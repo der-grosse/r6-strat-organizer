@@ -13,6 +13,8 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
+RUN mkdir -p /app/data
+
 # Build the Next.js application
 RUN npm run build
 
@@ -27,6 +29,7 @@ COPY --from=base /app/package.json /app/package-lock.json ./
 COPY --from=base /app/.next ./.next
 COPY --from=base /app/public ./public
 COPY --from=base /app/node_modules ./node_modules
+COPY --from=base /app/data ./data
 
 # Expose the port the app runs on
 EXPOSE 3000

@@ -1,10 +1,19 @@
 import fs from "fs";
+import path from "path";
 
 class StratsDBClass {
-  private path = "./data/strats.json";
+  private path: string;
   private data: Strat[] = [];
 
   constructor() {
+    this.path = path.join(process.cwd(), "data", "strats.json");
+
+    // Ensure directory exists
+    const dir = path.dirname(this.path);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
     if (!fs.existsSync(this.path)) {
       fs.writeFileSync(this.path, JSON.stringify([]));
     }
