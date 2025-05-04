@@ -4,90 +4,66 @@
     "map": "Bank",
     "site": "2F CEO",
     "name": "Castle",
-    "rotationIndex": [
-      1
-    ],
-    "powerOPs": [
-      "Castle"
-    ],
+    "rotationIndex": [1],
+    "powerOPs": ["Castle"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1FSSP66KcfwhjGeMyUKZhjaLLyuua0ZAk2ddh_tXGtHE/preview",
-    "editURL": "https://docs.google.com/drawings/d/1FSSP66KcfwhjGeMyUKZhjaLLyuua0ZAk2ddh_tXGtHE/preview"
+    "editURL": "https://docs.google.com/drawings/d/1FSSP66KcfwhjGeMyUKZhjaLLyuua0ZAk2ddh_tXGtHE/edit"
   },
   {
     "id": 2,
     "map": "Bank",
     "site": "B Lockers",
     "name": "Server extend",
-    "rotationIndex": [
-      2
-    ],
-    "powerOPs": [
-      "Warden"
-    ],
+    "rotationIndex": [2],
+    "powerOPs": ["Warden"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1wI5YeJ68mHton_NRr_HhspkEPvRDFFSc_hBgj2Vg7aU/preview",
-    "editURL": "https://docs.google.com/drawings/d/1wI5YeJ68mHton_NRr_HhspkEPvRDFFSc_hBgj2Vg7aU/preview"
+    "editURL": "https://docs.google.com/drawings/d/1wI5YeJ68mHton_NRr_HhspkEPvRDFFSc_hBgj2Vg7aU/edit"
   },
   {
     "id": 3,
     "map": "Bank",
     "site": "1F Open Area",
     "name": "Mira Teller's",
-    "rotationIndex": [
-      3
-    ],
-    "powerOPs": [
-      "Mira"
-    ],
+    "rotationIndex": [3],
+    "powerOPs": ["Mira"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1v8pXcVdRsCobJpgutiYv_4m1Na-K0KdCrfWoYlj-hmo/preview",
-    "editURL": "https://docs.google.com/drawings/d/1v8pXcVdRsCobJpgutiYv_4m1Na-K0KdCrfWoYlj-hmo/preview"
+    "editURL": "https://docs.google.com/drawings/d/1v8pXcVdRsCobJpgutiYv_4m1Na-K0KdCrfWoYlj-hmo/edit"
   },
   {
     "id": 4,
     "map": "Bank",
     "site": "2F CEO",
     "name": "Azami K9",
-    "rotationIndex": [
-      4
-    ],
+    "rotationIndex": [4],
     "powerOPs": [],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/185cSYq97I5eBBPaWGkJOyl_eY4qYt9otvuwWVZwKcHI/preview",
-    "editURL": "https://docs.google.com/drawings/d/185cSYq97I5eBBPaWGkJOyl_eY4qYt9otvuwWVZwKcHI/preview"
+    "editURL": "https://docs.google.com/drawings/d/185cSYq97I5eBBPaWGkJOyl_eY4qYt9otvuwWVZwKcHI/edit"
   },
   {
     "id": 5,
     "map": "Bank",
     "site": "B Lockers",
     "name": "Heavy Roam",
-    "rotationIndex": [
-      5
-    ],
-    "powerOPs": [
-      "Castle",
-      "Goyo"
-    ],
+    "rotationIndex": [5],
+    "powerOPs": ["Castle", "Goyo"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1qm9Fl6Hp72S6LWQHWptIkrwU0sjBFxy699BQr3ujkz4/preview",
-    "editURL": "https://docs.google.com/drawings/d/1qm9Fl6Hp72S6LWQHWptIkrwU0sjBFxy699BQr3ujkz4/preview"
+    "editURL": "https://docs.google.com/drawings/d/1qm9Fl6Hp72S6LWQHWptIkrwU0sjBFxy699BQr3ujkz4/edit"
   },
   {
     "id": 6,
     "map": "Bank",
     "site": "1F Open Area",
     "name": "Stock hold",
-    "rotationIndex": [
-      6
-    ],
-    "powerOPs": [
-      "Castle",
-      "Maestro"
-    ],
+    "rotationIndex": [6],
+    "powerOPs": ["Castle", "Maestro"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/18NqBeYS9QsBAaV2RFjJRZxLpRw91RGeV-5NRshoz0yc/preview",
-    "editURL": "https://docs.google.com/drawings/d/18NqBeYS9QsBAaV2RFjJRZxLpRw91RGeV-5NRshoz0yc/preview"
+    "editURL": "https://docs.google.com/drawings/d/18NqBeYS9QsBAaV2RFjJRZxLpRw91RGeV-5NRshoz0yc/edit"
   },
   {
     "id": 7,
@@ -95,12 +71,10 @@
     "site": "1F Open Area",
     "name": "Kitchen Hold",
     "rotationIndex": null,
-    "powerOPs": [
-      "Azami"
-    ],
+    "powerOPs": ["Azami"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1ImXH-RfAUyh-EVOznoFXZmv1p7SNvVZtzWAwYTFmt44/preview",
-    "editURL": "https://docs.google.com/drawings/d/1ImXH-RfAUyh-EVOznoFXZmv1p7SNvVZtzWAwYTFmt44/preview"
+    "editURL": "https://docs.google.com/drawings/d/1ImXH-RfAUyh-EVOznoFXZmv1p7SNvVZtzWAwYTFmt44/edit"
   },
   {
     "id": 8,
@@ -108,12 +82,10 @@
     "site": "B Lockers",
     "name": "Bunker",
     "rotationIndex": null,
-    "powerOPs": [
-      "Goyo"
-    ],
+    "powerOPs": ["Goyo"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1g-yCF4MRHeMPkpXZxfLpV3Ld5Ec1aFHninN6ouVCKDU/preview",
-    "editURL": "https://docs.google.com/drawings/d/1g-yCF4MRHeMPkpXZxfLpV3Ld5Ec1aFHninN6ouVCKDU/preview"
+    "editURL": "https://docs.google.com/drawings/d/1g-yCF4MRHeMPkpXZxfLpV3Ld5Ec1aFHninN6ouVCKDU/edit"
   },
   {
     "id": 9,
@@ -121,12 +93,10 @@
     "site": "1F Teller's",
     "name": "",
     "rotationIndex": null,
-    "powerOPs": [
-      "Castle"
-    ],
+    "powerOPs": ["Castle"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1SdPX48xzaFMMySAkLzPlUZtjtioi5b3BKDIahQiUq5Y/preview",
-    "editURL": "https://docs.google.com/drawings/d/1SdPX48xzaFMMySAkLzPlUZtjtioi5b3BKDIahQiUq5Y/preview"
+    "editURL": "https://docs.google.com/drawings/d/1SdPX48xzaFMMySAkLzPlUZtjtioi5b3BKDIahQiUq5Y/edit"
   },
   {
     "id": 10,
@@ -134,14 +104,10 @@
     "site": "2F CEO",
     "name": "C4 below",
     "rotationIndex": null,
-    "powerOPs": [
-      "Valk",
-      "Azami",
-      "Pulse"
-    ],
+    "powerOPs": ["Valk", "Azami", "Pulse"],
     "notes": "Fallback Strat",
     "previewURL": "https://docs.google.com/drawings/d/1BzpTSEGjocj1t0BWTyKqxBKLYuuRXYiVYIZVwiUnsm0/preview",
-    "editURL": "https://docs.google.com/drawings/d/1BzpTSEGjocj1t0BWTyKqxBKLYuuRXYiVYIZVwiUnsm0/preview"
+    "editURL": "https://docs.google.com/drawings/d/1BzpTSEGjocj1t0BWTyKqxBKLYuuRXYiVYIZVwiUnsm0/edit"
   },
   {
     "id": 11,
@@ -152,53 +118,40 @@
     "powerOPs": [],
     "notes": "Extrem risky",
     "previewURL": "https://docs.google.com/drawings/d/1JWC5vgs6mpqAE0uCpM8jeWQGaWAnIITTLoXMm0mz-yo/preview",
-    "editURL": "https://docs.google.com/drawings/d/1JWC5vgs6mpqAE0uCpM8jeWQGaWAnIITTLoXMm0mz-yo/preview"
+    "editURL": "https://docs.google.com/drawings/d/1JWC5vgs6mpqAE0uCpM8jeWQGaWAnIITTLoXMm0mz-yo/edit"
   },
   {
     "id": 12,
     "map": "Border",
     "site": "2F Armory",
     "name": "Mira Office",
-    "rotationIndex": [
-      1
-    ],
-    "powerOPs": [
-      "Azami",
-      "Castle"
-    ],
+    "rotationIndex": [1],
+    "powerOPs": ["Azami", "Castle"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1jHC5tW59nPresZLi8bfG-so_IZtqR58hOLeNF3okzm0/preview",
-    "editURL": "https://docs.google.com/drawings/d/1jHC5tW59nPresZLi8bfG-so_IZtqR58hOLeNF3okzm0/preview"
+    "editURL": "https://docs.google.com/drawings/d/1jHC5tW59nPresZLi8bfG-so_IZtqR58hOLeNF3okzm0/edit"
   },
   {
     "id": 13,
     "map": "Border",
     "site": "2F Armory",
     "name": "Mira 90",
-    "rotationIndex": [
-      4
-    ],
-    "powerOPs": [
-      "Mira",
-      "Castle"
-    ],
+    "rotationIndex": [4],
+    "powerOPs": ["Mira", "Castle"],
     "notes": "Alt Strat zu Mira Office",
     "previewURL": "https://docs.google.com/drawings/d/1dMCMGCddcigEik644ReJ26euh9SrLHPzs2yQryjZWEo/preview",
-    "editURL": "https://docs.google.com/drawings/d/1dMCMGCddcigEik644ReJ26euh9SrLHPzs2yQryjZWEo/preview"
+    "editURL": "https://docs.google.com/drawings/d/1dMCMGCddcigEik644ReJ26euh9SrLHPzs2yQryjZWEo/edit"
   },
   {
     "id": 14,
     "map": "Border",
     "site": "1F Bathroom",
     "name": "2F Roam",
-    "rotationIndex": [
-      2,
-      5
-    ],
+    "rotationIndex": [2, 5],
     "powerOPs": [],
     "notes": "Alle bitte einmal alle ihr actual setup eintragen",
     "previewURL": "https://docs.google.com/drawings/d/12EcbRDzeEP3ar_9D6_kK9ErkI9QmLoD_dAOql0f7gr8/preview",
-    "editURL": "https://docs.google.com/drawings/d/12EcbRDzeEP3ar_9D6_kK9ErkI9QmLoD_dAOql0f7gr8/preview"
+    "editURL": "https://docs.google.com/drawings/d/12EcbRDzeEP3ar_9D6_kK9ErkI9QmLoD_dAOql0f7gr8/edit"
   },
   {
     "id": 15,
@@ -206,12 +159,10 @@
     "site": "1F Workshop",
     "name": "Vertical Hold",
     "rotationIndex": null,
-    "powerOPs": [
-      "Castle"
-    ],
+    "powerOPs": ["Castle"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1QgwKmY30GqqRq-RCyQ7aJHUDITst0k_99w3GSOCI4GQ/preview",
-    "editURL": "https://docs.google.com/drawings/d/1QgwKmY30GqqRq-RCyQ7aJHUDITst0k_99w3GSOCI4GQ/preview"
+    "editURL": "https://docs.google.com/drawings/d/1QgwKmY30GqqRq-RCyQ7aJHUDITst0k_99w3GSOCI4GQ/edit"
   },
   {
     "id": 16,
@@ -222,7 +173,7 @@
     "powerOPs": [],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/105m8_QpwhjEDZQUSJEHLILUAtwKpuaHS_Ts2bg6yB5w/preview",
-    "editURL": "https://docs.google.com/drawings/d/105m8_QpwhjEDZQUSJEHLILUAtwKpuaHS_Ts2bg6yB5w/preview"
+    "editURL": "https://docs.google.com/drawings/d/105m8_QpwhjEDZQUSJEHLILUAtwKpuaHS_Ts2bg6yB5w/edit"
   },
   {
     "id": 17,
@@ -230,101 +181,76 @@
     "site": "1F Bathroom",
     "name": "Heavy Roam",
     "rotationIndex": null,
-    "powerOPs": [
-      "Mira",
-      "Castle"
-    ],
+    "powerOPs": ["Mira", "Castle"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/11dYOvkg1DSDniPia6SKiR_QyEQ22M7iW7Pj366HjOys/preview",
-    "editURL": "https://docs.google.com/drawings/d/11dYOvkg1DSDniPia6SKiR_QyEQ22M7iW7Pj366HjOys/preview"
+    "editURL": "https://docs.google.com/drawings/d/11dYOvkg1DSDniPia6SKiR_QyEQ22M7iW7Pj366HjOys/edit"
   },
   {
     "id": 18,
     "map": "Chalet",
     "site": "1F Bar",
     "name": "Top und Basement Extend",
-    "rotationIndex": [
-      1
-    ],
+    "rotationIndex": [1],
     "powerOPs": [],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1JhGT5BtOsRaH2wtQTPrdGObIwLKqTD0gWp4SVv2UUDE/preview",
-    "editURL": "https://docs.google.com/drawings/d/1JhGT5BtOsRaH2wtQTPrdGObIwLKqTD0gWp4SVv2UUDE/preview"
+    "editURL": "https://docs.google.com/drawings/d/1JhGT5BtOsRaH2wtQTPrdGObIwLKqTD0gWp4SVv2UUDE/edit"
   },
   {
     "id": 19,
     "map": "Chalet",
     "site": "2F Master",
     "name": "Kitchen Extend",
-    "rotationIndex": [
-      2
-    ],
-    "powerOPs": [
-      "Castle"
-    ],
+    "rotationIndex": [2],
+    "powerOPs": ["Castle"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1cTUiclZQXtNdAe-FcHZQlN0S6tdh9CAUk3pTZup3P9I/preview",
-    "editURL": "https://docs.google.com/drawings/d/1cTUiclZQXtNdAe-FcHZQlN0S6tdh9CAUk3pTZup3P9I/preview"
+    "editURL": "https://docs.google.com/drawings/d/1cTUiclZQXtNdAe-FcHZQlN0S6tdh9CAUk3pTZup3P9I/edit"
   },
   {
     "id": 20,
     "map": "Chalet",
     "site": "B Snow",
     "name": "Boiler Shield",
-    "rotationIndex": [
-      3
-    ],
-    "powerOPs": [
-      "Castle"
-    ],
+    "rotationIndex": [3],
+    "powerOPs": ["Castle"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1XfbswjKOXThIDaTwYeJMvXlrXobvYYFkCV2ZWWKGXGk/preview",
-    "editURL": "https://docs.google.com/drawings/d/1XfbswjKOXThIDaTwYeJMvXlrXobvYYFkCV2ZWWKGXGk/preview"
+    "editURL": "https://docs.google.com/drawings/d/1XfbswjKOXThIDaTwYeJMvXlrXobvYYFkCV2ZWWKGXGk/edit"
   },
   {
     "id": 21,
     "map": "Chalet",
     "site": "1F Bar",
     "name": "Top Extend",
-    "rotationIndex": [
-      4
-    ],
-    "powerOPs": [
-      "Mira"
-    ],
+    "rotationIndex": [4],
+    "powerOPs": ["Mira"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1yI3SaUgJVBhzMqAiV5LcTgjOPjUvCIuefhjDT8mNGNA/preview",
-    "editURL": "https://docs.google.com/drawings/d/1yI3SaUgJVBhzMqAiV5LcTgjOPjUvCIuefhjDT8mNGNA/preview"
+    "editURL": "https://docs.google.com/drawings/d/1yI3SaUgJVBhzMqAiV5LcTgjOPjUvCIuefhjDT8mNGNA/edit"
   },
   {
     "id": 22,
     "map": "Chalet",
     "site": "2F Master",
     "name": "Mira",
-    "rotationIndex": [
-      5
-    ],
-    "powerOPs": [
-      "Mira",
-      "Castle",
-      "Azami"
-    ],
+    "rotationIndex": [5],
+    "powerOPs": ["Mira", "Castle", "Azami"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1TV40JtV9WdSg0pOA6IIwncS1FTz4d2EDKBQPyDHXTo0/preview",
-    "editURL": "https://docs.google.com/drawings/d/1TV40JtV9WdSg0pOA6IIwncS1FTz4d2EDKBQPyDHXTo0/preview"
+    "editURL": "https://docs.google.com/drawings/d/1TV40JtV9WdSg0pOA6IIwncS1FTz4d2EDKBQPyDHXTo0/edit"
   },
   {
     "id": 23,
     "map": "Chalet",
     "site": "1F Kitchen",
     "name": "Smoke",
-    "rotationIndex": [
-      6
-    ],
+    "rotationIndex": [6],
     "powerOPs": [],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1oD4DOLKNzS1WVa81N98c_1NDSQHpnOrbrYEZIMr-egQ/preview",
-    "editURL": "https://docs.google.com/drawings/d/1oD4DOLKNzS1WVa81N98c_1NDSQHpnOrbrYEZIMr-egQ/preview"
+    "editURL": "https://docs.google.com/drawings/d/1oD4DOLKNzS1WVa81N98c_1NDSQHpnOrbrYEZIMr-egQ/edit"
   },
   {
     "id": 24,
@@ -335,82 +261,62 @@
     "powerOPs": [],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1TgGa8QGimlm1eQTS9JuVuJ3xShTRdtpa6yS--9cIUlc/preview",
-    "editURL": "https://docs.google.com/drawings/d/1TgGa8QGimlm1eQTS9JuVuJ3xShTRdtpa6yS--9cIUlc/preview"
+    "editURL": "https://docs.google.com/drawings/d/1TgGa8QGimlm1eQTS9JuVuJ3xShTRdtpa6yS--9cIUlc/edit"
   },
   {
     "id": 25,
     "map": "Clubhouse",
     "site": "2F Gym",
     "name": "Mira",
-    "rotationIndex": [
-      1
-    ],
-    "powerOPs": [
-      "Mira"
-    ],
+    "rotationIndex": [1],
+    "powerOPs": ["Mira"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1ATWsxwFQIRH4CJEsEgT28ztH1MukNxKqdQ2hJQ6mbtc/preview",
-    "editURL": "https://docs.google.com/drawings/d/1ATWsxwFQIRH4CJEsEgT28ztH1MukNxKqdQ2hJQ6mbtc/preview"
+    "editURL": "https://docs.google.com/drawings/d/1ATWsxwFQIRH4CJEsEgT28ztH1MukNxKqdQ2hJQ6mbtc/edit"
   },
   {
     "id": 26,
     "map": "Clubhouse",
     "site": "B Church",
     "name": "Heavy Roam",
-    "rotationIndex": [
-      2
-    ],
-    "powerOPs": [
-      "Castle",
-      "Goyo"
-    ],
+    "rotationIndex": [2],
+    "powerOPs": ["Castle", "Goyo"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1NMvMc73bz-Za-3PWpFFjJdIywASTogU0CeUwsejPlEY/preview",
-    "editURL": "https://docs.google.com/drawings/d/1NMvMc73bz-Za-3PWpFFjJdIywASTogU0CeUwsejPlEY/preview"
+    "editURL": "https://docs.google.com/drawings/d/1NMvMc73bz-Za-3PWpFFjJdIywASTogU0CeUwsejPlEY/edit"
   },
   {
     "id": 27,
     "map": "Clubhouse",
     "site": "2F CCTV",
     "name": "Double Breach Denial",
-    "rotationIndex": [
-      3,
-      6
-    ],
-    "powerOPs": [
-      "Kaid"
-    ],
+    "rotationIndex": [3, 6],
+    "powerOPs": ["Kaid"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1dNKCyverGsnO1SdFjwDQACyBIgsBdTEzbSeSentVf1w/preview",
-    "editURL": "https://docs.google.com/drawings/d/1dNKCyverGsnO1SdFjwDQACyBIgsBdTEzbSeSentVf1w/preview"
+    "editURL": "https://docs.google.com/drawings/d/1dNKCyverGsnO1SdFjwDQACyBIgsBdTEzbSeSentVf1w/edit"
   },
   {
     "id": 28,
     "map": "Clubhouse",
     "site": "2F Gym",
     "name": "C4 below",
-    "rotationIndex": [
-      4
-    ],
-    "powerOPs": [
-      "Castle"
-    ],
+    "rotationIndex": [4],
+    "powerOPs": ["Castle"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1WuHJISULHffr3b-bMhbTflAEEBpthWswk7SzRkLQ2RY/preview",
-    "editURL": "https://docs.google.com/drawings/d/1WuHJISULHffr3b-bMhbTflAEEBpthWswk7SzRkLQ2RY/preview"
+    "editURL": "https://docs.google.com/drawings/d/1WuHJISULHffr3b-bMhbTflAEEBpthWswk7SzRkLQ2RY/edit"
   },
   {
     "id": 29,
     "map": "Clubhouse",
     "site": "B Church",
     "name": "No Util Roam",
-    "rotationIndex": [
-      5
-    ],
+    "rotationIndex": [5],
     "powerOPs": [],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/18HRjrBd7WLK_rLlnEBPi_bfl-NBvuX17tgNeoLUTKJQ/preview",
-    "editURL": "https://docs.google.com/drawings/d/18HRjrBd7WLK_rLlnEBPi_bfl-NBvuX17tgNeoLUTKJQ/preview"
+    "editURL": "https://docs.google.com/drawings/d/18HRjrBd7WLK_rLlnEBPi_bfl-NBvuX17tgNeoLUTKJQ/edit"
   },
   {
     "id": 30,
@@ -418,12 +324,10 @@
     "site": "2F Gym",
     "name": "Azami",
     "rotationIndex": null,
-    "powerOPs": [
-      "Azami"
-    ],
+    "powerOPs": ["Azami"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1vNloLwJfKokEkuBw_TQ-vQx9wHbkl7dhi1PoIMBHgJ0/preview",
-    "editURL": "https://docs.google.com/drawings/d/1vNloLwJfKokEkuBw_TQ-vQx9wHbkl7dhi1PoIMBHgJ0/preview"
+    "editURL": "https://docs.google.com/drawings/d/1vNloLwJfKokEkuBw_TQ-vQx9wHbkl7dhi1PoIMBHgJ0/edit"
   },
   {
     "id": 31,
@@ -431,14 +335,10 @@
     "site": "B Church",
     "name": "Roam Fake",
     "rotationIndex": null,
-    "powerOPs": [
-      "Castle",
-      "Kaid",
-      "Tubarao"
-    ],
+    "powerOPs": ["Castle", "Kaid", "Tubarao"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/17zSDWYtRqE5e0VbIETvz1B_rY8BJrAaI9iuuABfHmGs/preview",
-    "editURL": "https://docs.google.com/drawings/d/17zSDWYtRqE5e0VbIETvz1B_rY8BJrAaI9iuuABfHmGs/preview"
+    "editURL": "https://docs.google.com/drawings/d/17zSDWYtRqE5e0VbIETvz1B_rY8BJrAaI9iuuABfHmGs/edit"
   },
   {
     "id": 32,
@@ -446,12 +346,10 @@
     "site": "B Church",
     "name": "Bunker",
     "rotationIndex": null,
-    "powerOPs": [
-      "Kaid"
-    ],
+    "powerOPs": ["Kaid"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1DpuYPbGokus6O3eUGqNV_iYf09hKEue6O5wWVZjFjj0/preview",
-    "editURL": "https://docs.google.com/drawings/d/1DpuYPbGokus6O3eUGqNV_iYf09hKEue6O5wWVZjFjj0/preview"
+    "editURL": "https://docs.google.com/drawings/d/1DpuYPbGokus6O3eUGqNV_iYf09hKEue6O5wWVZjFjj0/edit"
   },
   {
     "id": 33,
@@ -462,7 +360,7 @@
     "powerOPs": [],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1T2u_nmEDyzBZuSOMyhI36_8Pi1RWlnORq6oJAfoKQz4/preview",
-    "editURL": "https://docs.google.com/drawings/d/1T2u_nmEDyzBZuSOMyhI36_8Pi1RWlnORq6oJAfoKQz4/preview"
+    "editURL": "https://docs.google.com/drawings/d/1T2u_nmEDyzBZuSOMyhI36_8Pi1RWlnORq6oJAfoKQz4/edit"
   },
   {
     "id": 34,
@@ -470,100 +368,76 @@
     "site": "2F Gym",
     "name": "Unfinished",
     "rotationIndex": null,
-    "powerOPs": [
-      "Castle"
-    ],
+    "powerOPs": ["Castle"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1WuHJISULHffr3b-bMhbTflAEEBpthWswk7SzRkLQ2RY/preview",
-    "editURL": "https://docs.google.com/drawings/d/1WuHJISULHffr3b-bMhbTflAEEBpthWswk7SzRkLQ2RY/preview"
+    "editURL": "https://docs.google.com/drawings/d/1WuHJISULHffr3b-bMhbTflAEEBpthWswk7SzRkLQ2RY/edit"
   },
   {
     "id": 35,
     "map": "Consulate",
     "site": "2F Consul",
     "name": "Admin Focus",
-    "rotationIndex": [
-      1
-    ],
-    "powerOPs": [
-      "Azami",
-      "Melusi"
-    ],
+    "rotationIndex": [1],
+    "powerOPs": ["Azami", "Melusi"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1CmNam_BlJr-B4nEV0QzZ5AlJlfYyhNjZjFSEU495PbI/preview",
-    "editURL": "https://docs.google.com/drawings/d/1CmNam_BlJr-B4nEV0QzZ5AlJlfYyhNjZjFSEU495PbI/preview"
+    "editURL": "https://docs.google.com/drawings/d/1CmNam_BlJr-B4nEV0QzZ5AlJlfYyhNjZjFSEU495PbI/edit"
   },
   {
     "id": 36,
     "map": "Consulate",
     "site": "B Garage",
     "name": "Piano Hold",
-    "rotationIndex": [
-      2
-    ],
-    "powerOPs": [
-      "Castle"
-    ],
+    "rotationIndex": [2],
+    "powerOPs": ["Castle"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1N09dW9kw0F9KeJFd-XTQ2Z477FeIsIE5ZouMMVkfQVQ/preview",
-    "editURL": "https://docs.google.com/drawings/d/1N09dW9kw0F9KeJFd-XTQ2Z477FeIsIE5ZouMMVkfQVQ/preview"
+    "editURL": "https://docs.google.com/drawings/d/1N09dW9kw0F9KeJFd-XTQ2Z477FeIsIE5ZouMMVkfQVQ/edit"
   },
   {
     "id": 37,
     "map": "Consulate",
     "site": "1F Piano",
     "name": "Top Floor Hold",
-    "rotationIndex": [
-      3
-    ],
-    "powerOPs": [
-      "Aruni"
-    ],
+    "rotationIndex": [3],
+    "powerOPs": ["Aruni"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1CmooYmczIYrJEB0owVdCi92xTqCfbfDOC57gSkPNzY8/preview",
-    "editURL": "https://docs.google.com/drawings/d/1CmooYmczIYrJEB0owVdCi92xTqCfbfDOC57gSkPNzY8/preview"
+    "editURL": "https://docs.google.com/drawings/d/1CmooYmczIYrJEB0owVdCi92xTqCfbfDOC57gSkPNzY8/edit"
   },
   {
     "id": 38,
     "map": "Consulate",
     "site": "2F Consul",
     "name": "C4 Below",
-    "rotationIndex": [
-      4
-    ],
+    "rotationIndex": [4],
     "powerOPs": [],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1_wr-rUfS59gB8x5it8A2SWXgXNBdKN2rr0NRjRK25HM/preview",
-    "editURL": "https://docs.google.com/drawings/d/1_wr-rUfS59gB8x5it8A2SWXgXNBdKN2rr0NRjRK25HM/preview"
+    "editURL": "https://docs.google.com/drawings/d/1_wr-rUfS59gB8x5it8A2SWXgXNBdKN2rr0NRjRK25HM/edit"
   },
   {
     "id": 39,
     "map": "Consulate",
     "site": "B Garage",
     "name": "Active Breach",
-    "rotationIndex": [
-      5
-    ],
+    "rotationIndex": [5],
     "powerOPs": [],
     "notes": "Hat Clash/Azami Alternativen",
     "previewURL": "https://docs.google.com/drawings/d/1nC3mZhAkvuxG9V-ud3xm8If8oPbiljim23FSQUb-9lk/preview",
-    "editURL": "https://docs.google.com/drawings/d/1nC3mZhAkvuxG9V-ud3xm8If8oPbiljim23FSQUb-9lk/preview"
+    "editURL": "https://docs.google.com/drawings/d/1nC3mZhAkvuxG9V-ud3xm8If8oPbiljim23FSQUb-9lk/edit"
   },
   {
     "id": 40,
     "map": "Consulate",
     "site": "1F Piano",
     "name": "Horizontal Hold",
-    "rotationIndex": [
-      6
-    ],
-    "powerOPs": [
-      "Azami",
-      "Castle"
-    ],
+    "rotationIndex": [6],
+    "powerOPs": ["Azami", "Castle"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1cU8lV6cRrbtht43KouMea6ggvDJmU44ax6A_T8VR0ZY/preview",
-    "editURL": "https://docs.google.com/drawings/d/1cU8lV6cRrbtht43KouMea6ggvDJmU44ax6A_T8VR0ZY/preview"
+    "editURL": "https://docs.google.com/drawings/d/1cU8lV6cRrbtht43KouMea6ggvDJmU44ax6A_T8VR0ZY/edit"
   },
   {
     "id": 41,
@@ -571,13 +445,10 @@
     "site": "B/1F Server",
     "name": "Clash",
     "rotationIndex": null,
-    "powerOPs": [
-      "Tubarao",
-      "Clash"
-    ],
+    "powerOPs": ["Tubarao", "Clash"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1Sf8Kkue4sd94o5ZHGYlxrpN2hGdJlG245_bD4hElUqs/preview",
-    "editURL": "https://docs.google.com/drawings/d/1Sf8Kkue4sd94o5ZHGYlxrpN2hGdJlG245_bD4hElUqs/preview"
+    "editURL": "https://docs.google.com/drawings/d/1Sf8Kkue4sd94o5ZHGYlxrpN2hGdJlG245_bD4hElUqs/edit"
   },
   {
     "id": 42,
@@ -585,91 +456,65 @@
     "site": "B Garage",
     "name": "Echo",
     "rotationIndex": null,
-    "powerOPs": [
-      "Fenrir",
-      "Echo"
-    ],
+    "powerOPs": ["Fenrir", "Echo"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1sVaYaq5dMTdsCjBIwjest37_cIlO8pgusv9veO40Wrw/preview",
-    "editURL": "https://docs.google.com/drawings/d/1sVaYaq5dMTdsCjBIwjest37_cIlO8pgusv9veO40Wrw/preview"
+    "editURL": "https://docs.google.com/drawings/d/1sVaYaq5dMTdsCjBIwjest37_cIlO8pgusv9veO40Wrw/edit"
   },
   {
     "id": 43,
     "map": "Kafe",
     "site": "3F Cocktail",
     "name": "Mira Bathroom",
-    "rotationIndex": [
-      1
-    ],
-    "powerOPs": [
-      "Mira"
-    ],
+    "rotationIndex": [1],
+    "powerOPs": ["Mira"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1-6rHnaC18gLb2IpuCa79RrfCqBBBVZaoNgNaK5opQRo/preview",
-    "editURL": "https://docs.google.com/drawings/d/1-6rHnaC18gLb2IpuCa79RrfCqBBBVZaoNgNaK5opQRo/preview"
+    "editURL": "https://docs.google.com/drawings/d/1-6rHnaC18gLb2IpuCa79RrfCqBBBVZaoNgNaK5opQRo/edit"
   },
   {
     "id": 44,
     "map": "Kafe",
     "site": "1F Kitchen",
     "name": "VIP Shield",
-    "rotationIndex": [
-      2
-    ],
-    "powerOPs": [
-      "Smoke"
-    ],
+    "rotationIndex": [2],
+    "powerOPs": ["Smoke"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1vHMD4LJlBbEnFvSaI5B1-BkateGrdLk0rDPhhrpzWcs/preview",
-    "editURL": "https://docs.google.com/drawings/d/1vHMD4LJlBbEnFvSaI5B1-BkateGrdLk0rDPhhrpzWcs/preview"
+    "editURL": "https://docs.google.com/drawings/d/1vHMD4LJlBbEnFvSaI5B1-BkateGrdLk0rDPhhrpzWcs/edit"
   },
   {
     "id": 45,
     "map": "Kafe",
     "site": "2F Reading",
     "name": "Mira Train",
-    "rotationIndex": [
-      3,
-      6
-    ],
-    "powerOPs": [
-      "Mira",
-      "Castle"
-    ],
+    "rotationIndex": [3, 6],
+    "powerOPs": ["Mira", "Castle"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/19z2_fD_rGhcJbOcQN2m060NE3d90__9RDtV-0wv8P50/preview",
-    "editURL": "https://docs.google.com/drawings/d/19z2_fD_rGhcJbOcQN2m060NE3d90__9RDtV-0wv8P50/preview"
+    "editURL": "https://docs.google.com/drawings/d/19z2_fD_rGhcJbOcQN2m060NE3d90__9RDtV-0wv8P50/edit"
   },
   {
     "id": 46,
     "map": "Kafe",
     "site": "3F Cocktail",
     "name": "Maestro",
-    "rotationIndex": [
-      4
-    ],
-    "powerOPs": [
-      "Maestro"
-    ],
+    "rotationIndex": [4],
+    "powerOPs": ["Maestro"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1yxZzOQMiaOxhoPnEERiXW60JAucsJPfumKCohLtGQ00/preview",
-    "editURL": "https://docs.google.com/drawings/d/1yxZzOQMiaOxhoPnEERiXW60JAucsJPfumKCohLtGQ00/preview"
+    "editURL": "https://docs.google.com/drawings/d/1yxZzOQMiaOxhoPnEERiXW60JAucsJPfumKCohLtGQ00/edit"
   },
   {
     "id": 47,
     "map": "Kafe",
     "site": "1F Kitchen",
     "name": "Goyo Bakery",
-    "rotationIndex": [
-      5
-    ],
-    "powerOPs": [
-      "Azami",
-      "Castle"
-    ],
+    "rotationIndex": [5],
+    "powerOPs": ["Azami", "Castle"],
     "notes": "Potentiell neu machen",
     "previewURL": "https://docs.google.com/drawings/d/1ZOejo3hGlMlwmTw_PNHIv7akgoS4hiA3Oi_DP3K4DuU/preview",
-    "editURL": "https://docs.google.com/drawings/d/1ZOejo3hGlMlwmTw_PNHIv7akgoS4hiA3Oi_DP3K4DuU/preview"
+    "editURL": "https://docs.google.com/drawings/d/1ZOejo3hGlMlwmTw_PNHIv7akgoS4hiA3Oi_DP3K4DuU/edit"
   },
   {
     "id": 48,
@@ -677,13 +522,10 @@
     "site": "2F Reading",
     "name": "Mira Train alt",
     "rotationIndex": null,
-    "powerOPs": [
-      "Mira",
-      "Castle"
-    ],
+    "powerOPs": ["Mira", "Castle"],
     "notes": "Spielen wir die noch? Haben wir nicht komplett auf die Alt Strat mit neuen Laufwegen gewechselt",
     "previewURL": "https://docs.google.com/drawings/d/1czAIadimk8EDdteQnolA0IDA4rMPtuxo9r8MIa5QX60/preview",
-    "editURL": "https://docs.google.com/drawings/d/1czAIadimk8EDdteQnolA0IDA4rMPtuxo9r8MIa5QX60/preview"
+    "editURL": "https://docs.google.com/drawings/d/1czAIadimk8EDdteQnolA0IDA4rMPtuxo9r8MIa5QX60/edit"
   },
   {
     "id": 49,
@@ -694,7 +536,7 @@
     "powerOPs": [],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1FRGe4FZue7bx8uP4XiszXNYTbbcEOczBmKdbz8HVKno/preview",
-    "editURL": "https://docs.google.com/drawings/d/1FRGe4FZue7bx8uP4XiszXNYTbbcEOczBmKdbz8HVKno/preview"
+    "editURL": "https://docs.google.com/drawings/d/1FRGe4FZue7bx8uP4XiszXNYTbbcEOczBmKdbz8HVKno/edit"
   },
   {
     "id": 50,
@@ -702,151 +544,109 @@
     "site": "3F Cocktail",
     "name": "Mira Cockstil",
     "rotationIndex": null,
-    "powerOPs": [
-      "Mira"
-    ],
+    "powerOPs": ["Mira"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1TgtRK8rzprWIy9UWD9lUhINy1JCLewkaWgv7aJAcBA8/preview",
-    "editURL": "https://docs.google.com/drawings/d/1TgtRK8rzprWIy9UWD9lUhINy1JCLewkaWgv7aJAcBA8/preview"
+    "editURL": "https://docs.google.com/drawings/d/1TgtRK8rzprWIy9UWD9lUhINy1JCLewkaWgv7aJAcBA8/edit"
   },
   {
     "id": 51,
     "map": "Lair",
     "site": "2F R6 Room",
     "name": "Mira Operational",
-    "rotationIndex": [
-      1,
-      4
-    ],
-    "powerOPs": [
-      "Azami",
-      "Mira"
-    ],
+    "rotationIndex": [1, 4],
+    "powerOPs": ["Azami", "Mira"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1ZaevB5kFeZ7DS0u0MxepZmAHmEPYttf7qfLh1k-GdRQ/preview",
-    "editURL": "https://docs.google.com/drawings/d/1ZaevB5kFeZ7DS0u0MxepZmAHmEPYttf7qfLh1k-GdRQ/preview"
+    "editURL": "https://docs.google.com/drawings/d/1ZaevB5kFeZ7DS0u0MxepZmAHmEPYttf7qfLh1k-GdRQ/edit"
   },
   {
     "id": 52,
     "map": "Lair",
     "site": "1F Bunks",
     "name": "Vertical Hold",
-    "rotationIndex": [
-      2,
-      5
-    ],
-    "powerOPs": [
-      "Castle",
-      "Kaid"
-    ],
+    "rotationIndex": [2, 5],
+    "powerOPs": ["Castle", "Kaid"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1yGNT_Qgkn25y9XxrI0wCqqKRsr5Of2Up-L8Fy_5DUFM/preview",
-    "editURL": "https://docs.google.com/drawings/d/1yGNT_Qgkn25y9XxrI0wCqqKRsr5Of2Up-L8Fy_5DUFM/preview"
+    "editURL": "https://docs.google.com/drawings/d/1yGNT_Qgkn25y9XxrI0wCqqKRsr5Of2Up-L8Fy_5DUFM/edit"
   },
   {
     "id": 53,
     "map": "Lair",
     "site": "B Lab",
     "name": "Bunker",
-    "rotationIndex": [
-      3,
-      6
-    ],
+    "rotationIndex": [3, 6],
     "powerOPs": [],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1kqtQSaqtFnFVdvoRWg3tQoRiPU-Hn0Grk3zQyxbJAYM/preview",
-    "editURL": "https://docs.google.com/drawings/d/1kqtQSaqtFnFVdvoRWg3tQoRiPU-Hn0Grk3zQyxbJAYM/preview"
+    "editURL": "https://docs.google.com/drawings/d/1kqtQSaqtFnFVdvoRWg3tQoRiPU-Hn0Grk3zQyxbJAYM/edit"
   },
   {
     "id": 54,
     "map": "Nighthaven",
     "site": "2F Server",
     "name": "Azami Rafters",
-    "rotationIndex": [
-      1
-    ],
+    "rotationIndex": [1],
     "powerOPs": [],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1bNllsK3mGf1G3sbJUwdMr0jMEkNCnPSALV85wGT9tk4/preview",
-    "editURL": "https://docs.google.com/drawings/d/1bNllsK3mGf1G3sbJUwdMr0jMEkNCnPSALV85wGT9tk4/preview"
+    "editURL": "https://docs.google.com/drawings/d/1bNllsK3mGf1G3sbJUwdMr0jMEkNCnPSALV85wGT9tk4/edit"
   },
   {
     "id": 55,
     "map": "Nighthaven",
     "site": "B Tank",
     "name": "1st Floor Roam",
-    "rotationIndex": [
-      2
-    ],
-    "powerOPs": [
-      "Castle"
-    ],
+    "rotationIndex": [2],
+    "powerOPs": ["Castle"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1VV-WXCK9NYj-gRd24MNTpc_UxWPZiF5MWZQlYh2pO1A/preview",
-    "editURL": "https://docs.google.com/drawings/d/1VV-WXCK9NYj-gRd24MNTpc_UxWPZiF5MWZQlYh2pO1A/preview"
+    "editURL": "https://docs.google.com/drawings/d/1VV-WXCK9NYj-gRd24MNTpc_UxWPZiF5MWZQlYh2pO1A/edit"
   },
   {
     "id": 56,
     "map": "Nighthaven",
     "site": "1F Storage",
     "name": "Top Floor Hold",
-    "rotationIndex": [
-      3
-    ],
-    "powerOPs": [
-      "Mira"
-    ],
+    "rotationIndex": [3],
+    "powerOPs": ["Mira"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1sgGolHND2pGvn1J9S1x5uhAIw7sXtu55abOrK-ubbCY/preview",
-    "editURL": "https://docs.google.com/drawings/d/1sgGolHND2pGvn1J9S1x5uhAIw7sXtu55abOrK-ubbCY/preview"
+    "editURL": "https://docs.google.com/drawings/d/1sgGolHND2pGvn1J9S1x5uhAIw7sXtu55abOrK-ubbCY/edit"
   },
   {
     "id": 57,
     "map": "Nighthaven",
     "site": "2F Server",
     "name": "Hidden Pulse",
-    "rotationIndex": [
-      4
-    ],
-    "powerOPs": [
-      "Fenrir",
-      "Mira",
-      "Pulse"
-    ],
+    "rotationIndex": [4],
+    "powerOPs": ["Fenrir", "Mira", "Pulse"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1AEoA1N_WatbnsdXl3M9tTWO4cPeyk1EA3YlO3eQO6Jg/preview",
-    "editURL": "https://docs.google.com/drawings/d/1AEoA1N_WatbnsdXl3M9tTWO4cPeyk1EA3YlO3eQO6Jg/preview"
+    "editURL": "https://docs.google.com/drawings/d/1AEoA1N_WatbnsdXl3M9tTWO4cPeyk1EA3YlO3eQO6Jg/edit"
   },
   {
     "id": 58,
     "map": "Nighthaven",
     "site": "B Tank",
     "name": "Heavy Roam",
-    "rotationIndex": [
-      5
-    ],
-    "powerOPs": [
-      "Kaid",
-      "Tubarao"
-    ],
+    "rotationIndex": [5],
+    "powerOPs": ["Kaid", "Tubarao"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1HGS4BXhClAPe3do3vO_OrAWk7To2AmKrAFmuD653FiA/preview",
-    "editURL": "https://docs.google.com/drawings/d/1HGS4BXhClAPe3do3vO_OrAWk7To2AmKrAFmuD653FiA/preview"
+    "editURL": "https://docs.google.com/drawings/d/1HGS4BXhClAPe3do3vO_OrAWk7To2AmKrAFmuD653FiA/edit"
   },
   {
     "id": 59,
     "map": "Nighthaven",
     "site": "1F Storage",
     "name": "Clash",
-    "rotationIndex": [
-      6
-    ],
-    "powerOPs": [
-      "Clash"
-    ],
+    "rotationIndex": [6],
+    "powerOPs": ["Clash"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/19sEguhCYheCiR-fiMm2vNjB5QjRK79FbTXfVV4GPfmY/preview",
-    "editURL": "https://docs.google.com/drawings/d/19sEguhCYheCiR-fiMm2vNjB5QjRK79FbTXfVV4GPfmY/preview"
+    "editURL": "https://docs.google.com/drawings/d/19sEguhCYheCiR-fiMm2vNjB5QjRK79FbTXfVV4GPfmY/edit"
   },
   {
     "id": 60,
@@ -854,12 +654,10 @@
     "site": "1F Storage",
     "name": "Pulse Basement",
     "rotationIndex": null,
-    "powerOPs": [
-      "Fenrir"
-    ],
+    "powerOPs": ["Fenrir"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1iIFKYNBo18S4aiA-jUFB2u_XCYePg2mnYGWSjCRumv4/preview",
-    "editURL": "https://docs.google.com/drawings/d/1iIFKYNBo18S4aiA-jUFB2u_XCYePg2mnYGWSjCRumv4/preview"
+    "editURL": "https://docs.google.com/drawings/d/1iIFKYNBo18S4aiA-jUFB2u_XCYePg2mnYGWSjCRumv4/edit"
   },
   {
     "id": 61,
@@ -870,7 +668,7 @@
     "powerOPs": [],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1eeuJsw389oPUWZgoCE6xTLa9j8lAeva2W-b_d2UWt5s/preview",
-    "editURL": "https://docs.google.com/drawings/d/1eeuJsw389oPUWZgoCE6xTLa9j8lAeva2W-b_d2UWt5s/preview"
+    "editURL": "https://docs.google.com/drawings/d/1eeuJsw389oPUWZgoCE6xTLa9j8lAeva2W-b_d2UWt5s/edit"
   },
   {
     "id": 62,
@@ -878,12 +676,10 @@
     "site": "1F Kitchen",
     "name": "",
     "rotationIndex": null,
-    "powerOPs": [
-      "Azami"
-    ],
+    "powerOPs": ["Azami"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1qzcgdwqnrOxsxdqddwuXfvm6OO719f1qicvfD1dNWcs/preview",
-    "editURL": "https://docs.google.com/drawings/d/1qzcgdwqnrOxsxdqddwuXfvm6OO719f1qicvfD1dNWcs/preview"
+    "editURL": "https://docs.google.com/drawings/d/1qzcgdwqnrOxsxdqddwuXfvm6OO719f1qicvfD1dNWcs/edit"
   },
   {
     "id": 63,
@@ -891,89 +687,65 @@
     "site": "B Tank",
     "name": "Ohne Tank",
     "rotationIndex": null,
-    "powerOPs": [
-      "Mira",
-      "Castle"
-    ],
+    "powerOPs": ["Mira", "Castle"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1lKwo37bJ4UOwNBdQR34mYIrOHzu4bjcoh3hE_sd_FDE/preview",
-    "editURL": "https://docs.google.com/drawings/d/1lKwo37bJ4UOwNBdQR34mYIrOHzu4bjcoh3hE_sd_FDE/preview"
+    "editURL": "https://docs.google.com/drawings/d/1lKwo37bJ4UOwNBdQR34mYIrOHzu4bjcoh3hE_sd_FDE/edit"
   },
   {
     "id": 64,
     "map": "Skyscraper",
     "site": "2F Tea",
     "name": "Goyo Delay",
-    "rotationIndex": [
-      1
-    ],
-    "powerOPs": [
-      "Azami"
-    ],
+    "rotationIndex": [1],
+    "powerOPs": ["Azami"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1A0SL-oodHSp5hNbXSuK3FvP0FT3n_v8Mj3TaaLykEMI/preview",
-    "editURL": "https://docs.google.com/drawings/d/1A0SL-oodHSp5hNbXSuK3FvP0FT3n_v8Mj3TaaLykEMI/preview"
+    "editURL": "https://docs.google.com/drawings/d/1A0SL-oodHSp5hNbXSuK3FvP0FT3n_v8Mj3TaaLykEMI/edit"
   },
   {
     "id": 65,
     "map": "Skyscraper",
     "site": "2F Exhibition",
     "name": "Full 2nd Floor",
-    "rotationIndex": [
-      2
-    ],
-    "powerOPs": [
-      "Clash"
-    ],
+    "rotationIndex": [2],
+    "powerOPs": ["Clash"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1MDL4b4LMwC84JM-PrR1N8eFCt-BD0JWcbPMP5i6ceM4/preview",
-    "editURL": "https://docs.google.com/drawings/d/1MDL4b4LMwC84JM-PrR1N8eFCt-BD0JWcbPMP5i6ceM4/preview"
+    "editURL": "https://docs.google.com/drawings/d/1MDL4b4LMwC84JM-PrR1N8eFCt-BD0JWcbPMP5i6ceM4/edit"
   },
   {
     "id": 66,
     "map": "Skyscraper",
     "site": "1F Kitchen",
     "name": "Vertical Hold",
-    "rotationIndex": [
-      3,
-      6
-    ],
-    "powerOPs": [
-      "Mira",
-      "Castle",
-      "Tubarao"
-    ],
+    "rotationIndex": [3, 6],
+    "powerOPs": ["Mira", "Castle", "Tubarao"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1ai4h23VY1s5J4gYS-6MvcmGfgjASQzlauG6i483S_ZE/preview",
-    "editURL": "https://docs.google.com/drawings/d/1ai4h23VY1s5J4gYS-6MvcmGfgjASQzlauG6i483S_ZE/preview"
+    "editURL": "https://docs.google.com/drawings/d/1ai4h23VY1s5J4gYS-6MvcmGfgjASQzlauG6i483S_ZE/edit"
   },
   {
     "id": 67,
     "map": "Skyscraper",
     "site": "2F Tea",
     "name": "Azami Drum",
-    "rotationIndex": [
-      4
-    ],
+    "rotationIndex": [4],
     "powerOPs": [],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1HKnmIa3eaPXBZB53Jp4I0sZp1lTT6uxzWFm21E-uzgk/preview",
-    "editURL": "https://docs.google.com/drawings/d/1HKnmIa3eaPXBZB53Jp4I0sZp1lTT6uxzWFm21E-uzgk/preview"
+    "editURL": "https://docs.google.com/drawings/d/1HKnmIa3eaPXBZB53Jp4I0sZp1lTT6uxzWFm21E-uzgk/edit"
   },
   {
     "id": 68,
     "map": "Skyscraper",
     "site": "2F Exhibition",
     "name": "Kaid/Tuba",
-    "rotationIndex": [
-      5
-    ],
-    "powerOPs": [
-      "Kaid"
-    ],
+    "rotationIndex": [5],
+    "powerOPs": ["Kaid"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1DrzLfJxJZUtZ8_8hd3YBmlOgprPSxMFII8PCkTIo5Tw/preview",
-    "editURL": "https://docs.google.com/drawings/d/1DrzLfJxJZUtZ8_8hd3YBmlOgprPSxMFII8PCkTIo5Tw/preview"
+    "editURL": "https://docs.google.com/drawings/d/1DrzLfJxJZUtZ8_8hd3YBmlOgprPSxMFII8PCkTIo5Tw/edit"
   },
   {
     "id": 69,
@@ -981,11 +753,9 @@
     "site": "2F Tea",
     "name": "Exhibition Extend",
     "rotationIndex": null,
-    "powerOPs": [
-      "Azami"
-    ],
+    "powerOPs": ["Azami"],
     "notes": "",
     "previewURL": "https://docs.google.com/drawings/d/1o-oh7K4FIOe3Ho0-CupywW-GXAbsDQutBU81FaZmaEQ/preview",
-    "editURL": "https://docs.google.com/drawings/d/1o-oh7K4FIOe3Ho0-CupywW-GXAbsDQutBU81FaZmaEQ/preview"
+    "editURL": "https://docs.google.com/drawings/d/1o-oh7K4FIOe3Ho0-CupywW-GXAbsDQutBU81FaZmaEQ/edit"
   }
 ]

@@ -5,6 +5,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { FilterProvider } from "./FilterContext";
 
 export interface AppLayoutProps {
   children: React.ReactNode;
@@ -12,12 +13,14 @@ export interface AppLayoutProps {
 
 export default function AppLayout(props: AppLayoutProps) {
   return (
-    <SidebarProvider defaultOpen>
-      <AppSidebar />
-      <SidebarInset>
-        <SidebarTrigger className="absolute top-2 left-2" />
-        {props.children}
-      </SidebarInset>
-    </SidebarProvider>
+    <FilterProvider>
+      <SidebarProvider defaultOpen>
+        <AppSidebar />
+        <SidebarInset>
+          <SidebarTrigger className="absolute top-2 left-2" />
+          {props.children}
+        </SidebarInset>
+      </SidebarProvider>
+    </FilterProvider>
   );
 }

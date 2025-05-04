@@ -8,3 +8,8 @@ interface Strat {
   previewURL: string;
   editURL: string;
 }
+
+interface R6Map {
+  name: string;
+  sites: string[];
+}

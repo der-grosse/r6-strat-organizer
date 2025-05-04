@@ -2,16 +2,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  if (request.nextUrl.pathname.startsWith("/api/")) {
-    if (request.headers.get("authorization") !== process.env.APP_SECRET) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    return NextResponse.next();
-  }
-
   if (!request.nextUrl.pathname.startsWith("/auth")) {
     const token = request.cookies.get("r6-strat-token");
-    console.log("Token:", token);
 
     if (token?.value !== process.env.APP_SECRET) {
       return NextResponse.redirect(new URL("/auth", request.url));
