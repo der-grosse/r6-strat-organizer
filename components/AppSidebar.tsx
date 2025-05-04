@@ -38,9 +38,13 @@ import {
   CollapsibleTrigger,
 } from "./ui/collapsible";
 import { setActive } from "@/src/strats";
+import { Checkbox } from "./ui/checkbox";
+import { useRouter } from "next/navigation";
 
 export function AppSidebar() {
-  const { filter, setFilter, filteredStrats } = useFilter();
+  const router = useRouter();
+  const { filter, setFilter, filteredStrats, isLeading, setIsLeading } =
+    useFilter();
   return (
     <Sidebar variant="inset">
       <SidebarHeader />
@@ -186,8 +190,15 @@ export function AppSidebar() {
                         <SidebarMenuItem key={strat.id}>
                           <SidebarMenuButton
                             className="inline h-auto"
-                            onClick={() => {
-                              setActive(strat);
+                            onClick={async () => {
+                              if (isLeading) {
+                                await setActive(strat);
+                                if (window.location.pathname === "/") {
+                                  router.push("/");
+                                }
+                              } else {
+                                router.push(`/strat/${strat.id}`);
+                              }
                             }}
                           >
                             {filter.site ? (
@@ -215,7 +226,7 @@ export function AppSidebar() {
                         </SidebarMenuItem>
                       ))
                     : null}
-                  {filteredStrats.length === 0 && (
+                  {filter.map && filteredStrats.length === 0 && (
                     <SidebarMenuItem className="text-muted-foreground">
                       <SidebarMenuButton disabled>
                         No strats found
@@ -235,7 +246,24 @@ export function AppSidebar() {
           </SidebarGroup>
         </Collapsible>
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <Checkbox
+              id="sidebar-leading-checkbox"
+              className="mr-2"
+              checked={isLeading}
+              onCheckedChange={(checked) => setIsLeading(!!checked)}
+            />
+            <label
+              htmlFor="sidebar-leading-checkbox"
+              className="text-sm leading-none"
+            >
+              Lead current open strat
+            </label>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }

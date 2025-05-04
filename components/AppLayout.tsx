@@ -17,7 +17,7 @@ export default function AppLayout(props: AppLayoutProps) {
       <SidebarProvider defaultOpen>
         <AppSidebar />
         <SidebarInset>
-          <SidebarTrigger className="absolute top-2 left-2" />
+          <SidebarTrigger className="absolute top-2 left-2 z-10 cursor-pointer" />
           {props.children}
         </SidebarInset>
       </SidebarProvider>

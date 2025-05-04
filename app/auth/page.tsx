@@ -9,7 +9,7 @@ export default function Login() {
   const [error, setError] = useState(false);
   return (
     <form
-      className="flex flex-col items-center justify-center h-full w-full gap-4"
+      className="h-screen flex flex-col items-center justify-center w-full gap-4"
       onSubmit={async (e) => {
         e.preventDefault();
         setError(false);

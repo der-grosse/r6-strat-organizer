@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Noto_Sans } from "next/font/google";
-import "./globals.css";
-import AppLayout from "@/components/AppLayout";
+import "../globals.css";
 
 const notoSans = Noto_Sans({
   variable: "--font-noto-sans",
@@ -22,7 +21,7 @@ export default function RootLayout({
       <body
         className={`${notoSans.variable} antialiased m-0 dark w-screen min-h-screen`}
       >
-        <AppLayout>{children}</AppLayout>
+        {children}
       </body>
     </html>
   );

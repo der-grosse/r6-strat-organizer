@@ -8,10 +8,18 @@ interface Filter {
   bannedOPs: string[];
 }
 
+const EMPTY_FILTER: Filter = {
+  map: null,
+  site: null,
+  bannedOPs: [],
+};
+
 interface FilterContextType {
   filter: Filter;
   setFilter: React.Dispatch<React.SetStateAction<Filter>>;
   filteredStrats: Strat[];
+  isLeading: boolean;
+  setIsLeading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const FilterContext = createContext<FilterContextType | undefined>(undefined);
@@ -24,12 +32,16 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({
   const [filter, setFilter] = useState<Filter>(() => {
     if (typeof window !== "undefined") {
       const storedFilter = localStorage.getItem(FILTER_STORAGE_KEY);
-      return storedFilter ? JSON.parse(storedFilter) : {};
+      return storedFilter
+        ? { ...EMPTY_FILTER, ...JSON.parse(storedFilter) }
+        : EMPTY_FILTER;
     }
-    return {};
+    return EMPTY_FILTER;
   });
 
   const [filteredStrats, setFilteredStrats] = useState<Strat[]>([]);
+
+  const [isLeading, setIsLeading] = useState(false);
 
   // store filter in local storage
   useEffect(() => {
@@ -62,7 +74,9 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [filter]);
 
   return (
-    <FilterContext.Provider value={{ filter, setFilter, filteredStrats }}>
+    <FilterContext.Provider
+      value={{ filter, setFilter, filteredStrats, isLeading, setIsLeading }}
+    >
       {children}
     </FilterContext.Provider>
   );
