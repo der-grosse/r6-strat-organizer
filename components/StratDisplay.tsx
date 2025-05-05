@@ -7,7 +7,7 @@ export interface StratDisplayProps {
 
 export default function StratDisplay(props: StratDisplayProps) {
   return (
-    <div className="relative h-full w-full flex justify-center items-center flex-col gap-4 z-0">
+    <div className="relative h-full w-full flex justify-center items-center flex-col z-0">
       {props.strat ? (
         <>
           <iframe
