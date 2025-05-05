@@ -6,14 +6,16 @@ import {
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { FilterProvider } from "./FilterContext";
+import { Filter } from "./FilterContext.functions";
 
 export interface AppLayoutProps {
   children: React.ReactNode;
+  cookieFilter?: Filter;
 }
 
 export default function AppLayout(props: AppLayoutProps) {
   return (
-    <FilterProvider>
+    <FilterProvider defaultFilter={props.cookieFilter}>
       <SidebarProvider defaultOpen>
         <AppSidebar />
         <SidebarInset>

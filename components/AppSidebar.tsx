@@ -203,7 +203,9 @@ export function AppSidebar() {
                                   OPERATORS.find((o) => o.name === op)
                                 )
                                 .filter(Boolean)
-                                .map((op) => <OperatorIcon op={op!} />)
+                                .map((op) => (
+                                  <OperatorIcon key={op!.name} op={op!} />
+                                ))
                             : "Select banned OPs"}
                           <ChevronUp className="ml-auto" />
                         </SidebarMenuButton>

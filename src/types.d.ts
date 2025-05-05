@@ -3,7 +3,7 @@ interface Strat {
   map: string;
   site: string;
   name: string;
-  rotationIndex: number;
+  rotationIndex: number[] | null;
   powerOPs: string[];
   previewURL: string;
   editURL: string;

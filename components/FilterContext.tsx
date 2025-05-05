@@ -1,18 +1,12 @@
 "use client";
 import { getAllStrats } from "@/src/strats";
 import React, { createContext, useContext, useEffect, useState } from "react";
-
-interface Filter {
-  map: string | null;
-  site: string | null;
-  bannedOPs: string[];
-}
-
-const EMPTY_FILTER: Filter = {
-  map: null,
-  site: null,
-  bannedOPs: [],
-};
+import Cookie from "js-cookie";
+import {
+  EMPTY_FILTER,
+  Filter,
+  FILTER_COOKIE_KEY,
+} from "./FilterContext.functions";
 
 interface FilterContextType {
   filter: Filter;
@@ -24,28 +18,19 @@ interface FilterContextType {
 
 const FilterContext = createContext<FilterContextType | undefined>(undefined);
 
-const FILTER_STORAGE_KEY = "strat_filter";
-
-export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  const [filter, setFilter] = useState<Filter>(() => {
-    if (typeof window !== "undefined") {
-      const storedFilter = localStorage.getItem(FILTER_STORAGE_KEY);
-      return storedFilter
-        ? { ...EMPTY_FILTER, ...JSON.parse(storedFilter) }
-        : EMPTY_FILTER;
-    }
-    return EMPTY_FILTER;
-  });
+export const FilterProvider: React.FC<{
+  children: React.ReactNode;
+  defaultFilter?: Filter;
+}> = ({ children, defaultFilter }) => {
+  const [filter, setFilter] = useState<Filter>(defaultFilter ?? EMPTY_FILTER);
 
   const [filteredStrats, setFilteredStrats] = useState<Strat[]>([]);
 
   const [isLeading, setIsLeading] = useState(false);
 
-  // store filter in local storage
+  // store filter in cookies
   useEffect(() => {
-    localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(filter));
+    Cookie.set(FILTER_COOKIE_KEY, JSON.stringify(filter));
   }, [filter]);
 
   // load filtered strats based on filter
