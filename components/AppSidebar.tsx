@@ -14,6 +14,7 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 import {
+  Check,
   ChevronDown,
   ChevronUp,
   Database,
@@ -21,7 +22,6 @@ import {
   FolderOpen,
   Link2,
   MapPinned,
-  MoreHorizontal,
 } from "lucide-react";
 import Link from "next/link";
 import { useFilter } from "./FilterContext";
@@ -40,11 +40,24 @@ import {
 import { setActive } from "@/src/strats";
 import { Checkbox } from "./ui/checkbox";
 import { useRouter } from "next/navigation";
+import OPERATORS from "@/data/operator";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandShortcut,
+} from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import OperatorIcon from "./OperatorIcon";
 
 export function AppSidebar() {
   const router = useRouter();
   const { filter, setFilter, filteredStrats, isLeading, setIsLeading } =
     useFilter();
+
   return (
     <Sidebar variant="inset">
       <SidebarHeader />
@@ -179,7 +192,67 @@ export function AppSidebar() {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </SidebarMenuItem>
-                  {/* TODO: banned OPs selector */}
+                  {/* banned OPs selector */}
+                  <SidebarMenuItem>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <SidebarMenuButton>
+                          {filter.bannedOPs.length
+                            ? filter.bannedOPs
+                                .map((op) =>
+                                  OPERATORS.find((o) => o.name === op)
+                                )
+                                .filter(Boolean)
+                                .map((op) => <OperatorIcon op={op!} />)
+                            : "Select banned OPs"}
+                          <ChevronUp className="ml-auto" />
+                        </SidebarMenuButton>
+                      </PopoverTrigger>
+                      <PopoverContent>
+                        <Command>
+                          <CommandInput placeholder="Type a command or search..." />
+                          <CommandList>
+                            <CommandEmpty>No results found.</CommandEmpty>
+                            <CommandGroup>
+                              <CommandItem
+                                key="clear"
+                                onSelect={() =>
+                                  setFilter({ ...filter, bannedOPs: [] })
+                                }
+                              >
+                                <em>Clear</em>
+                              </CommandItem>
+                              {OPERATORS.map((op) => (
+                                <CommandItem
+                                  key={op.name}
+                                  onSelect={() => {
+                                    setFilter((filter) => ({
+                                      ...filter,
+                                      bannedOPs: filter.bannedOPs.includes(
+                                        op.name
+                                      )
+                                        ? filter.bannedOPs.filter(
+                                            (op2) => op2 !== op.name
+                                          )
+                                        : [...filter.bannedOPs, op.name],
+                                    }));
+                                  }}
+                                >
+                                  <OperatorIcon op={op} />
+                                  {op.name}
+                                  <CommandShortcut>
+                                    {filter.bannedOPs.includes(op.name) && (
+                                      <Check className="text-muted-foreground" />
+                                    )}
+                                  </CommandShortcut>
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                  </SidebarMenuItem>
                 </SidebarMenu>
                 <SidebarSeparator />
                 <SidebarGroupLabel>Filtered Strats</SidebarGroupLabel>
