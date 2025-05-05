@@ -16,6 +16,7 @@ import {
 import {
   Check,
   ChevronDown,
+  ChevronRight,
   ChevronUp,
   Database,
   Edit,
@@ -114,13 +115,10 @@ export function AppSidebar() {
                       <DropdownMenuTrigger asChild>
                         <SidebarMenuButton>
                           {filter.map ?? "Select map"}
-                          <ChevronUp className="ml-auto" />
+                          <ChevronRight className="ml-auto" />
                         </SidebarMenuButton>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        side="top"
-                        className="w-[--radix-popper-anchor-width]"
-                      >
+                      <DropdownMenuContent side="right" className="w-56">
                         <DropdownMenuItem
                           key="clear"
                           onClick={() => {
@@ -156,13 +154,10 @@ export function AppSidebar() {
                         <SidebarMenuButton>
                           {filter.site ??
                             (filter.map ? "Select site" : "Select map first")}
-                          <ChevronUp className="ml-auto" />
+                          <ChevronRight className="ml-auto" />
                         </SidebarMenuButton>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        side="top"
-                        className="w-[--radix-popper-anchor-width]"
-                      >
+                      <DropdownMenuContent side="right" className="w-56">
                         <DropdownMenuItem
                           key="clear"
                           onClick={() => {
@@ -207,10 +202,10 @@ export function AppSidebar() {
                                   <OperatorIcon key={op!.name} op={op!} />
                                 ))
                             : "Select banned OPs"}
-                          <ChevronUp className="ml-auto" />
+                          <ChevronRight className="ml-auto" />
                         </SidebarMenuButton>
                       </PopoverTrigger>
-                      <PopoverContent>
+                      <PopoverContent className="p-0" side="right">
                         <Command>
                           <CommandInput placeholder="Type a command or search..." />
                           <CommandList>
@@ -268,7 +263,7 @@ export function AppSidebar() {
                             onClick={async () => {
                               if (isLeading) {
                                 await setActive(strat);
-                                if (window.location.pathname === "/") {
+                                if (window.location.pathname !== "/") {
                                   router.push("/");
                                 }
                               } else {

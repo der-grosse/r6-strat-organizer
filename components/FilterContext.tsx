@@ -7,6 +7,7 @@ import {
   Filter,
   FILTER_COOKIE_KEY,
 } from "./FilterContext.functions";
+import { useSearchParams, useRouter } from "next/navigation";
 
 interface FilterContextType {
   filter: Filter;
@@ -22,11 +23,15 @@ export const FilterProvider: React.FC<{
   children: React.ReactNode;
   defaultFilter?: Filter;
 }> = ({ children, defaultFilter }) => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [filter, setFilter] = useState<Filter>(defaultFilter ?? EMPTY_FILTER);
 
   const [filteredStrats, setFilteredStrats] = useState<Strat[]>([]);
 
-  const [isLeading, setIsLeading] = useState(false);
+  const [isLeading, setIsLeading] = useState(
+    searchParams.get("leading") === "true"
+  );
 
   // store filter in cookies
   useEffect(() => {
@@ -57,6 +62,16 @@ export const FilterProvider: React.FC<{
       stop = true;
     };
   }, [filter]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (isLeading) {
+      params.set("leading", "true");
+    } else {
+      params.delete("leading");
+    }
+    router.replace(`?${params.toString()}`);
+  }, [isLeading]);
 
   return (
     <FilterContext.Provider
