@@ -1,4 +1,5 @@
 "use server";
+import ActiveStratDB from "./activeStrat";
 import StratsDB from "./db";
 
 export async function getAllStrats() {
@@ -11,12 +12,11 @@ export async function getStrat(id: number) {
   return strat;
 }
 
-let currentStrat: Strat | null = null;
-
 export async function getActive() {
-  return currentStrat;
+  const activeStrat = ActiveStratDB.getActiveStrat();
+  return activeStrat;
 }
 
 export async function setActive(newStrat: Strat) {
-  currentStrat = newStrat;
+  ActiveStratDB.setActiveStrat(newStrat);
 }

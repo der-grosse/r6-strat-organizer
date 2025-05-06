@@ -40,7 +40,7 @@ import {
 } from "./ui/collapsible";
 import { setActive } from "@/src/strats";
 import { Checkbox } from "./ui/checkbox";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import OPERATORS from "@/data/operator";
 import {
   Command,
@@ -53,9 +53,11 @@ import {
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import OperatorIcon from "./OperatorIcon";
+import SearchPreservingLink from "./SearchPreservingLink";
 
 export function AppSidebar() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { filter, setFilter, filteredStrats, isLeading, setIsLeading } =
     useFilter();
 
@@ -76,20 +78,20 @@ export function AppSidebar() {
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <Link href="/">
+                    <SearchPreservingLink href="/">
                       <SidebarMenuButton>
                         <FolderOpen className="mr-2" />
                         Current Strat
                       </SidebarMenuButton>
-                    </Link>
+                    </SearchPreservingLink>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <Link href="/strats">
+                    <SearchPreservingLink href="/strats">
                       <SidebarMenuButton>
                         <Database className="mr-2" />
                         All strats
                       </SidebarMenuButton>
-                    </Link>
+                    </SearchPreservingLink>
                   </SidebarMenuItem>
                 </SidebarMenu>
               </SidebarGroupContent>
@@ -264,7 +266,7 @@ export function AppSidebar() {
                               if (isLeading) {
                                 await setActive(strat);
                                 if (window.location.pathname !== "/") {
-                                  router.push("/");
+                                  router.push("/?isLeading=true");
                                 }
                               } else {
                                 router.push(`/strat/${strat.id}`);

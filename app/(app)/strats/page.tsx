@@ -11,11 +11,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import DEFENDERS from "@/data/operator";
+import { setActive } from "@/src/strats";
 import { Edit, Eye } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function StratsPage() {
-  const { filteredStrats } = useFilter();
+  const { filteredStrats, isLeading } = useFilter();
+  const router = useRouter();
   return (
     <div className="w-full p-4">
       <Table>
@@ -48,19 +51,21 @@ export default function StratsPage() {
                 </div>
               </TableCell>
               <TableCell>
-                <Link
-                  href={strat.previewURL}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="cursor-pointer"
+                  onClick={async () => {
+                    if (isLeading) {
+                      await setActive(strat);
+                      router.push("/?leading=true");
+                    } else {
+                      router.push(`/strat/${strat.id}`);
+                    }
+                  }}
                 >
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="cursor-pointer"
-                  >
-                    <Eye />
-                  </Button>
-                </Link>
+                  <Eye />
+                </Button>
               </TableCell>
               <TableCell>
                 <Link
