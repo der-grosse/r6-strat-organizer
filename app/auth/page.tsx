@@ -1,10 +1,11 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { checkCredentials } from "@/src/auth";
+import { login } from "@/src/auth/auth";
 import { useState } from "react";
 
 export default function Login() {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   return (
@@ -14,23 +15,29 @@ export default function Login() {
         e.preventDefault();
         setError(false);
 
-        const valid = await checkCredentials(password);
+        const user = await login(username, password);
 
-        setError(!valid);
+        setError(!user);
 
-        if (valid) {
-          document.cookie = `r6-strat-token=${password}; path=/; max-age=31536000; secure; SameSite=Strict`;
-
+        if (user) {
           window.location.href = "/";
         }
       }}
     >
       <h1 className="text-xl">R6 Strats Management - Login</h1>
       <Input
+        type="text"
+        placeholder="Username"
+        autoComplete="username"
+        autoFocus
+        className="w-1/2"
+        value={username}
+        onInput={(e) => setUsername((e.target as HTMLInputElement).value)}
+      />
+      <Input
         type="password"
         placeholder="Password"
         autoComplete="current-password"
-        autoFocus
         className="w-1/2"
         value={password}
         onInput={(e) => setPassword((e.target as HTMLInputElement).value)}

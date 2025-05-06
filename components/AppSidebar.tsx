@@ -25,7 +25,7 @@ import {
   MapPinned,
 } from "lucide-react";
 import Link from "next/link";
-import { useFilter } from "./FilterContext";
+import { useFilter } from "./context/FilterContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,7 +40,7 @@ import {
 } from "./ui/collapsible";
 import { setActive } from "@/src/strats";
 import { Checkbox } from "./ui/checkbox";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import OPERATORS from "@/data/operator";
 import {
   Command,
@@ -53,11 +53,12 @@ import {
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import OperatorIcon from "./OperatorIcon";
-import SearchPreservingLink from "./SearchPreservingLink";
+import { getGoogleDrawingsEditURL } from "@/lib/googleDrawings";
+import { useUser } from "./context/UserContext";
 
 export function AppSidebar() {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const { user } = useUser();
   const { filter, setFilter, filteredStrats, isLeading, setIsLeading } =
     useFilter();
 
@@ -78,20 +79,20 @@ export function AppSidebar() {
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SearchPreservingLink href="/">
+                    <Link href="/">
                       <SidebarMenuButton>
                         <FolderOpen className="mr-2" />
                         Current Strat
                       </SidebarMenuButton>
-                    </SearchPreservingLink>
+                    </Link>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SearchPreservingLink href="/strats">
+                    <Link href="/strats">
                       <SidebarMenuButton>
                         <Database className="mr-2" />
                         All strats
                       </SidebarMenuButton>
-                    </SearchPreservingLink>
+                    </Link>
                   </SidebarMenuItem>
                 </SidebarMenu>
               </SidebarGroupContent>
@@ -137,10 +138,12 @@ export function AppSidebar() {
                           <DropdownMenuItem
                             key={map.name}
                             onClick={() => {
-                              setFilter({
+                              setFilter((filter) => ({
                                 ...filter,
                                 map: map.name,
-                              });
+                                site:
+                                  filter.map === map.name ? filter.site : null,
+                              }));
                             }}
                           >
                             {map.name}
@@ -264,7 +267,7 @@ export function AppSidebar() {
                             className="inline h-auto"
                             onClick={async () => {
                               if (isLeading) {
-                                await setActive(strat);
+                                await setActive(user!, strat.id);
                                 if (window.location.pathname !== "/") {
                                   router.push("/?isLeading=true");
                                 }
@@ -291,7 +294,12 @@ export function AppSidebar() {
                           </SidebarMenuButton>
                           <SidebarMenuAction
                             className="cursor-pointer my-0.5"
-                            onClick={() => window.open(strat.editURL, "_blank")}
+                            onClick={() =>
+                              window.open(
+                                getGoogleDrawingsEditURL(strat.drawingID),
+                                "_blank"
+                              )
+                            }
                           >
                             <Edit />
                           </SidebarMenuAction>

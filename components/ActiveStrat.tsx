@@ -1,6 +1,5 @@
 "use client";
 import { getActive } from "@/src/strats";
-import { Ban } from "lucide-react";
 import { useEffect, useState } from "react";
 import StratDisplay from "./StratDisplay";
 

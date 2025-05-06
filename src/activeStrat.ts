@@ -1,40 +1,24 @@
-import fs from "fs";
-import path from "path";
+import { eq } from "drizzle-orm";
+import db from "./db";
+import { activeStrat } from "./db/schema";
+import StratsDB from "./stratsDB";
 
 class ActiveStratClass {
-  private path: string;
-  private activeStrat: Strat | null;
-  constructor() {
-    this.activeStrat = null;
-    this.path = path.join(process.cwd(), "data", "activeStrat.json");
-
-    // Ensure directory exists
-    const dir = path.dirname(this.path);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-
-    if (!fs.existsSync(this.path)) {
-      fs.writeFileSync(this.path, JSON.stringify(null));
-    }
-    this.readData();
+  async setActiveStrat(user: JWTPayload, stratID: Strat["id"]) {
+    db.update(activeStrat)
+      .set({ stratID })
+      .where(eq(activeStrat.teamID, user.teamID))
+      .run();
   }
 
-  private readData() {
-    this.activeStrat = JSON.parse(fs.readFileSync(this.path, "utf-8"));
-  }
-
-  private writeData(): void {
-    fs.writeFileSync(this.path, JSON.stringify(this.activeStrat, null, 2));
-  }
-
-  setActiveStrat(strat: Strat) {
-    this.activeStrat = strat;
-    this.writeData();
-  }
-
-  getActiveStrat() {
-    return this.activeStrat;
+  async getActiveStrat(user: JWTPayload): Promise<Strat | null> {
+    const active = db
+      .select()
+      .from(activeStrat)
+      .where(eq(activeStrat.teamID, user.teamID))
+      .get();
+    if (!active?.stratID) return null;
+    return await StratsDB.get(active.stratID);
   }
 }
 

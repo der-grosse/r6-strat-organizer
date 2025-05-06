@@ -1,21 +1,20 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { verifyJWT } from "./src/auth/verifyJWT";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
+  const token = request.cookies.get("jwt");
+  const payload = token ? await verifyJWT(token.value) : null;
+
   if (!request.nextUrl.pathname.startsWith("/auth")) {
-    const token = request.cookies.get("r6-strat-token");
-
-    if (token?.value !== process.env.APP_SECRET) {
+    if (!payload) {
       return NextResponse.redirect(new URL("/auth", request.url));
     }
-
     return NextResponse.next();
   }
 
   if (request.nextUrl.pathname === "/auth") {
-    const token = request.cookies.get("r6-strat-token");
-
-    if (token?.value === process.env.APP_SECRET) {
+    if (payload) {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }
@@ -35,4 +34,5 @@ export const config = {
      */
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
+  runtime: "nodejs",
 };

@@ -1,6 +1,7 @@
 "use server";
 import ActiveStratDB from "./activeStrat";
-import StratsDB from "./db";
+import { getPayload } from "./auth/getPayload";
+import StratsDB from "./stratsDB";
 
 export async function getAllStrats() {
   return StratsDB.list();
@@ -13,10 +14,11 @@ export async function getStrat(id: number) {
 }
 
 export async function getActive() {
-  const activeStrat = ActiveStratDB.getActiveStrat();
+  const user = await getPayload();
+  const activeStrat = ActiveStratDB.getActiveStrat(user!);
   return activeStrat;
 }
 
-export async function setActive(newStrat: Strat) {
-  ActiveStratDB.setActiveStrat(newStrat);
+export async function setActive(user: JWTPayload, newStrat: Strat["id"]) {
+  ActiveStratDB.setActiveStrat(user, newStrat);
 }

@@ -12,6 +12,7 @@ export const EMPTY_FILTER: Filter = {
   bannedOPs: [],
 };
 export const FILTER_COOKIE_KEY = "strat_filter";
+export const LEADING_COOKIE_KEY = "strat_leading";
 
 export function parseCookies(cookies: ReadonlyRequestCookies) {
   const storedFilter = cookies.get(FILTER_COOKIE_KEY)?.value;

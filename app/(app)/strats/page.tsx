@@ -1,5 +1,6 @@
 "use client";
-import { useFilter } from "@/components/FilterContext";
+import { useFilter } from "@/components/context/FilterContext";
+import { useUser } from "@/components/context/UserContext";
 import OperatorIcon from "@/components/OperatorIcon";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import DEFENDERS from "@/data/operator";
+import { getGoogleDrawingsEditURL } from "@/lib/googleDrawings";
 import { setActive } from "@/src/strats";
 import { Edit, Eye } from "lucide-react";
 import Link from "next/link";
@@ -18,6 +20,7 @@ import { useRouter } from "next/navigation";
 
 export default function StratsPage() {
   const { filteredStrats, isLeading } = useFilter();
+  const { user } = useUser();
   const router = useRouter();
   return (
     <div className="w-full p-4">
@@ -57,7 +60,7 @@ export default function StratsPage() {
                   className="cursor-pointer"
                   onClick={async () => {
                     if (isLeading) {
-                      await setActive(strat);
+                      await setActive(user!, strat.id);
                       router.push("/?leading=true");
                     } else {
                       router.push(`/strat/${strat.id}`);
@@ -69,7 +72,7 @@ export default function StratsPage() {
               </TableCell>
               <TableCell>
                 <Link
-                  href={strat.editURL}
+                  href={getGoogleDrawingsEditURL(strat.drawingID)}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

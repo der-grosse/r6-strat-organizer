@@ -1,3 +1,7 @@
+import {
+  getGoogleDrawingsEditURL,
+  getGoogleDrawingsPreviewURL,
+} from "@/lib/googleDrawings";
 import { Ban } from "lucide-react";
 
 export interface StratDisplayProps {
@@ -8,11 +12,15 @@ export interface StratDisplayProps {
 export default function StratDisplay(props: StratDisplayProps) {
   return (
     <div className="relative h-full w-full flex justify-center items-center flex-col z-0">
-      {props.strat ? (
+      {props.strat?.drawingID ? (
         <>
           <iframe
             className="w-full flex-1"
-            src={props.editView ? props.strat.editURL : props.strat.previewURL}
+            src={
+              props.editView
+                ? getGoogleDrawingsEditURL(props.strat.drawingID)
+                : getGoogleDrawingsPreviewURL(props.strat.drawingID)
+            }
           />
           <div className="flex gap-2 p-2 rounded bg-background">
             {props.strat.map}
