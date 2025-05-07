@@ -5,10 +5,19 @@ import StratsDB from "./stratsDB";
 
 class ActiveStratClass {
   async setActiveStrat(user: JWTPayload, stratID: Strat["id"]) {
-    db.update(activeStrat)
-      .set({ stratID })
+    const active = db
+      .select()
+      .from(activeStrat)
       .where(eq(activeStrat.teamID, user.teamID))
-      .run();
+      .get();
+    if (!active) {
+      db.insert(activeStrat).values({ teamID: user.teamID, stratID }).run();
+    } else if (active.stratID !== stratID) {
+      db.update(activeStrat)
+        .set({ stratID })
+        .where(eq(activeStrat.teamID, user.teamID))
+        .run();
+    }
   }
 
   async getActiveStrat(user: JWTPayload): Promise<Strat | null> {

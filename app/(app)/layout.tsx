@@ -3,7 +3,10 @@ import { Noto_Sans } from "next/font/google";
 import "../globals.css";
 import AppLayout from "@/components/AppLayout";
 import { cookies } from "next/headers";
-import { parseCookies } from "@/components/context/FilterContext.functions";
+import {
+  LEADING_COOKIE_KEY,
+  parseCookies,
+} from "@/components/context/FilterContext.functions";
 
 const notoSans = Noto_Sans({
   variable: "--font-noto-sans",
@@ -22,12 +25,13 @@ export default async function RootLayout({
   const cookiesStore = await cookies();
   const filter = parseCookies(cookiesStore);
   const jwt = cookiesStore.get("jwt")?.value;
+  const leading = cookiesStore.get(LEADING_COOKIE_KEY)?.value === "true";
   return (
     <html lang="en" className="overflow-x-hidden">
       <body
         className={`${notoSans.variable} antialiased m-0 dark w-screen min-h-screen`}
       >
-        <AppLayout cookieFilter={filter} jwt={jwt}>
+        <AppLayout cookieFilter={filter} jwt={jwt} defaultLeading={leading}>
           {children}
         </AppLayout>
       </body>

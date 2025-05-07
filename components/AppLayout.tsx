@@ -13,12 +13,16 @@ export interface AppLayoutProps {
   children: React.ReactNode;
   cookieFilter?: Filter;
   jwt?: string;
+  defaultLeading?: boolean;
 }
 
 export default function AppLayout(props: AppLayoutProps) {
   return (
     <UserProvider jwt={props.jwt}>
-      <FilterProvider defaultFilter={props.cookieFilter}>
+      <FilterProvider
+        defaultFilter={props.cookieFilter}
+        defaultLeading={props.defaultLeading}
+      >
         <SidebarProvider defaultOpen>
           <AppSidebar />
           <SidebarInset>

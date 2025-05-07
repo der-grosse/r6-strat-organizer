@@ -22,18 +22,19 @@ const FilterContext = createContext<FilterContextType | undefined>(undefined);
 export const FilterProvider: React.FC<{
   children: React.ReactNode;
   defaultFilter?: Filter;
-}> = ({ children, defaultFilter }) => {
+  defaultLeading?: boolean;
+}> = ({ children, defaultFilter, defaultLeading }) => {
   const [filter, setFilter] = useState<Filter>(defaultFilter ?? EMPTY_FILTER);
 
   const [filteredStrats, setFilteredStrats] = useState<Strat[]>([]);
 
   const [isLeading, setIsLeading] = useState(
-    Cookie.get(FILTER_COOKIE_KEY) === "true"
+    defaultLeading ?? Cookie.get(LEADING_COOKIE_KEY) === "true"
   );
 
   // store filter in cookies
   useEffect(() => {
-    Cookie.set(FILTER_COOKIE_KEY, JSON.stringify(filter));
+    Cookie.set(LEADING_COOKIE_KEY, JSON.stringify(filter));
   }, [filter]);
 
   // load filtered strats based on filter

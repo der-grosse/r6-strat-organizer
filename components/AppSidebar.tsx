@@ -269,7 +269,7 @@ export function AppSidebar() {
                               if (isLeading) {
                                 await setActive(user!, strat.id);
                                 if (window.location.pathname !== "/") {
-                                  router.push("/?isLeading=true");
+                                  router.push("/");
                                 }
                               } else {
                                 router.push(`/strat/${strat.id}`);
