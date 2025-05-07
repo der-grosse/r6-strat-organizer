@@ -1,8 +1,15 @@
 import jwt from "jsonwebtoken";
+import fs from "fs";
+import path from "path";
+
+const PUBLIC_KEY = fs.readFileSync(
+  path.join(process.cwd(), "data", "publicKey.pem"),
+  "utf8"
+);
 
 export async function verifyJWT(token: string) {
   try {
-    const decoded = jwt.verify(token, process.env.PUBLIC_KEY!, {
+    const decoded = jwt.verify(token, PUBLIC_KEY, {
       algorithms: ["RS256"],
     });
     return decoded as JWTPayload;
