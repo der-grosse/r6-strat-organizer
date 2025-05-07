@@ -1,5 +1,5 @@
-# Use the official Node.js 18 image as the base image
-FROM node:18-alpine AS base
+# Use the official Node.js image as the base image
+FROM node:20 AS base
 
 # Set the working directory
 WORKDIR /app
@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copy the rest of the application code
 COPY . .
@@ -18,8 +18,11 @@ RUN mkdir -p /app/data
 # Build the Next.js application
 RUN npm run build
 
-# Use a lightweight web server for production
-FROM node:18-alpine AS production
+# Use node for production
+FROM node:20-slim AS production
+
+# Install SQLite runtime
+RUN apt-get update && apt-get install -y sqlite3 && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory
 WORKDIR /app
@@ -29,6 +32,7 @@ COPY --from=base /app/package.json /app/package-lock.json ./
 COPY --from=base /app/.next ./.next
 COPY --from=base /app/public ./public
 COPY --from=base /app/node_modules ./node_modules
+COPY --from=base /app/src ./src
 COPY --from=base /app/data ./data
 
 # Expose the port the app runs on
