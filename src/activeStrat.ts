@@ -27,7 +27,7 @@ class ActiveStratClass {
       .where(eq(activeStrat.teamID, user.teamID))
       .get();
     if (!active?.stratID) return null;
-    return await StratsDB.get(active.stratID);
+    return await StratsDB.get(user, active.stratID);
   }
 }
 

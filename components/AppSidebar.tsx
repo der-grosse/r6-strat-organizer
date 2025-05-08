@@ -23,6 +23,7 @@ import {
   Link2,
   LogOut,
   MapPinned,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { useFilter } from "./context/FilterContext";
@@ -68,7 +69,7 @@ export function AppSidebar() {
 
   useEffect(() => {
     if (user?.teamID) {
-      getTeamName(user.teamID).then((name) => setTeamName(name ?? null));
+      getTeamName().then((name) => setTeamName(name ?? null));
     }
   }, [user?.teamID]);
 
@@ -115,6 +116,14 @@ export function AppSidebar() {
                       <SidebarMenuButton>
                         <Database className="mr-2" />
                         All strats
+                      </SidebarMenuButton>
+                    </Link>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <Link href="/team">
+                      <SidebarMenuButton>
+                        <Users className="mr-2" />
+                        Team Management
                       </SidebarMenuButton>
                     </Link>
                   </SidebarMenuItem>

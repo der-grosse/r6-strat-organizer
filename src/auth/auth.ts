@@ -1,10 +1,12 @@
 "use server";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import db from "../db";
 import { team, teamInvites, users } from "../db/schema";
 import * as bcrypt from "bcrypt-ts";
 import { cookies } from "next/headers";
 import { generateJWT } from "./jwt";
+import { generate } from "random-words";
+import { getPayload } from "./getPayload";
 
 async function hashPassword(password: string) {
   const salt = await bcrypt.genSalt(10);
@@ -44,7 +46,7 @@ export async function register(
     .from(teamInvites)
     .where(eq(teamInvites.inviteKey, invite_key))
     .get();
-  if (!invite) throw new Error("Invalid invite key");
+  if (!invite || invite.usedAt) throw new Error("Invalid invite key");
   const hash = await hashPassword(password);
   const { lastInsertRowid } = db
     .insert(users)
@@ -55,6 +57,13 @@ export async function register(
       teamID: invite.teamID,
       isAdmin: 0,
     })
+    .run();
+  db.update(teamInvites)
+    .set({
+      usedBy: lastInsertRowid as number,
+      usedAt: new Date().toISOString(),
+    })
+    .where(eq(teamInvites.inviteKey, invite_key))
     .run();
   return lastInsertRowid as number;
 }
@@ -131,7 +140,127 @@ export async function logout() {
   return true;
 }
 
-export async function getTeamName(teamID: number) {
-  const teamData = db.select().from(team).where(eq(team.id, teamID)).get();
+export async function getTeamName() {
+  const user = await getPayload();
+  const teamData = db
+    .select()
+    .from(team)
+    .where(eq(team.id, user!.teamID))
+    .get();
   return teamData?.name;
+}
+
+export async function getTeamUsers() {
+  const user = await getPayload();
+  const teamUsers = db
+    .select()
+    .from(users)
+    .where(eq(users.teamID, user!.teamID))
+    .all();
+  return teamUsers.map((user) => ({
+    ...user,
+    isAdmin: user.isAdmin === 1,
+  }));
+}
+
+export async function removeUser(userID: number) {
+  const user = await getPayload();
+  if (!user?.isAdmin) throw new Error("Only admins can remove users");
+  const targetUser = db.select().from(users).where(eq(users.id, userID)).get();
+  if (!targetUser) throw new Error("User not found");
+
+  // Don't allow removing the last admin
+  if (targetUser.isAdmin === 1) {
+    const adminCount = db
+      .select()
+      .from(users)
+      .where(and(eq(users.teamID, targetUser.teamID), eq(users.isAdmin, 1)))
+      .all().length;
+
+    if (adminCount <= 1) {
+      throw new Error("Cannot remove the last admin");
+    }
+  }
+
+  db.delete(users).where(eq(users.id, userID)).run();
+  return true;
+}
+
+export async function createInviteKey() {
+  const user = await getPayload();
+  if (!user?.isAdmin) throw new Error("Only admins can create invite keys");
+  const inviteKey = generate({ exactly: 5, join: "-" });
+
+  db.insert(teamInvites)
+    .values({
+      teamID: user.teamID,
+      inviteKey,
+    })
+    .run();
+
+  return inviteKey;
+}
+
+export async function getInviteKeys() {
+  const user = await getPayload();
+  if (!user?.isAdmin) throw new Error("Only admins can get invite keys");
+  return db
+    .select()
+    .from(teamInvites)
+    .where(eq(teamInvites.teamID, user.teamID))
+    .all();
+}
+
+export async function deleteInviteKey(inviteKey: string) {
+  const user = await getPayload();
+  if (!user?.isAdmin) throw new Error("Only admins can delete invite keys");
+  const invite = db
+    .select()
+    .from(teamInvites)
+    .where(eq(teamInvites.inviteKey, inviteKey))
+    .get();
+  if (!invite) return;
+  if (invite.teamID !== user.teamID || invite.usedAt)
+    throw new Error("Invalid request");
+  db.delete(teamInvites).where(eq(teamInvites.inviteKey, inviteKey)).run();
+  return true;
+}
+
+export async function promoteToAdmin(userID: number) {
+  const user = await getPayload();
+  if (!user?.isAdmin) throw new Error("Only admins can promote users");
+  const targetUser = db.select().from(users).where(eq(users.id, userID)).get();
+  if (!targetUser) throw new Error("User not found");
+  if (targetUser.teamID !== user.teamID)
+    throw new Error("User must be in the same team");
+  if (targetUser.isAdmin === 1) throw new Error("User is already an admin");
+
+  db.update(users).set({ isAdmin: 1 }).where(eq(users.id, userID)).run();
+
+  return true;
+}
+
+export async function demoteFromAdmin(userID: number) {
+  const user = await getPayload();
+  if (!user?.isAdmin) throw new Error("Only admins can demote users");
+  const targetUser = db.select().from(users).where(eq(users.id, userID)).get();
+  if (!targetUser) throw new Error("User not found");
+  if (targetUser.teamID !== user.teamID)
+    throw new Error("User must be in the same team");
+  if (targetUser.isAdmin !== 1) throw new Error("User is not an admin");
+
+  // Don't allow demoting the last admin
+  const adminCount = db
+    .select()
+    .from(users)
+    .where(and(eq(users.teamID, targetUser.teamID), eq(users.isAdmin, 1)))
+    .all().length;
+
+  if (adminCount <= 1) {
+    throw new Error("Cannot demote the last admin");
+  }
+
+  db.update(users).set({ isAdmin: 0 }).where(eq(users.id, userID)).run();
+
+  return true;
 }

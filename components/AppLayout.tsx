@@ -8,6 +8,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { FilterProvider } from "./context/FilterContext";
 import { Filter } from "./context/FilterContext.functions";
 import { UserProvider } from "./context/UserContext";
+import { Toaster } from "@/components/ui/sonner";
 
 export interface AppLayoutProps {
   children: React.ReactNode;
@@ -29,6 +30,7 @@ export default function AppLayout(props: AppLayoutProps) {
             <SidebarTrigger className="absolute top-2 left-2 z-10 cursor-pointer" />
             {props.children}
           </SidebarInset>
+          <Toaster />
         </SidebarProvider>
       </FilterProvider>
     </UserProvider>

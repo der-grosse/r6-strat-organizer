@@ -11,6 +11,8 @@ export const teamInvites = sqliteTable("team_invites", {
   teamID: int("team_id")
     .notNull()
     .references(() => team.id, { onDelete: "cascade" }),
+  usedBy: int("used_by").references(() => users.id),
+  usedAt: text("used_at"),
 });
 
 export const users = sqliteTable("users", {
