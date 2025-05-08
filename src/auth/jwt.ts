@@ -5,15 +5,8 @@ import * as jwt from "jose";
 const JWT_PRIVATE_KEY = process.env.JWT_PRIVATE_KEY;
 const JWT_PUBLIC_KEY = process.env.JWT_PUBLIC_KEY;
 
-if (!JWT_PRIVATE_KEY || !JWT_PUBLIC_KEY) {
-  throw new Error(
-    "JWT keys are not properly configured. Please set JWT_PRIVATE_KEY and JWT_PUBLIC_KEY environment variables."
-  );
-}
-
-// At this point, TypeScript knows these are strings
-const privateKeyStr = JWT_PRIVATE_KEY;
-const publicKeyStr = JWT_PUBLIC_KEY;
+const privateKeyStr = JWT_PRIVATE_KEY!;
+const publicKeyStr = JWT_PUBLIC_KEY!;
 
 let publicKey: CryptoKey | null = null;
 let privateKey: CryptoKey | null = null;
