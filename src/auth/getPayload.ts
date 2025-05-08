@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { verifyJWT } from "./verifyJWT";
+import { verifyJWT } from "./jwt";
 
 export async function getPayload() {
   const token = (await cookies()).get("jwt")?.value;

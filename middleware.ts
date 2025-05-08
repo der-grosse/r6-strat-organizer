@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { verifyJWT } from "./src/auth/verifyJWT";
+import { verifyJWT } from "./src/auth/jwt";
 
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get("jwt");
@@ -34,5 +34,4 @@ export const config = {
      */
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
-  runtime: "nodejs",
 };

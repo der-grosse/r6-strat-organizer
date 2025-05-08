@@ -3,8 +3,8 @@ import { eq } from "drizzle-orm";
 import db from "../db";
 import { teamInvites, users } from "../db/schema";
 import * as bcrypt from "bcrypt-ts";
-import { generateJWT } from "./generateJWT";
 import { cookies } from "next/headers";
+import { generateJWT } from "./jwt";
 
 export async function login(name: string, password: string) {
   const userRaw = db.select().from(users).where(eq(users.name, name)).get();
@@ -20,7 +20,7 @@ export async function login(name: string, password: string) {
   const isValid = await bcrypt.compare(password, user.password);
   if (!isValid) return null;
 
-  (await cookies()).set("jwt", generateJWT(user), {
+  (await cookies()).set("jwt", await generateJWT(user), {
     httpOnly: true,
     maxAge: 60 * 60 * 24 * 7, // 1 week
   });
