@@ -5,7 +5,6 @@ import Cookie from "js-cookie";
 import {
   EMPTY_FILTER,
   Filter,
-  FILTER_COOKIE_KEY,
   LEADING_COOKIE_KEY,
 } from "./FilterContext.functions";
 
@@ -15,6 +14,7 @@ interface FilterContextType {
   filteredStrats: Strat[];
   isLeading: boolean;
   setIsLeading: React.Dispatch<React.SetStateAction<boolean>>;
+  refreshStrats: () => Promise<void>;
 }
 
 const FilterContext = createContext<FilterContextType | undefined>(undefined);
@@ -31,6 +31,22 @@ export const FilterProvider: React.FC<{
   const [isLeading, setIsLeading] = useState(
     defaultLeading ?? Cookie.get(LEADING_COOKIE_KEY) === "true"
   );
+
+  const refreshStrats = async () => {
+    const strats = await getAllStrats();
+    const filtered = strats.filter((strat) => {
+      if (filter.map && filter.map !== strat.map) return false;
+      if (filter.site && filter.site !== strat.site) return false;
+      if (filter.bannedOPs.length > 0) {
+        const hasBannedOP = strat.powerOPs.some((op) =>
+          filter.bannedOPs.includes(op)
+        );
+        if (hasBannedOP) return false;
+      }
+      return true;
+    });
+    setFilteredStrats(filtered);
+  };
 
   // store filter in cookies
   useEffect(() => {
@@ -68,7 +84,14 @@ export const FilterProvider: React.FC<{
 
   return (
     <FilterContext.Provider
-      value={{ filter, setFilter, filteredStrats, isLeading, setIsLeading }}
+      value={{
+        filter,
+        setFilter,
+        filteredStrats,
+        isLeading,
+        setIsLeading,
+        refreshStrats,
+      }}
     >
       {children}
     </FilterContext.Provider>

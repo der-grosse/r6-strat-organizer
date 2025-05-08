@@ -1,6 +1,8 @@
 "use client";
 import { useFilter } from "@/components/context/FilterContext";
 import { useUser } from "@/components/context/UserContext";
+import { CreateStratDialog } from "@/components/CreateStratDialog";
+import { DeleteStratDialog } from "@/components/DeleteStratDialog";
 import OperatorIcon from "@/components/OperatorIcon";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +26,9 @@ export default function StratsPage() {
   const router = useRouter();
   return (
     <div className="w-full p-4">
+      <div className="mb-4">
+        <CreateStratDialog />
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
@@ -32,8 +37,7 @@ export default function StratsPage() {
             <TableHead>Site</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Power OPs</TableHead>
-            <TableHead>Preview</TableHead>
-            <TableHead>Edit</TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -53,7 +57,7 @@ export default function StratsPage() {
                     ))}
                 </div>
               </TableCell>
-              <TableCell>
+              <TableCell className="flex gap-1">
                 <Button
                   variant="outline"
                   size="icon"
@@ -69,8 +73,6 @@ export default function StratsPage() {
                 >
                   <Eye />
                 </Button>
-              </TableCell>
-              <TableCell>
                 <Link
                   href={getGoogleDrawingsEditURL(strat.drawingID)}
                   target="_blank"
@@ -84,6 +86,7 @@ export default function StratsPage() {
                     <Edit />
                   </Button>
                 </Link>
+                <DeleteStratDialog stratId={strat.id} stratName={strat.name} />
               </TableCell>
             </TableRow>
           ))}
