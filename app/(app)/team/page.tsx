@@ -17,6 +17,8 @@ import {
   createInviteKey,
   getInviteKeys,
   deleteInviteKey,
+  getTeamName,
+  updateTeamName,
 } from "@/src/auth/auth";
 import {
   Table,
@@ -32,8 +34,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreVertical, Copy, Trash2, Shield, ShieldOff } from "lucide-react";
+import {
+  MoreVertical,
+  Copy,
+  Trash2,
+  Shield,
+  ShieldOff,
+  Edit2,
+  Check,
+  X,
+} from "lucide-react";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
 
 export default function TeamManagement() {
   const { user } = useUser();
@@ -57,15 +69,20 @@ export default function TeamManagement() {
   >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [teamName, setTeamName] = useState<string | null>(null);
+  const [isEditingTeamName, setIsEditingTeamName] = useState(false);
+  const [newTeamName, setNewTeamName] = useState("");
 
   const loadData = async () => {
     try {
-      const [users, keys] = await Promise.all([
+      const [users, keys, name] = await Promise.all([
         getTeamUsers(),
         user?.isAdmin ? getInviteKeys() : [],
+        getTeamName(),
       ]);
       setTeamUsers(users);
       setInviteKeys(keys);
+      setTeamName(name ?? null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -138,6 +155,20 @@ export default function TeamManagement() {
     }
   };
 
+  const handleUpdateTeamName = async () => {
+    try {
+      await updateTeamName(newTeamName);
+      await loadData();
+      setIsEditingTeamName(false);
+      toast.success("Team name updated successfully");
+      window.location.reload();
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Failed to update team name"
+      );
+    }
+  };
+
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast.success("Copied to clipboard");
@@ -153,6 +184,60 @@ export default function TeamManagement() {
 
   return (
     <div className="container mx-auto py-8 px-4 space-y-8">
+      {user?.isAdmin && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Team Settings</CardTitle>
+            <CardDescription>Manage your team settings</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-4">
+              {isEditingTeamName ? (
+                <>
+                  <Input
+                    value={newTeamName}
+                    onChange={(e) => setNewTeamName(e.target.value)}
+                    placeholder="Enter new team name"
+                    className="max-w-sm"
+                  />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleUpdateTeamName}
+                  >
+                    <Check className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setIsEditingTeamName(false);
+                      setNewTeamName("");
+                    }}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <div className="text-lg font-semibold">{teamName}</div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setIsEditingTeamName(true);
+                      setNewTeamName(teamName ?? "");
+                    }}
+                  >
+                    <Edit2 className="h-4 w-4" />
+                  </Button>
+                </>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle>Team Members</CardTitle>

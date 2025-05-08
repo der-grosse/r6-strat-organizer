@@ -264,3 +264,23 @@ export async function demoteFromAdmin(userID: number) {
 
   return true;
 }
+
+export async function updateTeamName(newName: string) {
+  const user = await getPayload();
+  if (!user?.isAdmin) throw new Error("Only admins can update team name");
+
+  // Check if team name already exists
+  const existingTeam = db
+    .select()
+    .from(team)
+    .where(eq(team.name, newName))
+    .get();
+
+  if (existingTeam) {
+    throw new Error("Team name already exists");
+  }
+
+  db.update(team).set({ name: newName }).where(eq(team.id, user.teamID)).run();
+
+  return true;
+}
