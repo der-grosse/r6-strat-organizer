@@ -17,11 +17,11 @@ import {
   Check,
   ChevronDown,
   ChevronRight,
-  ChevronUp,
   Database,
   Edit,
   FolderOpen,
   Link2,
+  LogOut,
   MapPinned,
 } from "lucide-react";
 import Link from "next/link";
@@ -53,18 +53,42 @@ import {
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import OperatorIcon from "./OperatorIcon";
-import { getGoogleDrawingsEditURL } from "@/lib/googleDrawings";
+import { getGoogleDrawingsEditURL } from "@/src/googleDrawings";
 import { useUser } from "./context/UserContext";
+import { logout, getTeamName } from "@/src/auth/auth";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
 
 export function AppSidebar() {
   const router = useRouter();
   const { user } = useUser();
   const { filter, setFilter, filteredStrats, isLeading, setIsLeading } =
     useFilter();
+  const [teamName, setTeamName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user?.teamID) {
+      getTeamName(user.teamID).then((name) => setTeamName(name ?? null));
+    }
+  }, [user?.teamID]);
 
   return (
     <Sidebar variant="inset">
-      <SidebarHeader />
+      <SidebarHeader>
+        <div className="pl-2 -mr-1 flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-foreground">{teamName}</h2>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={async () => {
+              await logout();
+              router.push("/auth");
+            }}
+          >
+            <LogOut className="h-5 w-5" />
+          </Button>
+        </div>
+      </SidebarHeader>
       <SidebarContent>
         <Collapsible defaultOpen className="group/pages">
           <SidebarGroup>
@@ -331,7 +355,7 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <Checkbox
               id="sidebar-leading-checkbox"
-              className="mr-2"
+              className="mx-2"
               checked={isLeading}
               onCheckedChange={(checked) => setIsLeading(!!checked)}
             />

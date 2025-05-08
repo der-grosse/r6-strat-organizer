@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/src/utils";
 
 export interface OperatorIconProps {
   op: { icon: string; name: string };

@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import db from "./db";
 import { powerOPs, rotationIndexes, strats } from "./db/schema";
 
@@ -11,12 +11,13 @@ class StratsDBClass {
     return lastInsertRowid as number;
   }
 
-  async list(): Promise<Strat[]> {
+  async list(user: User): Promise<Strat[]> {
     const data = db
       .select()
       .from(strats)
       .leftJoin(powerOPs, eq(strats.id, powerOPs.stratsID))
       .leftJoin(rotationIndexes, eq(strats.id, rotationIndexes.stratsID))
+      .where(eq(strats.teamID, user.teamID))
       .orderBy(
         strats.map,
         sql`${rotationIndexes.rotationIndex} asc nulls last`,
@@ -27,21 +28,24 @@ class StratsDBClass {
     return this.parseStratRows(data);
   }
 
-  async get(id: Strat["id"]): Promise<Strat | null> {
+  async get(user: User, id: Strat["id"]): Promise<Strat | null> {
     const data = db
       .select()
       .from(strats)
       .leftJoin(powerOPs, eq(strats.id, powerOPs.stratsID))
       .leftJoin(rotationIndexes, eq(strats.id, rotationIndexes.stratsID))
-      .where(eq(strats.id, id))
+      .where(and(eq(strats.id, id), eq(strats.teamID, user.teamID)))
       .all();
 
     if (data.length === 0) return null;
     return this.parseStratRows(data)[0] ?? null;
   }
 
-  update(updatedStrat: Partial<Strat> & Pick<Strat, "id">): Promise<undefined> {
-    const strat = this.get(updatedStrat.id);
+  update(
+    user: User,
+    updatedStrat: Partial<Strat> & Pick<Strat, "id">
+  ): Promise<undefined> {
+    const strat = this.get(user, updatedStrat.id);
     if (!strat) return Promise.reject(new Error("Strat not found"));
     const newStrat = { ...strat, ...updatedStrat };
     db.update(strats).set(newStrat).where(eq(strats.id, updatedStrat.id)).run();

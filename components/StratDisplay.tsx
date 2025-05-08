@@ -1,7 +1,7 @@
 import {
   getGoogleDrawingsEditURL,
   getGoogleDrawingsPreviewURL,
-} from "@/lib/googleDrawings";
+} from "@/src/googleDrawings";
 import { Ban } from "lucide-react";
 
 export interface StratDisplayProps {

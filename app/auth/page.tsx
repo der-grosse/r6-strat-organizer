@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { login } from "@/src/auth/auth";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -45,7 +46,16 @@ export default function Login() {
       <Button type="submit" variant="default" className="w-1/2">
         Login
       </Button>
-      <p className="text-sm text-red-400">{error && "Invalid password"}</p>
+      <p className="text-sm text-destructive">{error && "Invalid password"}</p>
+      <p className="text-sm text-muted-foreground">
+        Don't have a team?{" "}
+        <Link
+          href="/auth/signup"
+          className="text-primary hover:text-primary/90 hover:underline"
+        >
+          Create one
+        </Link>
+      </p>
     </form>
   );
 }

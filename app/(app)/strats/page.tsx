@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import DEFENDERS from "@/data/operator";
-import { getGoogleDrawingsEditURL } from "@/lib/googleDrawings";
+import { getGoogleDrawingsEditURL } from "@/src/googleDrawings";
 import { setActive } from "@/src/strats";
 import { Edit, Eye } from "lucide-react";
 import Link from "next/link";

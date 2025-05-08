@@ -1,10 +1,16 @@
 "use server";
 import { eq } from "drizzle-orm";
 import db from "../db";
-import { teamInvites, users } from "../db/schema";
+import { team, teamInvites, users } from "../db/schema";
 import * as bcrypt from "bcrypt-ts";
 import { cookies } from "next/headers";
 import { generateJWT } from "./jwt";
+
+async function hashPassword(password: string) {
+  const salt = await bcrypt.genSalt(10);
+  const hash = await bcrypt.hash(password, salt);
+  return hash;
+}
 
 export async function login(name: string, password: string) {
   const userRaw = db.select().from(users).where(eq(users.name, name)).get();
@@ -33,12 +39,6 @@ export async function register(
   password: string,
   invite_key: string
 ) {
-  async function hashPassword(password: string) {
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(password, salt);
-    return hash;
-  }
-
   const invite = db
     .select()
     .from(teamInvites)
@@ -57,4 +57,81 @@ export async function register(
     })
     .run();
   return lastInsertRowid as number;
+}
+
+export async function createTeam(input: {
+  teamName: string;
+  username: string;
+  password: string;
+}) {
+  try {
+    const { teamName, username, password } = input;
+
+    // Validate input
+    if (!teamName || !username || !password) {
+      return { error: "Missing required fields" };
+    }
+
+    // Check if team name already exists
+    const existingTeam = await db
+      .select()
+      .from(team)
+      .where(eq(team.name, teamName))
+      .limit(1);
+
+    if (existingTeam.length) {
+      return { error: "Team name already exists" };
+    }
+
+    // Check if username already exists
+    const existingUser = await db
+      .select()
+      .from(users)
+      .where(eq(users.name, username))
+      .limit(1);
+
+    if (existingUser.length) {
+      return { error: "Username already exists" };
+    }
+
+    // Hash password
+    const hashedPassword = await hashPassword(password);
+
+    // Create team and admin user in a transaction
+    await db.transaction(async (tx) => {
+      // Create team
+      const { lastInsertRowid } = await tx.insert(team).values({
+        name: teamName,
+        createdAt: new Date().toISOString(),
+      });
+      const teamID = lastInsertRowid as number;
+
+      // Create admin user
+      await tx
+        .insert(users)
+        .values({
+          name: username,
+          password: hashedPassword,
+          teamID,
+          isAdmin: 1,
+          createdAt: new Date().toISOString(),
+        })
+        .returning();
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Signup error:", error);
+    return { error: "Internal server error" };
+  }
+}
+
+export async function logout() {
+  (await cookies()).delete("jwt");
+  return true;
+}
+
+export async function getTeamName(teamID: number) {
+  const teamData = db.select().from(team).where(eq(team.id, teamID)).get();
+  return teamData?.name;
 }

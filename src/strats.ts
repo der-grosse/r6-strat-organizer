@@ -4,11 +4,13 @@ import { getPayload } from "./auth/getPayload";
 import StratsDB from "./stratsDB";
 
 export async function getAllStrats() {
-  return StratsDB.list();
+  const user = await getPayload();
+  return StratsDB.list(user!);
 }
 
 export async function getStrat(id: number) {
-  const strat = StratsDB.get(id);
+  const user = await getPayload();
+  const strat = await StratsDB.get(user!, id);
 
   return strat;
 }
