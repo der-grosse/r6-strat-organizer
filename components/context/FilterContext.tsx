@@ -5,6 +5,7 @@ import Cookie from "js-cookie";
 import {
   EMPTY_FILTER,
   Filter,
+  FILTER_COOKIE_KEY,
   LEADING_COOKIE_KEY,
 } from "./FilterContext.functions";
 
@@ -50,7 +51,7 @@ export const FilterProvider: React.FC<{
 
   // store filter in cookies
   useEffect(() => {
-    Cookie.set(LEADING_COOKIE_KEY, JSON.stringify(filter));
+    Cookie.set(FILTER_COOKIE_KEY, JSON.stringify(filter));
   }, [filter]);
 
   // load filtered strats based on filter
