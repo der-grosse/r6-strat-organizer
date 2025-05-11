@@ -16,7 +16,7 @@ import {
 import DEFENDERS from "@/data/operator";
 import { getGoogleDrawingsEditURL } from "@/src/googleDrawings";
 import { setActive } from "@/src/strats";
-import { Edit, Eye } from "lucide-react";
+import { Edit, Eye, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -74,16 +74,14 @@ export default function StratsPage() {
                   <Eye />
                 </Button>
                 <Link
-                  href={getGoogleDrawingsEditURL(strat.drawingID)}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={`/strats/editor?map=${strat.map}&site=${strat.site}&drawingID=${strat.drawingID}`}
                 >
                   <Button
                     variant="outline"
                     size="icon"
                     className="cursor-pointer"
                   >
-                    <Edit />
+                    <Pencil />
                   </Button>
                 </Link>
                 <DeleteStratDialog stratId={strat.id} stratName={strat.name} />
