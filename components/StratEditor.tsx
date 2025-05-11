@@ -81,27 +81,27 @@ export function StratEditor({ strat }: StratEditorProps) {
 
   return (
     <div className="h-screen w-screen overflow-hidden xl:grid xl:grid-cols-[1fr_4fr]">
-      {/* Toolbar */}
-      <div className="flex flex-row">
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="xl:hidden absolute top-2 left-2 z-10"
-            >
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle Menu</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-[300px] p-0" hideClose>
-            <SheetTitle className="sr-only">Toolbar</SheetTitle>
-            {sidebar}
-          </SheetContent>
-        </Sheet>
+      {/* small screen sidebar */}
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="xl:hidden absolute top-2 left-2 z-10"
+          >
+            <Menu className="h-5 w-5" />
+            <span className="sr-only">Toggle Menu</span>
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="left" className="w-[300px] p-0" hideClose>
+          <SheetTitle className="sr-only">Toolbar</SheetTitle>
+          {sidebar}
+        </SheetContent>
+      </Sheet>
 
-        {/* Desktop Sidebar */}
-        <div className="hidden xl:block w-[300px]">{sidebar}</div>
+      {/* large screen sidebar */}
+      <div className="hidden xl:flex flex-row">
+        {sidebar}
         <Separator orientation="vertical" className="mx-2 hidden xl:block" />
       </div>
 
