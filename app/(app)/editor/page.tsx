@@ -2,7 +2,7 @@ import { StratEditor } from "@/components/StratEditor";
 
 export default function StratEditorPage() {
   return (
-    <div className="h-full p-4">
+    <div className="h-screen w-screen overflow-hidden">
       <StratEditor
         strat={{
           assets: [],
@@ -10,7 +10,7 @@ export default function StratEditorPage() {
           name: "",
           drawingID: "",
           id: 0,
-          map: "Border",
+          map: "Bank",
           powerOPs: [],
           rotationIndex: [],
           site: "B Lockers",
