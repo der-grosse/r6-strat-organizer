@@ -10,7 +10,6 @@ export default async function ProvidersLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  console.log("ProvidersLayout");
   const cookiesStore = await cookies();
   const filter = parseCookies(cookiesStore);
   const jwt = cookiesStore.get("jwt")?.value;

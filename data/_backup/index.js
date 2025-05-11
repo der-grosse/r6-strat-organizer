@@ -31,7 +31,7 @@ fs.createReadStream("./strats.csv")
     fs.writeFileSync("strats.json", JSON.stringify(data, null, 2), "utf-8");
   })
   .on("error", function (error) {
-    console.log(error.message);
+    console.error(error.message);
   });
 
 // const strats = fs

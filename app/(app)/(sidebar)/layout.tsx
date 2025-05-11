@@ -12,7 +12,6 @@ export default function SidebarLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  console.log("SidebarLayout");
   return (
     <SidebarProvider defaultOpen>
       <AppSidebar />

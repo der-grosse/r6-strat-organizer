@@ -19,9 +19,9 @@ async function generateKeys() {
     await fs.writeFile(path.join(dataDir, "public.pem"), publicKey);
     await fs.writeFile(path.join(dataDir, "private.pem"), privateKey);
 
-    console.log("Keys generated and saved successfully!");
-    console.log("Public key saved to: data/public.pem");
-    console.log("Private key saved to: data/private.pem");
+    console.info("Keys generated and saved successfully!");
+    console.info("Public key saved to: data/public.pem");
+    console.info("Private key saved to: data/private.pem");
   } catch (error) {
     console.error("Error generating keys:", error);
     process.exit(1);
