@@ -12,6 +12,12 @@ interface Strat {
 interface R6Map {
   name: string;
   sites: string[];
+  floors: R6Floor[];
+}
+
+interface R6Floor {
+  floor: "B" | "1F" | "2F" | "3F";
+  src: string;
 }
 
 interface User {
@@ -25,4 +31,40 @@ interface JWTPayload {
   name: string;
   teamID: number;
   isAdmin: boolean;
+}
+
+interface StratDrawing extends Strat {
+  assets: AssetPlaced[];
+}
+
+type PlacedAsset = Asset & Position;
+interface Position {
+  x: number;
+  y: number;
+}
+
+type Asset = Marker | Operator | Gadget;
+
+interface BaseAsset {
+  id: string;
+  player?: string;
+  customColor?: string;
+}
+
+interface Marker extends BaseAsset {
+  id: `marker-${string}`;
+  type: "marker";
+}
+
+interface Operator extends BaseAsset {
+  id: `operator-${string}`;
+  type: "operator";
+  operator: string;
+  side: "att" | "def";
+}
+
+interface Gadget extends BaseAsset {
+  id: `gadget-${string}`;
+  type: "gadget";
+  gadget: string;
 }

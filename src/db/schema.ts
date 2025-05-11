@@ -24,6 +24,7 @@ export const users = sqliteTable("users", {
     .notNull()
     .references(() => team.id),
   isAdmin: int("is_admin").notNull(),
+  defaultColor: text("default_color"),
 });
 
 export const strats = sqliteTable("strats", {
@@ -72,3 +73,25 @@ export const activeStrat = sqliteTable(
   },
   (table) => [primaryKey({ columns: [table.teamID, table.stratID] })]
 );
+
+export const placedAssets = sqliteTable("placed_assets", {
+  id: int("id").primaryKey({ autoIncrement: true }),
+  assetID: text("asset_id").notNull(),
+  positionX: int("position_x").notNull(),
+  positionY: int("position_y").notNull(),
+  player: text("player").references(() => users.name, {
+    onDelete: "set null",
+    onUpdate: "cascade",
+  }),
+  customColor: text("custom_color"),
+
+  // Operator type
+  operator: text("operator"),
+  side: text("side", { enum: ["att", "def"] }),
+
+  // Gadget type
+  gadget: text("gadget"),
+
+  // Marker type
+  marker: text("marker"),
+});

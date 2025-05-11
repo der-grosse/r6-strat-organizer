@@ -32,11 +32,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import DEFENDERS from "@/data/operator";
+import DEFENDERS from "@/src/static/operator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { createStrat } from "@/src/actions/strats";
 import { toast } from "sonner";
-import MAPS from "@/data/maps";
+import MAPS from "@/src/static/maps";
 import {
   Command,
   CommandEmpty,
