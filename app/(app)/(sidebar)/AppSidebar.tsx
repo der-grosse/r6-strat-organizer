@@ -61,7 +61,7 @@ import OperatorIcon from "../../../components/OperatorIcon";
 import { getGoogleDrawingsEditURL } from "@/src/googleDrawings";
 import { useUser } from "../../../components/context/UserContext";
 import { logout, getTeamName } from "@/src/auth/auth";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 
 export function AppSidebar() {
@@ -70,6 +70,8 @@ export function AppSidebar() {
   const { filter, setFilter, filteredStrats, isLeading, setIsLeading } =
     useFilter();
   const [teamName, setTeamName] = useState<string | null>(null);
+
+  const bannedOPInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (user?.teamID) {
@@ -248,8 +250,11 @@ export function AppSidebar() {
                         </SidebarMenuButton>
                       </PopoverTrigger>
                       <PopoverContent className="p-0" side="right">
-                        <Command>
-                          <CommandInput placeholder="Type a command or search..." />
+                        <Command key={filter.bannedOPs.join(",")}>
+                          <CommandInput
+                            placeholder="Type a command or search..."
+                            ref={bannedOPInput}
+                          />
                           <CommandList>
                             <CommandEmpty>No results found.</CommandEmpty>
                             <CommandGroup>
@@ -261,7 +266,9 @@ export function AppSidebar() {
                               >
                                 <em>Clear</em>
                               </CommandItem>
-                              {OPERATORS.map((op) => (
+                              {OPERATORS.toSorted((a) =>
+                                filter.bannedOPs.includes(a.name) ? -1 : 1
+                              ).map((op) => (
                                 <CommandItem
                                   key={op.name}
                                   onSelect={() => {
@@ -275,6 +282,9 @@ export function AppSidebar() {
                                           )
                                         : [...filter.bannedOPs, op.name],
                                     }));
+                                    requestAnimationFrame(() => {
+                                      bannedOPInput.current?.focus();
+                                    });
                                   }}
                                 >
                                   <OperatorIcon op={op} />
