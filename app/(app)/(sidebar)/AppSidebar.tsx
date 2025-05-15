@@ -82,8 +82,15 @@ export function AppSidebar() {
   return (
     <Sidebar variant="inset">
       <SidebarHeader>
-        <div className="pl-2 -mr-1 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-foreground">{teamName}</h2>
+        <div className="ml-1 -mr-1 flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-foreground">
+            <img
+              src="/icon.svg"
+              className="w-6 h-6 mr-1 inline-block align-sub"
+              alt="R6 Strats Logo"
+            />
+            {teamName}
+          </h2>
           <Button
             variant="ghost"
             size="icon"

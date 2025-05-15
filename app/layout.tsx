@@ -9,6 +9,9 @@ const notoSans = Noto_Sans({
 
 export const metadata: Metadata = {
   title: "R6 Strats",
+  icons: {
+    icon: "icon.svg",
+  },
 };
 
 export default function RootLayout({
