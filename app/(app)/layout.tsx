@@ -7,6 +7,7 @@ import {
   LEADING_COOKIE_KEY,
   parseCookies,
 } from "@/components/context/FilterContext.functions";
+import favicon from "@/public/favicon.ico";
 
 const notoSans = Noto_Sans({
   variable: "--font-noto-sans",
@@ -15,6 +16,9 @@ const notoSans = Noto_Sans({
 
 export const metadata: Metadata = {
   title: "R6 Strats",
+  icons: {
+    icon: favicon.src,
+  },
 };
 
 export default async function RootLayout({
