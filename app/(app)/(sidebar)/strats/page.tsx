@@ -13,10 +13,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import DEFENDERS from "@/src/static/operator";
-import { getGoogleDrawingsEditURL } from "@/src/googleDrawings";
+import { DEFENDERS } from "@/src/static/operator";
 import { setActive } from "@/src/strats";
-import { Edit, Eye, Pencil } from "lucide-react";
+import { Eye, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
