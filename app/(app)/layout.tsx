@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Noto_Sans } from "next/font/google";
-import "../globals.css";
 import AppLayout from "@/components/AppLayout";
 import { cookies } from "next/headers";
 import {
@@ -8,6 +7,7 @@ import {
   parseCookies,
 } from "@/components/context/FilterContext.functions";
 import favicon from "@/public/favicon.ico";
+import "../globals.css";
 
 const notoSans = Noto_Sans({
   variable: "--font-noto-sans",
