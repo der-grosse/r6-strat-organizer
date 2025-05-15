@@ -42,7 +42,7 @@ import {
 import { setActive } from "@/src/strats";
 import { Checkbox } from "../../../components/ui/checkbox";
 import { useRouter } from "next/navigation";
-import OPERATORS from "@/src/static/operator";
+import { DEFENDERS } from "@/src/static/operator";
 import {
   Command,
   CommandEmpty,
@@ -239,7 +239,7 @@ export function AppSidebar() {
                           {filter.bannedOPs.length
                             ? filter.bannedOPs
                                 .map((op) =>
-                                  OPERATORS.find((o) => o.name === op)
+                                  DEFENDERS.find((o) => o.name === op)
                                 )
                                 .filter(Boolean)
                                 .map((op) => (
@@ -266,7 +266,7 @@ export function AppSidebar() {
                               >
                                 <em>Clear</em>
                               </CommandItem>
-                              {OPERATORS.toSorted((a) =>
+                              {DEFENDERS.toSorted((a) =>
                                 filter.bannedOPs.includes(a.name) ? -1 : 1
                               ).map((op) => (
                                 <CommandItem

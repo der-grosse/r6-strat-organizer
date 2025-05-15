@@ -34,16 +34,24 @@ interface JWTPayload {
 }
 
 interface StratDrawing extends Strat {
-  assets: AssetPlaced[];
+  assets: PlacedAsset[];
 }
 
-type PlacedAsset = Asset & Position;
+type PlacedAsset = Asset & {
+  position: Position;
+  size: Size;
+};
 interface Position {
   x: number;
   y: number;
 }
 
-type Asset = Marker | Operator | Gadget;
+interface Size {
+  width: number;
+  height: number;
+}
+
+type Asset = BaseAsset & (Marker | Operator | Gadget);
 
 interface BaseAsset {
   id: string;
@@ -51,19 +59,19 @@ interface BaseAsset {
   customColor?: string;
 }
 
-interface Marker extends BaseAsset {
+interface Marker {
   id: `marker-${string}`;
   type: "marker";
 }
 
-interface Operator extends BaseAsset {
+interface Operator {
   id: `operator-${string}`;
   type: "operator";
   operator: string;
   side: "att" | "def";
 }
 
-interface Gadget extends BaseAsset {
+interface Gadget {
   id: `gadget-${string}`;
   type: "gadget";
   gadget: string;

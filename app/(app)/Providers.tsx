@@ -2,6 +2,8 @@
 import { FilterProvider } from "@/components/context/FilterContext";
 import { Filter } from "@/components/context/FilterContext.functions";
 import { UserProvider } from "@/components/context/UserContext";
+import { DragProvider } from "@/components/ui/draggable-context";
+import { ResizeProvider } from "@/components/ui/resize-context";
 import { Toaster } from "@/components/ui/sonner";
 
 export interface ProvidersProps {
@@ -18,7 +20,9 @@ export default function Providers(props: Readonly<ProvidersProps>) {
         defaultFilter={props.cookieFilter}
         defaultLeading={props.defaultLeading}
       >
-        {props.children}
+        <DragProvider>
+          <ResizeProvider>{props.children}</ResizeProvider>
+        </DragProvider>
         <Toaster />
       </FilterProvider>
     </UserProvider>
