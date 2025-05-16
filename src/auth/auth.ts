@@ -28,12 +28,28 @@ export async function login(name: string, password: string) {
   const isValid = await bcrypt.compare(password, user.password);
   if (!isValid) return null;
 
-  (await cookies()).set("jwt", await generateJWT(user), {
+  await resetJWT(user);
+
+  return user;
+}
+
+export async function resetJWT(payload?: JWTPayload) {
+  if (!payload) {
+    const userid = (await getPayload())?.id;
+    if (!userid) throw new Error("User not found");
+    const user = db.select().from(users).where(eq(users.id, userid)).get();
+    if (!user) throw new Error("User not found");
+    payload = {
+      ...user,
+      isAdmin: user.isAdmin === 1,
+    };
+  }
+  if (!payload) throw new Error("User not found");
+
+  (await cookies()).set("jwt", await generateJWT(payload), {
     httpOnly: true,
     maxAge: 60 * 60 * 24 * 7, // 1 week
   });
-
-  return user;
 }
 
 export async function register(
@@ -237,6 +253,8 @@ export async function promoteToAdmin(userID: number) {
 
   db.update(users).set({ isAdmin: 1 }).where(eq(users.id, userID)).run();
 
+  await resetJWT();
+
   return true;
 }
 
@@ -282,5 +300,49 @@ export async function updateTeamName(newName: string) {
 
   db.update(team).set({ name: newName }).where(eq(team.id, user.teamID)).run();
 
+  return true;
+}
+
+export async function changeUsername(newUsername: string) {
+  const user = await getPayload();
+  const targetUser = db
+    .select()
+    .from(users)
+    .where(eq(users.id, user!.id))
+    .get();
+  if (!targetUser) throw new Error("User not found");
+
+  const existingUser = db
+    .select()
+    .from(users)
+    .where(eq(users.name, newUsername))
+    .get();
+  if (existingUser) throw new Error("Username already taken");
+
+  if (targetUser.name === newUsername) return true;
+
+  db.update(users)
+    .set({ name: newUsername })
+    .where(eq(users.id, user!.id))
+    .run();
+
+  await resetJWT();
+
+  return true;
+}
+
+export async function changePassword(newPassword: string) {
+  const user = await getPayload();
+  const targetUser = db
+    .select()
+    .from(users)
+    .where(eq(users.id, user!.id))
+    .get();
+  if (!targetUser) throw new Error("User not found");
+  const hashedPassword = await hashPassword(newPassword);
+  db.update(users)
+    .set({ password: hashedPassword })
+    .where(eq(users.id, user!.id))
+    .run();
   return true;
 }
