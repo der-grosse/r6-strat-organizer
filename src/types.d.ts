@@ -51,7 +51,7 @@ interface Size {
   height: number;
 }
 
-type Asset = BaseAsset & (Marker | Operator | Gadget);
+type Asset = BaseAsset & (MarkerAsset | OperatorAsset | GadgetAsset);
 
 interface BaseAsset {
   id: string;
@@ -59,19 +59,19 @@ interface BaseAsset {
   customColor?: string;
 }
 
-interface Marker {
+interface MarkerAsset {
   id: `marker-${string}`;
   type: "marker";
 }
 
-interface Operator {
+interface OperatorAsset {
   id: `operator-${string}`;
   type: "operator";
   operator: string;
   side: "att" | "def";
 }
 
-interface Gadget {
+interface GadgetAsset {
   id: `gadget-${string}`;
   type: "gadget";
   gadget: string;

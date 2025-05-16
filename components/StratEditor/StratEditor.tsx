@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import MAPS from "@/src/static/maps";
 import StratEditorLayout from "./Layout";
 import StratEditorCanvas from "./Canvas";
+import OperatorIcon from "../OperatorIcon";
 
 interface StratEditorProps {
   strat: StratDrawing;
@@ -41,7 +42,21 @@ export function StratEditor({ strat }: Readonly<StratEditorProps>) {
         ])
       }
     >
-      <StratEditorCanvas map={map} assets={assets} onAssetChange={setAssets} />
+      <StratEditorCanvas
+        map={map}
+        assets={assets}
+        onAssetChange={setAssets}
+        renderAsset={(asset) => {
+          if (asset.type === "operator")
+            return (
+              <OperatorIcon
+                op={asset.operator}
+                className="w-[130%] h-[130%] m-[-15%] max-w-[130%]"
+              />
+            );
+          return "Missing";
+        }}
+      />
     </StratEditorLayout>
   );
 }
