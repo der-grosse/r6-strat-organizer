@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
 import SVGAsset from "./SVGAsset";
+import { useKeys } from "../hooks/useKey";
 
 interface Asset {
   id: string;
@@ -18,6 +19,7 @@ interface CanvasProps<A extends Asset> {
 
 const BASE_SIZE = 1200;
 const MIN_ASSET_SIZE = 10;
+const DRAG_DEADZONE = 5;
 
 export default function StratEditorCanvas<A extends Asset>({
   map,
@@ -35,6 +37,7 @@ export default function StratEditorCanvas<A extends Asset>({
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [resizeStart, setResizeStart] = useState({ x: 0, y: 0 });
   const [selectedAssets, setSelectedAssets] = useState<string[]>([]);
+  const [activeAssetID, setActiveAssetID] = useState<string | null>(null);
 
   // Calculate viewBox based on map dimensions
   useEffect(() => {
@@ -66,6 +69,7 @@ export default function StratEditorCanvas<A extends Asset>({
     } else {
       setSelectedAssets([assetId]);
     }
+    setActiveAssetID(assetId);
 
     if (isResizeHandle) {
       setIsResizing(true);
@@ -96,16 +100,28 @@ export default function StratEditorCanvas<A extends Asset>({
     );
 
     if (isDragging) {
+      const dx = svgP.x - dragOffset.x;
+      const dy = svgP.y - dragOffset.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance < DRAG_DEADZONE) return;
+
+      const activeAsset = assets.find((a) => a.id === activeAssetID);
+      if (!activeAsset) return;
+
       onAssetChange(
         assets.map((asset) =>
           selectedAssets.includes(asset.id)
-            ? {
-                ...asset,
-                position: {
-                  x: svgP.x - dragOffset.x,
-                  y: svgP.y - dragOffset.y,
-                },
-              }
+            ? (() => {
+                const offsetX = activeAsset.position.x - asset.position.x;
+                const offsetY = activeAsset.position.y - asset.position.y;
+                return {
+                  ...asset,
+                  position: {
+                    x: svgP.x - dragOffset.x - offsetX,
+                    y: svgP.y - dragOffset.y - offsetY,
+                  },
+                };
+              })()
             : asset
         )
       );
@@ -149,14 +165,30 @@ export default function StratEditorCanvas<A extends Asset>({
 
   useEffect(() => {
     if (isDragging || isResizing) {
-      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mousemove", handleMouseMove, { passive: false });
       window.addEventListener("mouseup", handleMouseUp);
     }
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isDragging, isResizing, selectedAssets, dragOffset, resizeStart]);
+  }, [
+    isDragging,
+    isResizing,
+    selectedAssets,
+    dragOffset,
+    resizeStart,
+    activeAssetID,
+  ]);
+
+  useKeys([
+    {
+      shortcut: ["Backspace", "Delete"],
+      action() {
+        onAssetChange(assets.filter((a) => !selectedAssets.includes(a.id)));
+      },
+    },
+  ]);
 
   return (
     <div className="relative overflow-hidden w-full h-full">
