@@ -1,4 +1,4 @@
-import { StratEditor } from "@/components/StratEditor";
+import { StratEditor } from "@/components/StratEditor/StratEditor";
 
 export default function StratEditorPage() {
   return (
