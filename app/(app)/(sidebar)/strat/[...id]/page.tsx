@@ -3,21 +3,24 @@ import { getStrat } from "@/src/strats";
 
 export default async function Page({
   params: paramsRaw,
-}: {
+}: Readonly<{
   params: Promise<{ id: string[] }>;
-}) {
-  const params = (await paramsRaw).id.slice(1);
+}>) {
+  const params = (await paramsRaw).id;
   const id = Number(params[0]);
   const strat = await getStrat(id);
 
-  const editView = params[1] === "edit" ? true : false;
+  const editView = params[1] === "edit";
 
   if (!strat) {
     return (
-      <p>
-        Strat not found (id: {id}, edit: {editView}, params: {params.join(", ")}
-        )
-      </p>
+      <div className="flex flex-col items-center justify-center h-full">
+        <p className="text-2xl font-bold text-center">
+          Strat not found (id: {id})
+          <br />
+          <span className="text-sm font-mono">{JSON.stringify(params)}</span>
+        </p>
+      </div>
     );
   }
 

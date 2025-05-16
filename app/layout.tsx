@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Noto_Sans } from "next/font/google";
+import favicon from "@/public/favicon.ico";
 import "./globals.css";
 
 const notoSans = Noto_Sans({
@@ -10,7 +11,7 @@ const notoSans = Noto_Sans({
 export const metadata: Metadata = {
   title: "R6 Strats",
   icons: {
-    icon: "icon.svg",
+    icon: favicon.src,
   },
 };
 
