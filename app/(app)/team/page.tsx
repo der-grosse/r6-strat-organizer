@@ -19,6 +19,8 @@ import {
   deleteInviteKey,
   getTeamName,
   updateTeamName,
+  changeUsername,
+  changePassword,
 } from "@/src/auth/auth";
 import {
   Table,
@@ -43,9 +45,19 @@ import {
   Edit2,
   Check,
   X,
+  Lock,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function TeamManagement() {
   const { user } = useUser();
@@ -72,6 +84,10 @@ export default function TeamManagement() {
   const [teamName, setTeamName] = useState<string | null>(null);
   const [isEditingTeamName, setIsEditingTeamName] = useState(false);
   const [newTeamName, setNewTeamName] = useState("");
+  const [isChangeUsernameOpen, setIsChangeUsernameOpen] = useState(false);
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const [newUsername, setNewUsername] = useState("");
+  const [newPassword, setNewPassword] = useState("");
 
   const loadData = async () => {
     try {
@@ -174,6 +190,33 @@ export default function TeamManagement() {
     toast.success("Copied to clipboard");
   };
 
+  const handleChangeUsername = async () => {
+    try {
+      await changeUsername(newUsername);
+      setIsChangeUsernameOpen(false);
+      setNewUsername("");
+      toast.success("Username changed successfully");
+      window.location.reload();
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Failed to change username"
+      );
+    }
+  };
+
+  const handleChangePassword = async () => {
+    try {
+      await changePassword(newPassword);
+      setIsChangePasswordOpen(false);
+      setNewPassword("");
+      toast.success("Password changed successfully");
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Failed to change password"
+      );
+    }
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -256,69 +299,100 @@ export default function TeamManagement() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {teamUsers.map((member) => (
-                <TableRow key={member.id}>
-                  <TableCell>
-                    {member.name}
-                    {user?.id === member.id && (
-                      <span className="ml-2 text-muted-foreground text-sm">
-                        (You)
-                      </span>
-                    )}
-                  </TableCell>
-                  <TableCell>{member.isAdmin ? "Admin" : "Member"}</TableCell>
-                  <TableCell>
-                    {new Date(member.createdAt).toLocaleDateString("de-DE", {
-                      year: "numeric",
-                      month: "2-digit",
-                      day: "2-digit",
-                    })}
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          disabled={user?.id === member.id || !user?.isAdmin}
-                        >
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        {user?.isAdmin && member.id !== user?.id && (
-                          <>
-                            {!member.isAdmin ? (
-                              <DropdownMenuItem
-                                onClick={() => handlePromoteToAdmin(member.id)}
-                              >
-                                <Shield className="mr-2 h-4 w-4" />
-                                Promote to Admin
-                              </DropdownMenuItem>
-                            ) : (
-                              <DropdownMenuItem
-                                onClick={() => handleDemoteFromAdmin(member.id)}
-                              >
-                                <ShieldOff className="mr-2 h-4 w-4" />
-                                Demote from Admin
-                              </DropdownMenuItem>
-                            )}
-                          </>
-                        )}
-                        {user?.isAdmin && !member.isAdmin && (
-                          <DropdownMenuItem
-                            onClick={() => handleRemoveUser(member.id)}
-                            className="text-destructive"
+              {teamUsers
+                .toSorted((a, b) => {
+                  // Sort current user to top
+                  if (a.id === user?.id) return -1;
+                  if (b.id === user?.id) return 1;
+                  // Sort admins next
+                  if (a.isAdmin && !b.isAdmin) return -1;
+                  if (!a.isAdmin && b.isAdmin) return 1;
+                  // Sort alphabetically
+                  return a.name.localeCompare(b.name);
+                })
+                .map((member) => (
+                  <TableRow key={member.id}>
+                    <TableCell>
+                      {member.name}
+                      {user?.id === member.id && (
+                        <span className="ml-2 text-muted-foreground text-sm">
+                          (You)
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell>{member.isAdmin ? "Admin" : "Member"}</TableCell>
+                    <TableCell>
+                      {new Date(member.createdAt).toLocaleDateString("de-DE", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })}
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            disabled={user?.id !== member.id && !user?.isAdmin}
                           >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Remove User
-                          </DropdownMenuItem>
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start" side="right">
+                          {member.id === user?.id && (
+                            <>
+                              <DropdownMenuItem
+                                onClick={() => setIsChangeUsernameOpen(true)}
+                              >
+                                <Edit2 className="mr-2 h-4 w-4" />
+                                Change Username
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => setIsChangePasswordOpen(true)}
+                              >
+                                <Lock className="mr-2 h-4 w-4" />
+                                Change Password
+                              </DropdownMenuItem>
+                            </>
+                          )}
+                          {user?.isAdmin && member.id !== user?.id && (
+                            <>
+                              {!member.isAdmin ? (
+                                <DropdownMenuItem
+                                  onClick={() =>
+                                    handlePromoteToAdmin(member.id)
+                                  }
+                                >
+                                  <Shield className="mr-2 h-4 w-4" />
+                                  Promote to Admin
+                                </DropdownMenuItem>
+                              ) : (
+                                <DropdownMenuItem
+                                  onClick={() =>
+                                    handleDemoteFromAdmin(member.id)
+                                  }
+                                >
+                                  <ShieldOff className="mr-2 h-4 w-4" />
+                                  Demote from Admin
+                                </DropdownMenuItem>
+                              )}
+                            </>
+                          )}
+                          {user?.isAdmin && !member.isAdmin && (
+                            <DropdownMenuItem
+                              onClick={() => handleRemoveUser(member.id)}
+                              className="text-destructive"
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Remove User
+                            </DropdownMenuItem>
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </CardContent>
@@ -410,6 +484,69 @@ export default function TeamManagement() {
           </CardContent>
         </Card>
       )}
+
+      <Dialog
+        open={isChangeUsernameOpen}
+        onOpenChange={setIsChangeUsernameOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Change Username</DialogTitle>
+            <DialogDescription>
+              Enter your new username below.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input
+              value={newUsername}
+              onChange={(e) => setNewUsername(e.target.value)}
+              placeholder="New username"
+              autoFocus
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsChangeUsernameOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleChangeUsername}>Save</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={isChangePasswordOpen}
+        onOpenChange={setIsChangePasswordOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Change Password</DialogTitle>
+            <DialogDescription>
+              Enter your new password below.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="New password"
+              autoFocus
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsChangePasswordOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleChangePassword}>Save</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
