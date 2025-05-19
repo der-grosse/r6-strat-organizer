@@ -31,6 +31,9 @@ export default function StratEditorCanvas<A extends Asset>({
   onAssetChange,
   renderAsset,
 }: Readonly<CanvasProps<A>>) {
+  const assetsRef = useRef<A[]>(assets);
+  assetsRef.current = assets;
+
   const svgRef = useRef<SVGSVGElement>(null);
 
   const [viewBox, setViewBox] = useState({
@@ -92,12 +95,20 @@ export default function StratEditorCanvas<A extends Asset>({
   lastZoomedViewBox.current = zoomedViewBox;
 
   const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isResizing, setIsResizing] = useState(false);
-  const [resizeStart, setResizeStart] = useState({ x: 0, y: 0 });
+  const [actionStart, setActionStart] = useState({
+    x: 0,
+    y: 0,
+    startPositions: [] as {
+      id: string;
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    }[],
+  });
 
   const [selectedAssets, setSelectedAssets] = useState<string[]>([]);
-  const [activeAssetID, setActiveAssetID] = useState<string | null>(null);
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent, assetId: string, isResizeHandle: boolean) => {
@@ -116,25 +127,27 @@ export default function StratEditorCanvas<A extends Asset>({
       } else {
         setSelectedAssets([assetId]);
       }
-      setActiveAssetID(assetId);
 
       if (isResizeHandle) {
         // resizing asset
         setIsResizing(true);
-        setResizeStart({ x: svgP.x, y: svgP.y });
       } else {
         // dragging asset
         setIsDragging(true);
-        const asset = assets.find((a) => a.id === assetId);
-        if (asset) {
-          setDragOffset({
-            x: svgP.x - asset.position.x,
-            y: svgP.y - asset.position.y,
-          });
-        }
       }
+      setActionStart({
+        x: svgP.x,
+        y: svgP.y,
+        startPositions: assetsRef.current
+          .filter((a) => selectedAssets.includes(a.id) || a.id === assetId)
+          .map((a) => ({
+            ...a.position,
+            ...a.size,
+            id: a.id,
+          })),
+      });
     },
-    [zoomedViewBox]
+    [selectedAssets]
   );
 
   const handleMouseMove = useCallback(
@@ -143,6 +156,8 @@ export default function StratEditorCanvas<A extends Asset>({
 
       const svg = svgRef.current;
       if (!svg) return;
+      // deliberately use assets from first render when dragging started
+      const assets = assetsRef.current;
 
       const pt = svg.createSVGPoint();
       pt.x = e.clientX;
@@ -152,25 +167,25 @@ export default function StratEditorCanvas<A extends Asset>({
       );
 
       if (isDragging) {
-        const dx = svgP.x - dragOffset.x;
-        const dy = svgP.y - dragOffset.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+        const dx = svgP.x - actionStart.x;
+        const dy = svgP.y - actionStart.y;
+        const distance = Math.sqrt(dx ** 2 + dy ** 2);
         if (distance < DRAG_DEADZONE) return;
-
-        const activeAsset = assets.find((a) => a.id === activeAssetID);
-        if (!activeAsset) return;
 
         onAssetChange(
           assets.map((asset) =>
             selectedAssets.includes(asset.id)
               ? (() => {
-                  const offsetX = activeAsset.position.x - asset.position.x;
-                  const offsetY = activeAsset.position.y - asset.position.y;
+                  const startPos = actionStart.startPositions.find(
+                    (pos) => pos.id === asset.id
+                  );
+                  if (!startPos) return asset;
+
                   return {
                     ...asset,
                     position: {
-                      x: svgP.x - dragOffset.x - offsetX,
-                      y: svgP.y - dragOffset.y - offsetY,
+                      x: startPos.x + dx,
+                      y: startPos.y + dy,
                     },
                   };
                 })()
@@ -180,8 +195,8 @@ export default function StratEditorCanvas<A extends Asset>({
       } else if (isResizing) {
         const selected = assets.filter((a) => selectedAssets.includes(a.id));
         if (selected.length > 0) {
-          const deltaX = svgP.x - resizeStart.x;
-          const deltaY = svgP.y - resizeStart.y;
+          const deltaX = svgP.x - actionStart.x;
+          const deltaY = svgP.y - actionStart.y;
 
           const makeSquare = e.shiftKey;
 
@@ -191,11 +206,18 @@ export default function StratEditorCanvas<A extends Asset>({
                 ? {
                     ...a,
                     size: (() => {
+                      const startPos = actionStart.startPositions.find(
+                        (pos) => pos.id === a.id
+                      );
+                      if (!startPos) return a.size;
                       const newSize = {
-                        width: Math.max(MIN_ASSET_SIZE, a.size.width + deltaX),
+                        width: Math.max(
+                          MIN_ASSET_SIZE,
+                          startPos.width + deltaX
+                        ),
                         height: Math.max(
                           MIN_ASSET_SIZE,
-                          a.size.height + deltaY
+                          startPos.height + deltaY
                         ),
                       };
                       if (!makeSquare) return newSize;
@@ -212,15 +234,7 @@ export default function StratEditorCanvas<A extends Asset>({
         }
       }
     },
-    [
-      isDragging,
-      isResizing,
-      selectedAssets,
-      assets,
-      activeAssetID,
-      dragOffset,
-      resizeStart,
-    ]
+    [isDragging, isResizing, selectedAssets, actionStart]
   );
 
   const handleMouseUp = useCallback(() => {
@@ -298,7 +312,6 @@ export default function StratEditorCanvas<A extends Asset>({
       shortcut: ["Escape"],
       action() {
         setSelectedAssets([]);
-        setActiveAssetID(null);
       },
     },
     {
@@ -308,9 +321,6 @@ export default function StratEditorCanvas<A extends Asset>({
       },
       action() {
         setSelectedAssets(assets.map((a) => a.id));
-        if (assets.length > 0) {
-          setActiveAssetID(assets[0].id);
-        }
       },
     },
   ]);
