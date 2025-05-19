@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo, useCallback } from "react";
 import SVGAsset from "./SVGAsset";
 import { useKeys } from "../hooks/useKey";
 
@@ -17,9 +17,13 @@ interface CanvasProps<A extends Asset> {
   renderAsset: (asset: A) => React.ReactNode;
 }
 
+// should be a multiple of 4 and 3 to have nicer numbers for aspect ratio
 const BASE_SIZE = 1200;
+const MIN_ZOOM_FACTOR = 0.15;
 const MIN_ASSET_SIZE = 10;
 const DRAG_DEADZONE = 5;
+const ZOOM_MODIFIER = 0.004;
+const SCROLL_MODIFIER = 0.5;
 
 export default function StratEditorCanvas<A extends Asset>({
   map,
@@ -28,10 +32,55 @@ export default function StratEditorCanvas<A extends Asset>({
   renderAsset,
 }: Readonly<CanvasProps<A>>) {
   const svgRef = useRef<SVGSVGElement>(null);
+
   const [viewBox, setViewBox] = useState({
     width: BASE_SIZE,
     height: (BASE_SIZE / 4) * 3,
   });
+  const [zoomFactor, setZoomFactor] = useState(1);
+  const [zoomOrigin, setZoomOrigin] = useState({
+    // absolut cursor pos in svg coords
+    x: 600,
+    y: 450,
+    // relative cursor pos in svg -> needed to keep zooming on same point when mouse is not centered
+    relX: 0.5,
+    relY: 0.5,
+  });
+  const zoomedViewBox = useMemo(() => {
+    const size = {
+      width: viewBox.width * zoomFactor,
+      height: viewBox.height * zoomFactor,
+    };
+    const absolutZoomPos = {
+      x: zoomOrigin.x - size.width * zoomOrigin.relX,
+      y: zoomOrigin.y - size.height * zoomOrigin.relY,
+    };
+    const zoomedViewBox = {
+      ...absolutZoomPos,
+      ...size,
+    };
+    // clamp viewbox to not go out of bounds (should not be neccessary, still keep just in case)
+    zoomedViewBox.x = Math.max(0, zoomedViewBox.x);
+    zoomedViewBox.y = Math.max(0, zoomedViewBox.y);
+    if (zoomedViewBox.x + zoomedViewBox.width > viewBox.width) {
+      zoomedViewBox.x = viewBox.width - zoomedViewBox.width;
+      if (zoomedViewBox.x < 0) {
+        zoomedViewBox.x = 0;
+        zoomedViewBox.width = viewBox.width;
+      }
+    }
+    if (zoomedViewBox.y + zoomedViewBox.height > viewBox.height) {
+      zoomedViewBox.y = viewBox.height - zoomedViewBox.height;
+      if (zoomedViewBox.y < 0) {
+        zoomedViewBox.y = 0;
+        zoomedViewBox.height = viewBox.height;
+      }
+    }
+    return zoomedViewBox;
+  }, [viewBox, zoomFactor, zoomOrigin]);
+  const lastZoomedViewBox = useRef(zoomedViewBox);
+  lastZoomedViewBox.current = zoomedViewBox;
+
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -163,6 +212,45 @@ export default function StratEditorCanvas<A extends Asset>({
     setIsResizing(false);
   };
 
+  const handleWheel = useCallback(
+    (e: WheelEvent) => {
+      e.preventDefault();
+      if (e.ctrlKey) {
+        // zoom
+        const svg = svgRef.current;
+        if (!svg) return;
+        const pt = svg.createSVGPoint();
+        pt.x = e.clientX;
+        pt.y = e.clientY;
+        const svgP = pt.matrixTransform(
+          svg.getScreenCTM()?.inverse() || new DOMMatrix()
+        );
+
+        setZoomOrigin({
+          x: svgP.x,
+          y: svgP.y,
+          relX:
+            (svgP.x - lastZoomedViewBox.current.x) /
+            lastZoomedViewBox.current.width,
+          relY:
+            (svgP.y - lastZoomedViewBox.current.y) /
+            lastZoomedViewBox.current.height,
+        });
+        setZoomFactor((factor) =>
+          clamp(factor + e.deltaY * ZOOM_MODIFIER, MIN_ZOOM_FACTOR, 1)
+        );
+      } else {
+        // scroll
+        setZoomOrigin((org) => ({
+          ...org,
+          x: clamp(org.x + e.deltaX * SCROLL_MODIFIER, 0, viewBox.width),
+          y: clamp(org.y + e.deltaY * SCROLL_MODIFIER, 0, viewBox.height),
+        }));
+      }
+    },
+    [setZoomOrigin, setZoomFactor]
+  );
+
   useEffect(() => {
     if (isDragging || isResizing) {
       window.addEventListener("mousemove", handleMouseMove, { passive: false });
@@ -181,11 +269,39 @@ export default function StratEditorCanvas<A extends Asset>({
     activeAssetID,
   ]);
 
+  // add non-passive handleWheel event listener to svg
+  useEffect(() => {
+    if (!svgRef.current) return;
+    svgRef.current.addEventListener("wheel", handleWheel, { passive: false });
+    return () => {
+      svgRef.current?.removeEventListener("wheel", handleWheel);
+    };
+  }, [svgRef.current, handleWheel]);
+
   useKeys([
     {
       shortcut: ["Backspace", "Delete"],
       action() {
         onAssetChange(assets.filter((a) => !selectedAssets.includes(a.id)));
+      },
+    },
+    {
+      shortcut: ["Escape"],
+      action() {
+        setSelectedAssets([]);
+        setActiveAssetID(null);
+      },
+    },
+    {
+      shortcut: {
+        key: "a",
+        ctrlKey: true,
+      },
+      action() {
+        setSelectedAssets(assets.map((a) => a.id));
+        if (assets.length > 0) {
+          setActiveAssetID(assets[0].id);
+        }
       },
     },
   ]);
@@ -194,7 +310,7 @@ export default function StratEditorCanvas<A extends Asset>({
     <div className="relative overflow-hidden w-full h-full">
       <svg
         ref={svgRef}
-        viewBox={`0 0 ${viewBox.width} ${viewBox.height}`}
+        viewBox={`${zoomedViewBox.x} ${zoomedViewBox.y} ${zoomedViewBox.width} ${zoomedViewBox.height}`}
         className="w-full h-full"
         preserveAspectRatio="xMidYMid meet"
         onClick={(e) => {
@@ -234,4 +350,8 @@ export default function StratEditorCanvas<A extends Asset>({
       </svg>
     </div>
   );
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value));
 }
