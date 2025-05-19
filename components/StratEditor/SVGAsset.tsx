@@ -53,7 +53,7 @@ export default function SVGAsset({
       <circle
         cx={size.width}
         cy={size.height}
-        r={6}
+        r=".5%"
         fill="currentColor"
         className={cn("resize-handle cursor-se-resize", !selected && "hidden")}
         onMouseDown={(e) => {
