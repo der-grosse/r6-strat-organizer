@@ -271,10 +271,16 @@ export default function StratEditorCanvas<A extends Asset>({
         );
       } else {
         // scroll
+        let deltaX = e.deltaX;
+        let deltaY = e.deltaY;
+        if (e.shiftKey && e.deltaX === 0) {
+          deltaX = deltaY;
+          deltaY = 0;
+        }
         setZoomOrigin((org) => ({
           ...org,
-          x: clamp(org.x + e.deltaX * SCROLL_MODIFIER, 0, viewBox.width),
-          y: clamp(org.y + e.deltaY * SCROLL_MODIFIER, 0, viewBox.height),
+          x: clamp(org.x + deltaX * SCROLL_MODIFIER, 0, viewBox.width),
+          y: clamp(org.y + deltaY * SCROLL_MODIFIER, 0, viewBox.height),
         }));
       }
     },
