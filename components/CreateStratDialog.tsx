@@ -28,12 +28,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { useUser } from "@/components/context/UserContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import DEFENDERS from "@/src/static/operator";
-import { Checkbox } from "@/components/ui/checkbox";
+import { DEFENDERS } from "@/src/static/operator";
 import { createStrat } from "@/src/actions/strats";
 import { toast } from "sonner";
 import MAPS from "@/src/static/maps";
@@ -65,7 +63,6 @@ const formSchema = z.object({
 export function CreateStratDialog() {
   const [open, setOpen] = useState(false);
   const { user } = useUser();
-  const router = useRouter();
   const { refreshStrats } = useFilter();
 
   const form = useForm<z.infer<typeof formSchema>>({
