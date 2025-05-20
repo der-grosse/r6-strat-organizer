@@ -57,24 +57,21 @@ export default function StratsPage() {
                 </div>
               </TableCell>
               <TableCell className="flex gap-1">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="cursor-pointer"
-                  onClick={async () => {
-                    if (isLeading) {
-                      await setActive(user!, strat.id);
-                      router.push("/?leading=true");
-                    } else {
-                      router.push(`/strat/${strat.id}`);
-                    }
-                  }}
-                >
-                  <Eye />
-                </Button>
-                <Link
-                  href={`/strats/editor?map=${strat.map}&site=${strat.site}&drawingID=${strat.drawingID}`}
-                >
+                <Link href={isLeading ? "/" : `/strat/${strat.id}`}>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="cursor-pointer"
+                    onClick={async () => {
+                      if (isLeading) {
+                        await setActive(user!, strat.id);
+                      }
+                    }}
+                  >
+                    <Eye />
+                  </Button>
+                </Link>
+                <Link href={`/editor/${strat.id}`}>
                   <Button
                     variant="outline"
                     size="icon"
