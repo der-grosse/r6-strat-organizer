@@ -21,6 +21,7 @@ import {
   updateTeamName,
   changeUsername,
   changePassword,
+  setUserColor,
 } from "@/src/auth/auth";
 import {
   Table,
@@ -58,6 +59,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import ColorPickerDialog, {
+  ColorButton,
+  DEFAULT_COLORS,
+} from "@/components/ColorPickerDialog";
 
 export default function TeamManagement() {
   const { user } = useUser();
@@ -69,6 +74,7 @@ export default function TeamManagement() {
       password: string;
       createdAt: string;
       teamID: number;
+      defaultColor: string | null;
     }[]
   >([]);
   const [inviteKeys, setInviteKeys] = useState<
@@ -88,6 +94,9 @@ export default function TeamManagement() {
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
   const [newUsername, setNewUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
+
+  const [userColorChangeOpen, setUserColorChangeOpen] = useState(false);
+  const [userColorID, setUserColorID] = useState<number | null>(null);
 
   const loadData = async () => {
     try {
@@ -292,6 +301,7 @@ export default function TeamManagement() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead></TableHead>
                 <TableHead>Username</TableHead>
                 <TableHead>Role</TableHead>
                 <TableHead>Joined at</TableHead>
@@ -312,6 +322,16 @@ export default function TeamManagement() {
                 })
                 .map((member) => (
                   <TableRow key={member.id}>
+                    <TableCell className="w-[50px]">
+                      <ColorButton
+                        color={member.defaultColor ?? DEFAULT_COLORS[0]}
+                        onClick={() => {
+                          setUserColorID(member.id);
+                          setUserColorChangeOpen(true);
+                        }}
+                        disabled={member.id !== user?.id && !member.isAdmin}
+                      />
+                    </TableCell>
                     <TableCell>
                       {member.name}
                       {user?.id === member.id && (
@@ -397,6 +417,24 @@ export default function TeamManagement() {
           </Table>
         </CardContent>
       </Card>
+      <ColorPickerDialog
+        open={userColorChangeOpen}
+        onClose={() => setUserColorChangeOpen(false)}
+        color={
+          teamUsers.find((u) => u.id === userColorID)?.defaultColor ??
+          DEFAULT_COLORS[0]
+        }
+        onChange={async (color) => {
+          if (userColorID) await setUserColor(color, userColorID);
+          setTeamUsers((prev) =>
+            prev.map((u) =>
+              u.id === userColorID ? { ...u, defaultColor: color } : u
+            )
+          );
+          setUserColorID(null);
+          setUserColorChangeOpen(false);
+        }}
+      />
 
       {user?.isAdmin && (
         <Card>
@@ -487,9 +525,13 @@ export default function TeamManagement() {
 
       <Dialog
         open={isChangeUsernameOpen}
-        onOpenChange={setIsChangeUsernameOpen}
+        onOpenChange={(open) => {
+          setIsChangeUsernameOpen(open);
+          if (!open)
+            setTimeout(() => (document.body.style.pointerEvents = ""), 500);
+        }}
       >
-        <DialogContent>
+        <DialogContent className="w-auto">
           <DialogHeader>
             <DialogTitle>Change Username</DialogTitle>
             <DialogDescription>
@@ -518,7 +560,11 @@ export default function TeamManagement() {
 
       <Dialog
         open={isChangePasswordOpen}
-        onOpenChange={setIsChangePasswordOpen}
+        onOpenChange={(open) => {
+          setIsChangePasswordOpen(open);
+          if (!open)
+            setTimeout(() => (document.body.style.pointerEvents = ""), 500);
+        }}
       >
         <DialogContent>
           <DialogHeader>

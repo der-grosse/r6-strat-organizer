@@ -346,3 +346,20 @@ export async function changePassword(newPassword: string) {
     .run();
   return true;
 }
+
+export async function setUserColor(color: string, userID?: User["id"]) {
+  if (!color) throw new Error("Color is required");
+  const user = await getPayload();
+  if (!user) throw new Error("User not found");
+  if (!userID) userID = user!.id;
+  if (userID !== user.id && !user.isAdmin)
+    throw new Error("Only admins can set user color");
+  const targetUser = db.select().from(users).where(eq(users.id, userID)).get();
+  if (!targetUser) throw new Error("User not found");
+  if (targetUser.teamID !== user.teamID)
+    throw new Error("User must be in the same team");
+  db.update(users)
+    .set({ defaultColor: color })
+    .where(eq(users.id, userID))
+    .run();
+}
