@@ -7,6 +7,7 @@ import { cookies } from "next/headers";
 import { generateJWT } from "./jwt";
 import { generate } from "random-words";
 import { getPayload } from "./getPayload";
+import { create } from "domain";
 
 async function hashPassword(password: string) {
   const salt = await bcrypt.genSalt(10);
@@ -169,7 +170,13 @@ export async function getTeamName() {
 export async function getTeamUsers() {
   const user = await getPayload();
   const teamUsers = db
-    .select()
+    .select({
+      id: users.id,
+      name: users.name,
+      defaultColor: users.defaultColor,
+      isAdmin: users.isAdmin,
+      createdAt: users.createdAt,
+    })
     .from(users)
     .where(eq(users.teamID, user!.teamID))
     .all();

@@ -3,8 +3,7 @@ import { useMemo, useState } from "react";
 import MAPS from "@/src/static/maps";
 import StratEditorLayout from "./Layout";
 import StratEditorCanvas from "./Canvas";
-import OperatorIcon from "../OperatorIcon";
-import { cn } from "@/src/utils";
+import useMountAssets from "./Assets";
 
 interface StratEditorProps {
   strat: StratDrawing;
@@ -16,27 +15,38 @@ export function StratEditor({ strat }: Readonly<StratEditorProps>) {
       id: "operator-smoke",
       operator: "Smoke",
       type: "operator",
-      player: "test",
+      player: 1,
       position: { x: 450, y: 200 },
       side: "def",
+      showIcon: true,
       size: {
-        width: 100,
-        height: 100,
+        width: 25,
+        height: 25,
       },
     },
     {
       id: "operator-frost",
       operator: "Frost",
       type: "operator",
-      player: "test2",
+      player: 1,
       position: { x: 100, y: 600 },
       side: "def",
+      showIcon: true,
       size: {
-        width: 100,
-        height: 100,
+        width: 25,
+        height: 25,
       },
     },
   ]);
+
+  const { renderAsset, UI } = useMountAssets({
+    deleteAsset(asset) {
+      setAssets((assets) => assets.filter((a) => a.id !== asset.id));
+    },
+    updateAsset(asset) {
+      setAssets((assets) => assets.map((a) => (a.id === asset.id ? asset : a)));
+    },
+  });
 
   const map = useMemo(
     () => MAPS.find((map) => map.name === strat.map) ?? null,
@@ -50,7 +60,7 @@ export function StratEditor({ strat }: Readonly<StratEditorProps>) {
           ...assets,
           {
             ...asset,
-            size: { width: 100, height: 100 },
+            size: { width: 25, height: 25 },
             position: { x: 0, y: 0 },
           },
         ])
@@ -60,28 +70,9 @@ export function StratEditor({ strat }: Readonly<StratEditorProps>) {
         map={map}
         assets={assets}
         onAssetChange={setAssets}
-        renderAsset={(asset) => {
-          if (asset.type === "operator")
-            return (
-              <div className="w-[130%] h-[130%] m-[-15%] relative">
-                <OperatorIcon
-                  op={asset.operator}
-                  className="w-full h-full absolute z-10"
-                />
-                <div
-                  className={cn(
-                    "m-[12.5%] w-[75%] h-[75%] absolute top-0 left-0 z-0",
-                    asset.player && !asset.customColor && "bg-blue-500"
-                  )}
-                  style={{
-                    background: asset.customColor,
-                  }}
-                />
-              </div>
-            );
-          return "Missing";
-        }}
+        renderAsset={renderAsset}
       />
+      {UI}
     </StratEditorLayout>
   );
 }

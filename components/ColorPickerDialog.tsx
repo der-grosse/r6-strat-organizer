@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { useRef } from "react";
 import { Button } from "./ui/button";
 import { Check } from "lucide-react";
+import { cn } from "@/src/utils";
 
 export interface ColorPickerDialogProps {
   color?: string;
@@ -24,7 +25,7 @@ export const DEFAULT_COLORS = [
   "#3b82f6",
   "#6d28d9",
   "#e879f9",
-  "#f9a8d4",
+  "#fda4af",
 ];
 
 export default function ColorPickerDialog(props: ColorPickerDialogProps) {
@@ -51,6 +52,7 @@ export default function ColorPickerDialog(props: ColorPickerDialogProps) {
             <div className="grid grid-cols-4 gap-2 px-1 w-fit mx-auto">
               {DEFAULT_COLORS.map((color) => (
                 <ColorButton
+                  size="large"
                   key={color}
                   color={color}
                   onClick={(color) => {
@@ -87,10 +89,14 @@ export function ColorButton(props: {
   color: string;
   onClick?: (color: string) => void;
   disabled?: boolean;
+  size: "small" | "large";
 }) {
   return (
     <button
-      className="w-8 h-8 rounded-full hover:shadow-lg focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+      className={cn(
+        "rounded-full hover:shadow-lg focus:outline-none focus:ring-2 disabled:cursor-not-allowed cursor-pointer",
+        props.size === "small" ? "w-6 h-6" : "w-12 h-12"
+      )}
       disabled={props.disabled}
       style={{ backgroundColor: props.color }}
       onClick={() => {

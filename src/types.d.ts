@@ -55,7 +55,7 @@ type Asset = BaseAsset & (MarkerAsset | OperatorAsset | GadgetAsset);
 
 interface BaseAsset {
   id: string;
-  player?: string;
+  player?: User["id"];
   customColor?: string;
 }
 
@@ -69,6 +69,7 @@ interface OperatorAsset {
   type: "operator";
   operator: string;
   side: "att" | "def";
+  showIcon: boolean;
 }
 
 interface GadgetAsset {

@@ -14,14 +14,11 @@ export default function OperatorIcon(props: OperatorIconProps) {
       ? OPERATORS.find((op) => op.name === props.op)
       : props.op;
   return (
-    <picture>
-      <source srcSet={op?.icon.full} media="(min-width: 640px)" />
-      <img
-        src={op?.icon.small}
-        alt={op?.name}
-        className={cn("w-8 h-8", props.className)}
-        draggable={false}
-      />
-    </picture>
+    <img
+      src={op?.icon}
+      alt={op?.name}
+      className={cn("w-8 h-8", props.className)}
+      draggable={false}
+    />
   );
 }

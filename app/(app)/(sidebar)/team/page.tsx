@@ -71,9 +71,7 @@ export default function TeamManagement() {
       isAdmin: boolean;
       id: number;
       name: string;
-      password: string;
       createdAt: string;
-      teamID: number;
       defaultColor: string | null;
     }[]
   >([]);
@@ -324,12 +322,13 @@ export default function TeamManagement() {
                   <TableRow key={member.id}>
                     <TableCell className="w-[50px]">
                       <ColorButton
+                        size="small"
                         color={member.defaultColor ?? DEFAULT_COLORS[0]}
                         onClick={() => {
                           setUserColorID(member.id);
                           setUserColorChangeOpen(true);
                         }}
-                        disabled={member.id !== user?.id && !member.isAdmin}
+                        disabled={member.id !== user?.id && !user?.isAdmin}
                       />
                     </TableCell>
                     <TableCell>

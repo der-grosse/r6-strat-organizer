@@ -79,7 +79,7 @@ export const placedAssets = sqliteTable("placed_assets", {
   assetID: text("asset_id").notNull(),
   positionX: int("position_x").notNull(),
   positionY: int("position_y").notNull(),
-  player: text("player").references(() => users.name, {
+  player: int("player").references(() => users.id, {
     onDelete: "set null",
     onUpdate: "cascade",
   }),

@@ -14,7 +14,7 @@ interface CanvasProps<A extends Asset> {
   map: R6Map | null;
   assets: A[];
   onAssetChange: (assets: A[]) => void;
-  renderAsset: (asset: A) => React.ReactNode;
+  renderAsset: (asset: A, selected: boolean) => React.ReactNode;
 }
 
 // should be a multiple of 4 and 3 to have nicer numbers for aspect ratio
@@ -369,7 +369,10 @@ export default function StratEditorCanvas<A extends Asset>({
             }
             selected={selectedAssets.includes(asset.id)}
           >
-            {renderAsset(asset)}
+            {renderAsset(
+              asset,
+              selectedAssets.length === 1 && selectedAssets[0] === asset.id
+            )}
           </SVGAsset>
         ))}
       </svg>

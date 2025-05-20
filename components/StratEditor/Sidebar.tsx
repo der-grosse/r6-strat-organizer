@@ -24,7 +24,7 @@ export default function StratEditorSidebar(
         <div className="h-full absolute inset-0">
           <ScrollArea className="h-full">
             <div
-              className="grid grid- gap-2 items-center"
+              className="grid gap-2 items-center pb-4"
               style={{
                 gridTemplateColumns: "repeat(auto-fit, minmax(42px, 1fr))",
               }}
@@ -43,6 +43,7 @@ export default function StratEditorSidebar(
                       operator: op.name,
                       type: "operator",
                       side: "def",
+                      showIcon: true,
                     });
                   }}
                 >
@@ -63,6 +64,7 @@ export default function StratEditorSidebar(
                       operator: op.name,
                       type: "operator",
                       side: "def",
+                      showIcon: true,
                     });
                   }}
                 >

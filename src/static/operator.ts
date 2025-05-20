@@ -1,531 +1,306 @@
 const ATTACKERS = [
   {
     name: "Striker",
-    icon: {
-      small: "/ops/att/small/striker.webp",
-      full: "/ops/att/full/striker.webp",
-    },
+    icon: "/ops/att/striker.webp",
   },
   {
     name: "Sledge",
-    icon: {
-      small: "/ops/att/small/sledge.webp",
-      full: "/ops/att/full/sledge.webp",
-    },
+    icon: "/ops/att/sledge.webp",
   },
   {
     name: "Thatcher",
-    icon: {
-      small: "/ops/att/small/thatcher.webp",
-      full: "/ops/att/full/thatcher.webp",
-    },
+    icon: "/ops/att/thatcher.webp",
   },
   {
     name: "Ash",
-    icon: {
-      small: "/ops/att/ashsmall/.webp",
-      full: "/ops/att/full/ash.webp",
-    },
+    icon: "/ops/att/ash.webp",
   },
   {
     name: "Thermite",
-    icon: {
-      small: "/ops/att/small/thermite.webp",
-      full: "/ops/att/full/thermite.webp",
-    },
+    icon: "/ops/att/thermite.webp",
   },
   {
     name: "Twitch",
-    icon: {
-      small: "/ops/att/small/twitch.webp",
-      full: "/ops/att/full/twitch.webp",
-    },
+    icon: "/ops/att/twitch.webp",
   },
   {
     name: "Montagne",
-    icon: {
-      small: "/ops/att/small/montagne.webp",
-      full: "/ops/att/full/montagne.webp",
-    },
+    icon: "/ops/att/montagne.webp",
   },
   {
     name: "Glaz",
-    icon: {
-      small: "/ops/att/small/glaz.webp",
-      full: "/ops/att/full/glaz.webp",
-    },
+    icon: "/ops/att/glaz.webp",
   },
   {
     name: "Fuze",
-    icon: {
-      small: "/ops/att/small/fuze.webp",
-      full: "/ops/att/full/fuze.webp",
-    },
+    icon: "/ops/att/fuze.webp",
   },
   {
     name: "Blitz",
-    icon: {
-      small: "/ops/att/small/blitz.webp",
-      full: "/ops/att/full/blitz.webp",
-    },
+    icon: "/ops/att/blitz.webp",
   },
   {
     name: "IQ",
-    icon: {
-      small: "/ops/att/iq.small/webp",
-      full: "/ops/att/full/iq.webp",
-    },
+    icon: "/ops/att/iq.webp",
   },
   {
     name: "Buck",
-    icon: {
-      small: "/ops/att/small/buck.webp",
-      full: "/ops/att/full/buck.webp",
-    },
+    icon: "/ops/att/buck.webp",
   },
   {
     name: "Blackbeard",
-    icon: {
-      small: "/ops/att/small/blackbeard.webp",
-      full: "/ops/att/full/blackbeard.webp",
-    },
+    icon: "/ops/att/blackbeard.webp",
   },
   {
     name: "Capitao",
-    icon: {
-      small: "/ops/att/small/capitao.webp",
-      full: "/ops/att/full/capitao.webp",
-    },
+    icon: "/ops/att/capitao.webp",
   },
   {
     name: "Hibana",
-    icon: {
-      small: "/ops/att/small/hibana.webp",
-      full: "/ops/att/full/hibana.webp",
-    },
+    icon: "/ops/att/hibana.webp",
   },
   {
     name: "Jackal",
-    icon: {
-      small: "/ops/att/small/jackal.webp",
-      full: "/ops/att/full/jackal.webp",
-    },
+    icon: "/ops/att/jackal.webp",
   },
   {
     name: "Ying",
-    icon: {
-      small: "/ops/att/small/ying.webp",
-      full: "/ops/att/full/ying.webp",
-    },
+    icon: "/ops/att/ying.webp",
   },
   {
     name: "Zofia",
-    icon: {
-      small: "/ops/att/small/zofia.webp",
-      full: "/ops/att/full/zofia.webp",
-    },
+    icon: "/ops/att/zofia.webp",
   },
   {
     name: "Dokkaebi",
-    icon: {
-      small: "/ops/att/small/dokkaebi.webp",
-      full: "/ops/att/full/dokkaebi.webp",
-    },
+    icon: "/ops/att/dokkaebi.webp",
   },
   {
     name: "Lion",
-    icon: {
-      small: "/ops/att/small/lion.webp",
-      full: "/ops/att/full/lion.webp",
-    },
+    icon: "/ops/att/lion.webp",
   },
   {
     name: "Finka",
-    icon: {
-      small: "/ops/att/small/finka.webp",
-      full: "/ops/att/full/finka.webp",
-    },
+    icon: "/ops/att/finka.webp",
   },
   {
     name: "Maverick",
-    icon: {
-      small: "/ops/att/small/maverick.webp",
-      full: "/ops/att/full/maverick.webp",
-    },
+    icon: "/ops/att/maverick.webp",
   },
   {
     name: "Nomad",
-    icon: {
-      small: "/ops/att/small/nomad.webp",
-      full: "/ops/att/full/nomad.webp",
-    },
+    icon: "/ops/att/nomad.webp",
   },
   {
     name: "Gridlock",
-    icon: {
-      small: "/ops/att/small/gridlock.webp",
-      full: "/ops/att/full/gridlock.webp",
-    },
+    icon: "/ops/att/gridlock.webp",
   },
   {
     name: "Nøkk",
-    icon: {
-      small: "/ops/att/small/nokk.webp",
-      full: "/ops/att/full/nokk.webp",
-    },
+    icon: "/ops/att/nokk.webp",
   },
   {
     name: "Amaru",
-    icon: {
-      small: "/ops/att/small/amaru.webp",
-      full: "/ops/att/full/amaru.webp",
-    },
+    icon: "/ops/att/amaru.webp",
   },
   {
     name: "Kali",
-    icon: {
-      small: "/ops/att/small/kali.webp",
-      full: "/ops/att/full/kali.webp",
-    },
+    icon: "/ops/att/kali.webp",
   },
   {
     name: "Iana",
-    icon: {
-      small: "/ops/att/small/iana.webp",
-      full: "/ops/att/full/iana.webp",
-    },
+    icon: "/ops/att/iana.webp",
   },
   {
     name: "Ace",
-    icon: {
-      small: "/ops/att/acesmall/.webp",
-      full: "/ops/att/full/ace.webp",
-    },
+    icon: "/ops/att/ace.webp",
   },
   {
     name: "Zero",
-    icon: {
-      small: "/ops/att/small/zero.webp",
-      full: "/ops/att/full/zero.webp",
-    },
+    icon: "/ops/att/zero.webp",
   },
   {
     name: "Flores",
-    icon: {
-      small: "/ops/att/small/flores.webp",
-      full: "/ops/att/full/flores.webp",
-    },
+    icon: "/ops/att/flores.webp",
   },
   {
     name: "Osa",
-    icon: {
-      small: "/ops/att/osasmall/.webp",
-      full: "/ops/att/full/osa.webp",
-    },
+    icon: "/ops/att/osa.webp",
   },
   {
     name: "Sens",
-    icon: {
-      small: "/ops/att/small/sens.webp",
-      full: "/ops/att/full/sens.webp",
-    },
+    icon: "/ops/att/sens.webp",
   },
   {
     name: "Grim",
-    icon: {
-      small: "/ops/att/small/grim.webp",
-      full: "/ops/att/full/grim.webp",
-    },
+    icon: "/ops/att/grim.webp",
   },
   {
     name: "Brava",
-    icon: {
-      small: "/ops/att/small/brava.webp",
-      full: "/ops/att/full/brava.webp",
-    },
+    icon: "/ops/att/brava.webp",
   },
   {
     name: "Ram",
-    icon: {
-      small: "/ops/att/ramsmall/.webp",
-      full: "/ops/att/full/ram.webp",
-    },
+    icon: "/ops/att/ram.webp",
   },
   {
     name: "Deimos",
-    icon: {
-      small: "/ops/att/small/deimos.webp",
-      full: "/ops/att/full/deimos.webp",
-    },
+    icon: "/ops/att/deimos.webp",
   },
   {
     name: "Rauora",
-    icon: {
-      small: "/ops/att/small/rauora.webp",
-      full: "/ops/att/full/rauora.webp",
-    },
+    icon: "/ops/att/rauora.webp",
   },
 ];
 
 const DEFENDERS = [
   {
     name: "Sentry",
-    icon: {
-      small: "/ops/def/small/sentry.webp",
-      full: "/ops/def/full/sentry.webp",
-    },
+    icon: "/ops/def/sentry.webp",
   },
   {
     name: "Smoke",
-    icon: {
-      small: "/ops/def/small/smoke.webp",
-      full: "/ops/def/full/smoke.webp",
-    },
+    icon: "/ops/def/smoke.webp",
   },
   {
     name: "Mute",
-    icon: {
-      small: "/ops/def/small/mute.webp",
-      full: "/ops/def/full/mute.webp",
-    },
+    icon: "/ops/def/mute.webp",
   },
   {
     name: "Castle",
-    icon: {
-      small: "/ops/def/small/castle.webp",
-      full: "/ops/def/full/castle.webp",
-    },
+    icon: "/ops/def/castle.webp",
   },
   {
     name: "Pulse",
-    icon: {
-      small: "/ops/def/small/pulse.webp",
-      full: "/ops/def/full/pulse.webp",
-    },
+    icon: "/ops/def/pulse.webp",
   },
   {
     name: "Doc",
-    icon: {
-      small: "/ops/def/small/doc.webp",
-      full: "/ops/def/full/doc.webp",
-    },
+    icon: "/ops/def/doc.webp",
   },
   {
     name: "Rook",
-    icon: {
-      small: "/ops/def/small/rook.webp",
-      full: "/ops/def/full/rook.webp",
-    },
+    icon: "/ops/def/rook.webp",
   },
   {
     name: "Kapkan",
-    icon: {
-      small: "/ops/def/small/kapkan.webp",
-      full: "/ops/def/full/kapkan.webp",
-    },
+    icon: "/ops/def/kapkan.webp",
   },
   {
     name: "Tachanka",
-    icon: {
-      small: "/ops/def/small/tachanka.webp",
-      full: "/ops/def/full/tachanka.webp",
-    },
+    icon: "/ops/def/tachanka.webp",
   },
   {
     name: "Jäger",
-    icon: {
-      small: "/ops/def/small/jager.webp",
-      full: "/ops/def/full/jager.webp",
-    },
+    icon: "/ops/def/jager.webp",
   },
   {
     name: "Bandit",
-    icon: {
-      small: "/ops/def/small/bandit.webp",
-      full: "/ops/def/full/bandit.webp",
-    },
+    icon: "/ops/def/bandit.webp",
   },
   {
     name: "Frost",
-    icon: {
-      small: "/ops/def/small/frost.webp",
-      full: "/ops/def/full/frost.webp",
-    },
+    icon: "/ops/def/frost.webp",
   },
   {
     name: "Valkyrie",
-    icon: {
-      small: "/ops/def/small/valkyrie.webp",
-      full: "/ops/def/full/valkyrie.webp",
-    },
+    icon: "/ops/def/valkyrie.webp",
   },
   {
     name: "Caveira",
-    icon: {
-      small: "/ops/def/small/caveira.webp",
-      full: "/ops/def/full/caveira.webp",
-    },
+    icon: "/ops/def/caveira.webp",
   },
   {
     name: "Echo",
-    icon: {
-      small: "/ops/def/small/echo.webp",
-      full: "/ops/def/full/echo.webp",
-    },
+    icon: "/ops/def/echo.webp",
   },
   {
     name: "Mira",
-    icon: {
-      small: "/ops/def/small/mira.webp",
-      full: "/ops/def/full/mira.webp",
-    },
+    icon: "/ops/def/mira.webp",
   },
   {
     name: "Lesion",
-    icon: {
-      small: "/ops/def/small/lesion.webp",
-      full: "/ops/def/full/lesion.webp",
-    },
+    icon: "/ops/def/lesion.webp",
   },
   {
     name: "Ela",
-    icon: {
-      small: "/ops/def/small/ela.webp",
-      full: "/ops/def/full/ela.webp",
-    },
+    icon: "/ops/def/ela.webp",
   },
   {
     name: "Vigil",
-    icon: {
-      small: "/ops/def/small/vigil.webp",
-      full: "/ops/def/full/vigil.webp",
-    },
+    icon: "/ops/def/vigil.webp",
   },
   {
     name: "Maestro",
-    icon: {
-      small: "/ops/def/small/maestro.webp",
-      full: "/ops/def/full/maestro.webp",
-    },
+    icon: "/ops/def/maestro.webp",
   },
   {
     name: "Alibi",
-    icon: {
-      small: "/ops/def/small/alibi.webp",
-      full: "/ops/def/full/alibi.webp",
-    },
+    icon: "/ops/def/alibi.webp",
   },
   {
     name: "Clash",
-    icon: {
-      small: "/ops/def/small/clash.webp",
-      full: "/ops/def/full/clash.webp",
-    },
+    icon: "/ops/def/clash.webp",
   },
   {
     name: "Kaid",
-    icon: {
-      small: "/ops/def/small/kaid.webp",
-      full: "/ops/def/full/kaid.webp",
-    },
+    icon: "/ops/def/kaid.webp",
   },
   {
     name: "Mozzie",
-    icon: {
-      small: "/ops/def/small/mozzie.webp",
-      full: "/ops/def/full/mozzie.webp",
-    },
+    icon: "/ops/def/mozzie.webp",
   },
   {
     name: "Warden",
-    icon: {
-      small: "/ops/def/small/warden.webp",
-      full: "/ops/def/full/warden.webp",
-    },
+    icon: "/ops/def/warden.webp",
   },
   {
     name: "Goyo",
-    icon: {
-      small: "/ops/def/small/goyo.webp",
-      full: "/ops/def/full/goyo.webp",
-    },
+    icon: "/ops/def/goyo.webp",
   },
   {
     name: "Wamai",
-    icon: {
-      small: "/ops/def/small/wamai.webp",
-      full: "/ops/def/full/wamai.webp",
-    },
+    icon: "/ops/def/wamai.webp",
   },
   {
     name: "Oryx",
-    icon: {
-      small: "/ops/def/small/oryx.webp",
-      full: "/ops/def/full/oryx.webp",
-    },
+    icon: "/ops/def/oryx.webp",
   },
   {
     name: "Melusi",
-    icon: {
-      small: "/ops/def/small/melusi.webp",
-      full: "/ops/def/full/melusi.webp",
-    },
+    icon: "/ops/def/melusi.webp",
   },
   {
     name: "Aruni",
-    icon: {
-      small: "/ops/def/small/aruni.webp",
-      full: "/ops/def/full/aruni.webp",
-    },
+    icon: "/ops/def/aruni.webp",
   },
   {
     name: "Thunderbird",
-    icon: {
-      small: "/ops/def/small/thunderbird.webp",
-      full: "/ops/def/full/thunderbird.webp",
-    },
+    icon: "/ops/def/thunderbird.webp",
   },
   {
     name: "Thorn",
-    icon: {
-      small: "/ops/def/small/thorn.webp",
-      full: "/ops/def/full/thorn.webp",
-    },
+    icon: "/ops/def/thorn.webp",
   },
   {
     name: "Azami",
-    icon: {
-      small: "/ops/def/small/azami.webp",
-      full: "/ops/def/full/azami.webp",
-    },
+    icon: "/ops/def/azami.webp",
   },
   {
     name: "Solis",
-    icon: {
-      small: "/ops/def/small/solis.webp",
-      full: "/ops/def/full/solis.webp",
-    },
+    icon: "/ops/def/solis.webp",
   },
   {
     name: "Fenrir",
-    icon: {
-      small: "/ops/def/small/fenrir.webp",
-      full: "/ops/def/full/fenrir.webp",
-    },
+    icon: "/ops/def/fenrir.webp",
   },
   {
     name: "Tubarão",
-    icon: {
-      small: "/ops/def/small/tubarao.webp",
-      full: "/ops/def/full/tubarao.webp",
-    },
+    icon: "/ops/def/tubarao.webp",
   },
   {
     name: "Skopós",
-    icon: {
-      small: "/ops/def/small/skopos.webp",
-      full: "/ops/def/full/skopos.webp",
-    },
+    icon: "/ops/def/skopos.webp",
   },
 ];
 
