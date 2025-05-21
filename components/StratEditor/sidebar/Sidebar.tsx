@@ -16,9 +16,11 @@ import {
 } from "@/components/ui/tooltip";
 import { useMemo, useState } from "react";
 import StratEditorGadgetsSidebar from "./Gadgets";
+import StratEditorMetaSidebar from "./Meta";
 
 export interface StratEditorSidebarProps {
   onAssetAdd: (asset: Asset) => void;
+  strat: Strat;
 }
 
 export default function StratEditorSidebar(
@@ -48,6 +50,8 @@ export default function StratEditorSidebar(
             selectedOPs={[]}
           />
         );
+      case "meta":
+        return <StratEditorMetaSidebar strat={props.strat} />;
       default:
         return (
           <div className="flex items-center justify-center h-full">
@@ -55,115 +59,97 @@ export default function StratEditorSidebar(
           </div>
         );
     }
-  }, [openTab, props.onAssetAdd]);
+  }, [openTab, props.onAssetAdd, props.strat]);
 
   return (
     <div className="flex flex-1">
       <div className="flex flex-col h-screen">
         {/* Meta data (name, description) */}
-        <Tooltip delayDuration={500}>
-          <TooltipTrigger asChild>
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={() => setOpenTab("meta")}
-            >
-              <Info />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="right">
-            <div className="flex flex-col">
-              <p className="text-sm">Strat Meta Info</p>
-              <p className="text-xs text-muted-foreground">
-                Set the name and description of the strat
-              </p>
-            </div>
-          </TooltipContent>
-        </Tooltip>
+        <SidebarButton
+          icon={<Info />}
+          onClick={() => setOpenTab("meta")}
+          tooltip={{
+            title: "Strat Meta Info",
+            description: "Set the name and description of the strat",
+          }}
+          active={openTab === "meta"}
+        />
         {/* player OPs */}
-        <Tooltip delayDuration={500}>
-          <TooltipTrigger asChild>
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={() => setOpenTab("player-ops")}
-            >
-              <UsersRound />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="right">
-            <div className="flex flex-col">
-              <p className="text-sm">Operator Lineup</p>
-              <p className="text-xs text-muted-foreground">
-                Select what operators you want to bring and which player will
-                pick them
-              </p>
-            </div>
-          </TooltipContent>
-        </Tooltip>
+        <SidebarButton
+          icon={<UsersRound />}
+          onClick={() => setOpenTab("player-ops")}
+          tooltip={{
+            title: "Operator Lineup",
+            description:
+              "Select what operators you want to bring and which player will pick them",
+          }}
+          active={openTab === "player-ops"}
+        />
         {/* operator gadget assets */}
-        <Tooltip delayDuration={500}>
-          <TooltipTrigger asChild>
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={() => setOpenTab("operator-gadgets")}
-            >
-              <Fingerprint />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="right">
-            <div className="flex flex-col">
-              <p className="text-sm">Operator Gadgets</p>
-              <p className="text-xs text-muted-foreground">
-                Add primary and secondary operator gadgets.
-              </p>
-            </div>
-          </TooltipContent>
-        </Tooltip>
+        <SidebarButton
+          icon={<Fingerprint />}
+          onClick={() => setOpenTab("operator-gadgets")}
+          tooltip={{
+            title: "Operator Gadgets",
+            description: "Add primary and secondary operator gadgets",
+          }}
+          active={openTab === "operator-gadgets"}
+        />
         {/* layout assets - rotate, reinforcement */}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={() => setOpenTab("layout-assets")}
-            >
-              <LayoutGrid />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="right">
-            <div className="flex flex-col">
-              <p className="text-sm">Layout Assets</p>
-              <p className="text-xs text-muted-foreground">
-                Add rotates, headholes, barricades or reinforcements
-              </p>
-            </div>
-          </TooltipContent>
-        </Tooltip>
+        <SidebarButton
+          icon={<LayoutGrid />}
+          onClick={() => setOpenTab("layout-assets")}
+          tooltip={{
+            title: "Layout Assets",
+            description: "Add rotates, headholes, barricades or reinforcements",
+          }}
+          active={openTab === "layout-assets"}
+        />
         {/* operator assets - extra operators */}
-        <Tooltip delayDuration={500}>
-          <TooltipTrigger asChild>
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={() => setOpenTab("operator-assets")}
-            >
-              <CircleUserRound />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="right">
-            <div className="flex flex-col">
-              <p className="text-sm">Add Operators</p>
-              <p className="text-xs text-muted-foreground">
-                Add an operators or player locators to the map.
-              </p>
-            </div>
-          </TooltipContent>
-        </Tooltip>
+        <SidebarButton
+          icon={<CircleUserRound />}
+          onClick={() => setOpenTab("operator-assets")}
+          tooltip={{
+            title: "Operator Assets",
+            description: "Add operators or player locators to the map",
+          }}
+          active={openTab === "operator-assets"}
+        />
       </div>
       <Separator orientation="vertical" className="h-full" />
       <div className="flex-1 relative">{sidebarContent}</div>
     </div>
+  );
+}
+
+function SidebarButton(props: {
+  onClick: () => void;
+  icon: React.ReactNode;
+  tooltip: {
+    title: string;
+    description: string;
+  };
+  active?: boolean;
+}) {
+  return (
+    <Tooltip delayDuration={500}>
+      <TooltipTrigger asChild>
+        <Button
+          size="icon"
+          variant={props.active ? "default" : "ghost"}
+          onClick={props.onClick}
+        >
+          {props.icon}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="right">
+        <div className="flex flex-col">
+          <p className="text-sm">{props.tooltip.title}</p>
+          <p className="text-xs text-muted-foreground">
+            {props.tooltip.description}
+          </p>
+        </div>
+      </TooltipContent>
+    </Tooltip>
   );
 }

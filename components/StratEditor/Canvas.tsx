@@ -311,12 +311,14 @@ export default function StratEditorCanvas<A extends Asset>({
     {
       shortcut: ["Backspace", "Delete"],
       action() {
+        if (document.activeElement !== svgRef.current) return;
         onAssetChange(assets.filter((a) => !selectedAssets.includes(a.id)));
       },
     },
     {
       shortcut: ["Escape"],
       action() {
+        if (document.activeElement !== svgRef.current) return;
         setSelectedAssets([]);
       },
     },
@@ -325,8 +327,10 @@ export default function StratEditorCanvas<A extends Asset>({
         key: "a",
         ctrlKey: true,
       },
-      action() {
+      action(e) {
+        if (document.activeElement !== svgRef.current) return;
         setSelectedAssets(assets.map((a) => a.id));
+        e.preventDefault();
       },
     },
   ]);
@@ -342,6 +346,8 @@ export default function StratEditorCanvas<A extends Asset>({
           e.stopPropagation();
           setSelectedAssets([]);
         }}
+        tabIndex={0}
+        focusable
       >
         {/* Render map background */}
         {map?.floors.map((floor, i) => (

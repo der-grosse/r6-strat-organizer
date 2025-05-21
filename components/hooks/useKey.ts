@@ -56,7 +56,7 @@ class KeyPressHandlerClass {
     });
     for (const shortcut of fittingShortcuts) {
       try {
-        shortcut.action();
+        shortcut.action(event);
       } catch (e) {
         console.error(
           `Error while executing shortcut ${KeyPressHandlerClass.stringifyShortcut(
@@ -64,9 +64,6 @@ class KeyPressHandlerClass {
           )} ${shortcut.name ?? "[UNNAMED]"}`
         );
       }
-    }
-    if (fittingShortcuts.length > 0) {
-      event.preventDefault();
     }
   };
 
@@ -91,7 +88,7 @@ type ShortcutKey = {
 
 export interface ShortCut {
   shortcut: ShortcutKey | string | ShortcutKey[] | string[];
-  action: () => void;
+  action: (e: KeyboardEvent) => void;
   /**
    * currently only used for debugging
    */
@@ -104,7 +101,7 @@ interface InternalShortCut {
     shiftKey?: boolean;
     altKey?: boolean;
   };
-  action: () => void;
+  action: (e: KeyboardEvent) => void;
   /**
    * currently only used for debugging
    */

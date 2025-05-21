@@ -1,4 +1,5 @@
 "use server";
+import { revalidatePath } from "next/cache";
 import ActiveStratDB from "./activeStrat";
 import { getPayload } from "./auth/getPayload";
 import StratsDB from "./stratsDB";
@@ -17,10 +18,22 @@ export async function getStrat(id: number) {
 
 export async function getActive() {
   const user = await getPayload();
-  const activeStrat = ActiveStratDB.getActiveStrat(user!);
+  const activeStrat = await ActiveStratDB.getActiveStrat(user!);
   return activeStrat;
 }
 
-export async function setActive(user: JWTPayload, newStrat: Strat["id"]) {
-  ActiveStratDB.setActiveStrat(user, newStrat);
+export async function setActive(newStrat: Strat["id"]) {
+  const user = await getPayload();
+  await ActiveStratDB.setActiveStrat(user!, newStrat);
+}
+
+export async function updateStrat(
+  updatedStrat: Partial<Strat> & Pick<Strat, "id">
+) {
+  const user = await getPayload();
+  await StratsDB.update(user!, updatedStrat);
+
+  revalidatePath("/editor/[id]");
+  revalidatePath("/strats");
+  revalidatePath("/strat/[id]");
 }

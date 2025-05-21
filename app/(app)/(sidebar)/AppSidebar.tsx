@@ -28,13 +28,6 @@ import {
 import Link from "next/link";
 import { useFilter } from "../../../components/context/FilterContext";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../../../components/ui/dropdown-menu";
-import MAPS from "@/src/static/maps";
-import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
@@ -64,6 +57,8 @@ import { getTeamName } from "@/src/auth/team";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/src/auth/auth";
+import MapSelector from "@/components/MapSelector";
+import SiteSelector from "@/components/SiteSelector";
 
 export function AppSidebar() {
   const router = useRouter();
@@ -161,83 +156,39 @@ export function AppSidebar() {
                 <SidebarMenu>
                   {/* map selection */}
                   <SidebarMenuItem>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <SidebarMenuButton>
-                          {filter.map ?? "Select map"}
-                          <ChevronRight className="ml-auto" />
-                        </SidebarMenuButton>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent side="right" className="w-56">
-                        <DropdownMenuItem
-                          key="clear"
-                          onClick={() => {
-                            setFilter({
-                              ...filter,
-                              map: null,
-                              site: null,
-                            });
-                          }}
-                        >
-                          <em>Clear</em>
-                        </DropdownMenuItem>
-                        {MAPS.map((map) => (
-                          <DropdownMenuItem
-                            key={map.name}
-                            onClick={() => {
-                              setFilter((filter) => ({
-                                ...filter,
-                                map: map.name,
-                                site:
-                                  filter.map === map.name ? filter.site : null,
-                              }));
-                            }}
-                          >
-                            {map.name}
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <MapSelector
+                      map={filter.map}
+                      onChange={(map) => {
+                        if (!map) {
+                          setFilter({
+                            ...filter,
+                            map: null,
+                            site: null,
+                          });
+                        } else {
+                          setFilter((filter) => ({
+                            ...filter,
+                            map: map.name,
+                            site: filter.map === map.name ? filter.site : null,
+                          }));
+                        }
+                      }}
+                      trigger={SidebarMenuButton}
+                    />
                   </SidebarMenuItem>
                   {/* site selection */}
                   <SidebarMenuItem>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild disabled={!filter.map}>
-                        <SidebarMenuButton>
-                          {filter.site ??
-                            (filter.map ? "Select site" : "Select map first")}
-                          <ChevronRight className="ml-auto" />
-                        </SidebarMenuButton>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent side="right" className="w-56">
-                        <DropdownMenuItem
-                          key="clear"
-                          onClick={() => {
-                            setFilter({
-                              ...filter,
-                              site: null,
-                            });
-                          }}
-                        >
-                          <em>Clear</em>
-                        </DropdownMenuItem>
-                        {MAPS.find((map) => map.name === filter.map)?.sites.map(
-                          (site) => (
-                            <DropdownMenuItem
-                              key={site}
-                              onClick={() => {
-                                setFilter({
-                                  ...filter,
-                                  site,
-                                });
-                              }}
-                            >
-                              {site}
-                            </DropdownMenuItem>
-                          )
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <SiteSelector
+                      map={filter.map}
+                      site={filter.site}
+                      onChange={(site) =>
+                        setFilter({
+                          ...filter,
+                          site,
+                        })
+                      }
+                      trigger={SidebarMenuButton}
+                    />
                   </SidebarMenuItem>
                   {/* banned OPs selector */}
                   <SidebarMenuItem>
@@ -322,7 +273,7 @@ export function AppSidebar() {
                             className="inline h-auto"
                             onClick={async () => {
                               if (isLeading) {
-                                await setActive(user!, strat.id);
+                                await setActive(strat.id);
                                 if (window.location.pathname !== "/") {
                                   router.push("/");
                                 }

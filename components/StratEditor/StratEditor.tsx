@@ -75,6 +75,7 @@ export function StratEditor({
           },
         ])
       }
+      strat={strat}
     >
       <StratEditorCanvas
         map={map}

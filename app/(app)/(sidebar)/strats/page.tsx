@@ -1,6 +1,5 @@
 "use client";
 import { useFilter } from "@/components/context/FilterContext";
-import { useUser } from "@/components/context/UserContext";
 import { CreateStratDialog } from "@/components/CreateStratDialog";
 import { DeleteStratDialog } from "@/components/DeleteStratDialog";
 import OperatorIcon from "@/components/OperatorIcon";
@@ -17,12 +16,9 @@ import { DEFENDERS } from "@/src/static/operator";
 import { setActive } from "@/src/strats";
 import { Eye, Pencil } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export default function StratsPage() {
   const { filteredStrats, isLeading } = useFilter();
-  const { user } = useUser();
-  const router = useRouter();
   return (
     <div className="w-full p-4">
       <div className="mb-4">
@@ -64,7 +60,7 @@ export default function StratsPage() {
                     className="cursor-pointer"
                     onClick={async () => {
                       if (isLeading) {
-                        await setActive(user!, strat.id);
+                        await setActive(strat.id);
                       }
                     }}
                   >

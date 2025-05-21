@@ -50,18 +50,22 @@ class StratsDBClass {
     const newStrat = { ...strat, ...updatedStrat };
     db.update(strats).set(newStrat).where(eq(strats.id, updatedStrat.id)).run();
 
-    db.delete(powerOPs).where(eq(powerOPs.stratsID, updatedStrat.id)).run();
-    for (const op of updatedStrat.powerOPs ?? []) {
-      db.insert(powerOPs).values({ op, stratsID: updatedStrat.id }).run();
+    if (updatedStrat.powerOPs) {
+      db.delete(powerOPs).where(eq(powerOPs.stratsID, updatedStrat.id)).run();
+      for (const op of updatedStrat.powerOPs ?? []) {
+        db.insert(powerOPs).values({ op, stratsID: updatedStrat.id }).run();
+      }
     }
 
-    db.delete(rotationIndexes)
-      .where(eq(rotationIndexes.stratsID, updatedStrat.id))
-      .run();
-    for (const rotationIndex of updatedStrat.rotationIndex ?? []) {
-      db.insert(rotationIndexes)
-        .values({ rotationIndex, stratsID: updatedStrat.id })
+    if (updatedStrat.rotationIndex) {
+      db.delete(rotationIndexes)
+        .where(eq(rotationIndexes.stratsID, updatedStrat.id))
         .run();
+      for (const rotationIndex of updatedStrat.rotationIndex) {
+        db.insert(rotationIndexes)
+          .values({ rotationIndex, stratsID: updatedStrat.id })
+          .run();
+      }
     }
 
     return Promise.resolve(undefined);

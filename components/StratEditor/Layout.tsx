@@ -22,6 +22,7 @@ export default function StratEditorLayout(
         props.onAssetAdd(...args);
         setSidebarOpen(false);
       }}
+      strat={props.strat}
     />
   );
 
