@@ -60,20 +60,12 @@ import { logout } from "@/src/auth/auth";
 import MapSelector from "@/components/MapSelector";
 import SiteSelector from "@/components/SiteSelector";
 
-export function AppSidebar() {
+export function AppSidebar(props: { teamName: string }) {
   const router = useRouter();
-  const { user } = useUser();
   const { filter, setFilter, filteredStrats, isLeading, setIsLeading } =
     useFilter();
-  const [teamName, setTeamName] = useState<string | null>(null);
 
   const bannedOPInput = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (user?.teamID) {
-      getTeamName().then((name) => setTeamName(name ?? null));
-    }
-  }, [user?.teamID]);
 
   return (
     <Sidebar variant="inset">
@@ -85,7 +77,7 @@ export function AppSidebar() {
               className="w-6 h-6 mr-1 inline-block align-sub"
               alt="R6 Strats Logo"
             />
-            {teamName}
+            {props.teamName}
           </h2>
           <Button
             variant="ghost"

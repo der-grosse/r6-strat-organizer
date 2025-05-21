@@ -1,24 +1,14 @@
-"use client";
+import { getTeamName } from "@/src/auth/team";
+import SidebarLayout from "./SidebarLayout";
 
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { AppSidebar } from "./AppSidebar";
-
-export default function SidebarLayout({
+export default async function SidebarLayoutPage({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <SidebarProvider defaultOpen>
-      <AppSidebar />
-      <SidebarInset>
-        <SidebarTrigger className="absolute top-2 left-2 z-10 cursor-pointer" />
-        {children}
-      </SidebarInset>
-    </SidebarProvider>
-  );
+  const teamName = await getTeamName();
+  if (!teamName) {
+    return <div>Error loading team</div>;
+  }
+  return <SidebarLayout teamName={teamName}>{children}</SidebarLayout>;
 }

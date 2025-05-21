@@ -20,11 +20,22 @@ import Link from "next/link";
 export default function StratsPage() {
   const { filteredStrats, isLeading } = useFilter();
   return (
-    <div className="w-full p-4">
-      <div className="mb-4">
-        <CreateStratDialog />
+    <div className="w-full h-full p-4 flex flex-col gap-4">
+      <div className="grid grid-cols-3 gap-1 items-center">
+        <div />
+        <p className="text-center text-muted-foreground leading-none">
+          All Strats
+          <br />
+          <span className="text-xs leading-none">
+            (total {filteredStrats.length})
+          </span>
+        </p>
+        <div className="flex justify-end">
+          <CreateStratDialog />
+        </div>
       </div>
-      <Table>
+      <Table className="mb-2">
+        {/* mb-2 needed to prevent overflow of table component due to -my-2 used in table cells */}
         <TableHeader>
           <TableRow>
             <TableHead></TableHead>

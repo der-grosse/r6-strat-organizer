@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useUser } from "@/components/context/UserContext";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   removeUser,
   promoteToAdmin,
@@ -70,6 +70,7 @@ export interface TeamManagementProps {
 export default function TeamManagement(props: TeamManagementProps) {
   const { user } = useUser();
   const [isEditingTeamName, setIsEditingTeamName] = useState(false);
+  const teamNameInputRef = useRef<HTMLInputElement | null>(null);
   const [newTeamName, setNewTeamName] = useState("");
   const [isChangeUsernameOpen, setIsChangeUsernameOpen] = useState(false);
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
@@ -138,7 +139,6 @@ export default function TeamManagement(props: TeamManagementProps) {
       await updateTeamName(newTeamName);
       setIsEditingTeamName(false);
       toast.success("Team name updated successfully");
-      window.location.reload();
     } catch (err) {
       toast.error(
         err instanceof Error ? err.message : "Failed to update team name"
@@ -191,8 +191,14 @@ export default function TeamManagement(props: TeamManagementProps) {
               {isEditingTeamName ? (
                 <>
                   <Input
+                    ref={teamNameInputRef}
                     value={newTeamName}
                     onChange={(e) => setNewTeamName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleUpdateTeamName();
+                      }
+                    }}
                     placeholder="Enter new team name"
                     className="max-w-sm"
                   />
@@ -223,6 +229,9 @@ export default function TeamManagement(props: TeamManagementProps) {
                     onClick={() => {
                       setIsEditingTeamName(true);
                       setNewTeamName(props.teamName ?? "");
+                      setTimeout(() => {
+                        teamNameInputRef.current?.focus();
+                      }, 0);
                     }}
                   >
                     <Edit2 className="h-4 w-4" />
