@@ -5,6 +5,7 @@ import { cn } from "@/src/utils";
 import { useCallback, useMemo, useState } from "react";
 import { TeamMember } from "@/src/auth/team";
 import ColorPickerDialog from "../ColorPickerDialog";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 export interface TeamUsers {
   id: number;
@@ -36,33 +37,39 @@ export default function useMountAssets(
         <GripVertical />
         <div className="bg-border w-[1px] h-6" />
         {teamMembers.map((user) => (
-          <Button
-            key={user.id}
-            size="icon"
-            variant="ghost"
-            className={cn(
-              user.id === asset.player && "bg-card dark:hover:bg-card"
-            )}
-            onMouseDown={(e) => e.stopPropagation()}
-            onClick={() => {
-              updateAsset({
-                ...asset,
-                player: user.id,
-                customColor: undefined,
-              });
-            }}
-          >
-            <div
-              className={cn(
-                "w-4 h-4 rounded-full",
-                !user.defaultColor &&
-                  "outline outline-2 outline-offset-1 outline-muted"
-              )}
-              style={{
-                background: user.defaultColor ?? undefined,
-              }}
-            />
-          </Button>
+          <Tooltip delayDuration={200} key={user.id}>
+            <TooltipTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                className={cn(
+                  user.id === asset.player && "bg-card dark:hover:bg-card"
+                )}
+                onMouseDown={(e) => e.stopPropagation()}
+                onClick={() => {
+                  updateAsset({
+                    ...asset,
+                    player: user.id,
+                    customColor: undefined,
+                  });
+                }}
+              >
+                <div
+                  className={cn(
+                    "w-4 h-4 rounded-full",
+                    !user.defaultColor &&
+                      "outline outline-2 outline-offset-1 outline-muted"
+                  )}
+                  style={{
+                    background: user.defaultColor ?? undefined,
+                  }}
+                />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              <p className="text-sm">{user.name}</p>
+            </TooltipContent>
+          </Tooltip>
         ))}
         <Button
           size="icon"
