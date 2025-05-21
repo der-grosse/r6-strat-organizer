@@ -14,9 +14,10 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import StratEditorGadgetsSidebar from "./Gadgets";
 import StratEditorMetaSidebar from "./Meta";
+import { cn } from "@/src/utils";
 
 export interface StratEditorSidebarProps {
   onAssetAdd: (asset: Asset) => void;
@@ -34,21 +35,28 @@ export default function StratEditorSidebar(
     | "operator-assets"
   >("meta");
 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const onAssetAdd = useCallback(
+    (asset: Asset) => {
+      props.onAssetAdd(asset);
+      setSidebarOpen(false);
+    },
+    [props.onAssetAdd]
+  );
+
   const sidebarContent = useMemo(() => {
     switch (openTab) {
       case "operator-assets":
         return (
           <StratEditorOperatorsSidebar
-            onAssetAdd={props.onAssetAdd}
+            onAssetAdd={onAssetAdd}
             selectedOPs={[]}
           />
         );
       case "operator-gadgets":
         return (
-          <StratEditorGadgetsSidebar
-            onAssetAdd={props.onAssetAdd}
-            selectedOPs={[]}
-          />
+          <StratEditorGadgetsSidebar onAssetAdd={onAssetAdd} selectedOPs={[]} />
         );
       case "meta":
         return <StratEditorMetaSidebar strat={props.strat} />;
@@ -59,15 +67,18 @@ export default function StratEditorSidebar(
           </div>
         );
     }
-  }, [openTab, props.onAssetAdd, props.strat]);
+  }, [openTab, onAssetAdd, props.strat]);
 
   return (
-    <div className="flex flex-1">
-      <div className="flex flex-col h-screen">
+    <div className="flex relative z-10">
+      <div className="flex flex-col h-screen z-10 bg-background">
         {/* Meta data (name, description) */}
         <SidebarButton
           icon={<Info />}
-          onClick={() => setOpenTab("meta")}
+          onClick={() => {
+            setOpenTab("meta");
+            setSidebarOpen((open) => (openTab === "meta" ? !open : true));
+          }}
           tooltip={{
             title: "Strat Meta Info",
             description: "Set the name and description of the strat",
@@ -77,7 +88,10 @@ export default function StratEditorSidebar(
         {/* player OPs */}
         <SidebarButton
           icon={<UsersRound />}
-          onClick={() => setOpenTab("player-ops")}
+          onClick={() => {
+            setOpenTab("player-ops");
+            setSidebarOpen((open) => (openTab === "player-ops" ? !open : true));
+          }}
           tooltip={{
             title: "Operator Lineup",
             description:
@@ -88,7 +102,12 @@ export default function StratEditorSidebar(
         {/* operator gadget assets */}
         <SidebarButton
           icon={<Fingerprint />}
-          onClick={() => setOpenTab("operator-gadgets")}
+          onClick={() => {
+            setOpenTab("operator-gadgets");
+            setSidebarOpen((open) =>
+              openTab === "operator-gadgets" ? !open : true
+            );
+          }}
           tooltip={{
             title: "Operator Gadgets",
             description: "Add primary and secondary operator gadgets",
@@ -98,7 +117,12 @@ export default function StratEditorSidebar(
         {/* layout assets - rotate, reinforcement */}
         <SidebarButton
           icon={<LayoutGrid />}
-          onClick={() => setOpenTab("layout-assets")}
+          onClick={() => {
+            setOpenTab("layout-assets");
+            setSidebarOpen((open) =>
+              openTab === "layout-assets" ? !open : true
+            );
+          }}
           tooltip={{
             title: "Layout Assets",
             description: "Add rotates, headholes, barricades or reinforcements",
@@ -108,7 +132,12 @@ export default function StratEditorSidebar(
         {/* operator assets - extra operators */}
         <SidebarButton
           icon={<CircleUserRound />}
-          onClick={() => setOpenTab("operator-assets")}
+          onClick={() => {
+            setOpenTab("operator-assets");
+            setSidebarOpen((open) =>
+              openTab === "operator-assets" ? !open : true
+            );
+          }}
           tooltip={{
             title: "Operator Assets",
             description: "Add operators or player locators to the map",
@@ -117,7 +146,14 @@ export default function StratEditorSidebar(
         />
       </div>
       <Separator orientation="vertical" className="h-full" />
-      <div className="flex-1 relative">{sidebarContent}</div>
+      <div
+        className={cn(
+          "bg-background flex-1 h-full absolute xl:relative transition-[left] duration-300 max-lg:w-[50vw]",
+          sidebarOpen ? "max-lg:left-[100%]" : "max-lg:-left-[50vw]"
+        )}
+      >
+        {sidebarContent}
+      </div>
     </div>
   );
 }

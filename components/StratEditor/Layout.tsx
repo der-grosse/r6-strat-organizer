@@ -13,44 +13,18 @@ export default function StratEditorLayout(
     } & StratEditorSidebarProps
   >
 ) {
-  // only used for small screen
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
   const sidebar = (
     <StratEditorSidebar
       onAssetAdd={(...args) => {
         props.onAssetAdd(...args);
-        setSidebarOpen(false);
       }}
       strat={props.strat}
     />
   );
 
   return (
-    <div className="h-screen w-screen overflow-hidden xl:grid xl:grid-cols-[1fr_4fr]">
-      {/* small screen sidebar */}
-      <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-        <SheetTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="xl:hidden absolute top-2 left-2 z-10"
-          >
-            <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle Menu</span>
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="left" className="w-[300px] p-0" hideClose>
-          <SheetTitle className="sr-only">Toolbar</SheetTitle>
-          {sidebar}
-        </SheetContent>
-      </Sheet>
-
-      {/* large screen sidebar */}
-      <div className="hidden xl:flex flex-row">
-        {sidebar}
-        <Separator orientation="vertical" className="mx-2 hidden xl:block" />
-      </div>
+    <div className="h-screen w-screen overflow-hidden grid grid-cols-[auto_1fr] xl:grid-cols-[1fr_4fr]">
+      {sidebar}
 
       {/* Canvas */}
       <div className="flex-1 relative h-screen overflow-hidden py-0 block">
