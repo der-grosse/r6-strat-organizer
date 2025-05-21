@@ -8,6 +8,7 @@ import { generateJWT } from "./jwt";
 import { generate } from "random-words";
 import { getPayload } from "./getPayload";
 import { create } from "domain";
+import { revalidatePath } from "next/cache";
 
 async function hashPassword(password: string) {
   const salt = await bcrypt.genSalt(10);
@@ -221,6 +222,9 @@ export async function createInviteKey() {
     })
     .run();
 
+  // team page
+  revalidatePath("/team");
+
   return inviteKey;
 }
 
@@ -246,6 +250,10 @@ export async function deleteInviteKey(inviteKey: string) {
   if (invite.teamID !== user.teamID || invite.usedAt)
     throw new Error("Invalid request");
   db.delete(teamInvites).where(eq(teamInvites.inviteKey, inviteKey)).run();
+
+  // team page
+  revalidatePath("/team");
+
   return true;
 }
 
@@ -261,6 +269,9 @@ export async function promoteToAdmin(userID: number) {
   db.update(users).set({ isAdmin: 1 }).where(eq(users.id, userID)).run();
 
   await resetJWT();
+
+  // team page
+  revalidatePath("/team");
 
   return true;
 }
@@ -287,6 +298,9 @@ export async function demoteFromAdmin(userID: number) {
 
   db.update(users).set({ isAdmin: 0 }).where(eq(users.id, userID)).run();
 
+  // team page
+  revalidatePath("/team");
+
   return true;
 }
 
@@ -306,6 +320,11 @@ export async function updateTeamName(newName: string) {
   }
 
   db.update(team).set({ name: newName }).where(eq(team.id, user.teamID)).run();
+
+  // team page
+  revalidatePath("/team");
+  // sidebar
+  revalidatePath("/", "layout");
 
   return true;
 }
@@ -369,4 +388,9 @@ export async function setUserColor(color: string, userID?: User["id"]) {
     .set({ defaultColor: color })
     .where(eq(users.id, userID))
     .run();
+
+  // team page
+  revalidatePath("/team");
+  // sidebar
+  revalidatePath("/");
 }
