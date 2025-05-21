@@ -9,7 +9,7 @@ export interface PrimaryGadgetIconProps {
 export default function PrimaryGadgetIcon(props: PrimaryGadgetIconProps) {
   return (
     <img
-      src={"MISSING"}
+      src={"/MISSING"}
       alt={props.id}
       className={cn("w-8 h-8", props.className)}
       draggable={false}

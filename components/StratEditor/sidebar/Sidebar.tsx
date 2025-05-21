@@ -147,9 +147,10 @@ export default function StratEditorSidebar(
       </div>
       <Separator orientation="vertical" className="h-full" />
       <div
+        style={{ "--sidebar-width": "min(90vw, 20rem)" } as React.CSSProperties}
         className={cn(
-          "bg-background flex-1 h-full absolute xl:relative transition-[left] duration-300 max-lg:w-[50vw]",
-          sidebarOpen ? "max-lg:left-[100%]" : "max-lg:-left-[50vw]"
+          "bg-background flex-1 h-full absolute xl:relative transition-[left] duration-300 max-xl:w-(--sidebar-width)",
+          sidebarOpen ? "max-xl:left-[100%]" : "max-xl:-left-(--sidebar-width)"
         )}
       >
         {sidebarContent}
