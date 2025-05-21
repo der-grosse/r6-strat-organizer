@@ -1,5 +1,5 @@
 import { StratEditor } from "@/components/StratEditor/StratEditor";
-import { getTeamUsers } from "@/src/auth/auth";
+import { getTeamUsers } from "@/src/auth/team";
 
 export default async function StratEditorPage() {
   const teamMembers = await getTeamUsers();

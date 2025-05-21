@@ -54,12 +54,12 @@ export default function Login() {
         Login
       </Button>
       <p className="text-sm text-muted-foreground">
-        Don't have a team?{" "}
+        Don't have an account?{" "}
         <Link
           href="/auth/signup"
           className="text-primary hover:text-primary/90 hover:underline"
         >
-          Create one
+          Create a team or join existing team
         </Link>
       </p>
       <p className="text-lg text-destructive min-h-[2rem]">

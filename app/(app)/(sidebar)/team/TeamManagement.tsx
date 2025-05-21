@@ -13,13 +13,11 @@ import {
   removeUser,
   promoteToAdmin,
   demoteFromAdmin,
-  createInviteKey,
-  deleteInviteKey,
   updateTeamName,
   changeUsername,
   changePassword,
   setUserColor,
-} from "@/src/auth/auth";
+} from "@/src/auth/team";
 import {
   Table,
   TableBody,
@@ -59,6 +57,7 @@ import ColorPickerDialog, {
   ColorButton,
   DEFAULT_COLORS,
 } from "@/components/ColorPickerDialog";
+import { createInviteKey, deleteInviteKey } from "@/src/auth/inviteKeys";
 
 export interface TeamManagementProps {
   teamUsers: {

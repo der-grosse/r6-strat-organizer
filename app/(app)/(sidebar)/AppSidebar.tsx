@@ -60,9 +60,10 @@ import {
 import OperatorIcon from "../../../components/OperatorIcon";
 import { getGoogleDrawingsEditURL } from "@/src/googleDrawings";
 import { useUser } from "../../../components/context/UserContext";
-import { logout, getTeamName } from "@/src/auth/auth";
+import { getTeamName } from "@/src/auth/team";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import { logout } from "@/src/auth/auth";
 
 export function AppSidebar() {
   const router = useRouter();

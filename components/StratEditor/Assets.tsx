@@ -1,10 +1,9 @@
-import { Brush, Edit, Eye, EyeOff, GripVertical, Trash } from "lucide-react";
+import { Brush, Eye, EyeOff, GripVertical, Trash } from "lucide-react";
 import { Button } from "../ui/button";
 import Operator from "./assets/Operator";
 import { cn } from "@/src/utils";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { getTeamUsers } from "@/src/auth/auth";
-import { Separator } from "../ui/separator";
+import { getTeamUsers } from "@/src/auth/team";
 import ColorPickerDialog from "../ColorPickerDialog";
 
 export interface TeamUsers {

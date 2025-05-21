@@ -1,6 +1,7 @@
-import { getTeamUsers, getInviteKeys, getTeamName } from "@/src/auth/auth";
 import TeamManagement from "./TeamManagement";
 import { getPayload } from "@/src/auth/getPayload";
+import { getInviteKeys } from "@/src/auth/inviteKeys";
+import { getTeamName, getTeamUsers } from "@/src/auth/team";
 
 export default async function TeamManagementPage() {
   const user = await getPayload();
