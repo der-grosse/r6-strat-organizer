@@ -1,6 +1,8 @@
 import { StratEditor } from "@/components/StratEditor/StratEditor";
+import { getTeamUsers } from "@/src/auth/auth";
 
-export default function StratEditorPage() {
+export default async function StratEditorPage() {
+  const teamMembers = await getTeamUsers();
   return (
     <div className="h-screen w-screen overflow-hidden">
       <StratEditor

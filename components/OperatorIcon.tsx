@@ -6,7 +6,7 @@ export interface OperatorIconProps {
   className?: string;
 }
 
-const OPERATORS = DEFENDERS.concat(ATTACKERS);
+const OPERATORS = [...DEFENDERS, ...ATTACKERS];
 
 export default function OperatorIcon(props: OperatorIconProps) {
   const op =
