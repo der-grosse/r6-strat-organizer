@@ -1,6 +1,6 @@
 import { StratEditor } from "@/components/StratEditor/StratEditor";
 import { getTeamUsers } from "@/src/auth/team";
-import { getStrat } from "@/src/strats";
+import { getStrat } from "@/src/strats/strats";
 import { CircleX } from "lucide-react";
 
 export default async function StratEditorPage({

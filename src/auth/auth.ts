@@ -1,6 +1,6 @@
 "use server";
 import { eq } from "drizzle-orm";
-import db from "../db";
+import db from "../db/db";
 import { teamInvites, users } from "../db/schema";
 import * as bcrypt from "bcrypt-ts";
 import { cookies } from "next/headers";

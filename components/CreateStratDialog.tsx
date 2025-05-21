@@ -32,7 +32,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { DEFENDERS } from "@/src/static/operator";
-import { createStrat } from "@/src/actions/strats";
+import { createStrat } from "@/src/strats/strats";
 import { toast } from "sonner";
 import MAPS from "@/src/static/maps";
 import {
@@ -49,7 +49,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import OperatorIcon from "@/components/OperatorIcon";
-import { useFilter } from "@/components/context/FilterContext";
 
 const formSchema = z.object({
   map: z.string().min(1, "Map is required"),
@@ -63,7 +62,6 @@ const formSchema = z.object({
 export function CreateStratDialog() {
   const [open, setOpen] = useState(false);
   const { user } = useUser();
-  const { refreshStrats } = useFilter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -110,7 +108,6 @@ export function CreateStratDialog() {
 
       setOpen(false);
       form.reset();
-      await refreshStrats();
       toast.success("Strat created successfully");
     } catch (error) {
       console.error("Error creating strat:", error);

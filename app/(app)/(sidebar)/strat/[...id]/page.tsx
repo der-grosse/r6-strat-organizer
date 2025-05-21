@@ -1,5 +1,5 @@
 import StratDisplay from "@/components/StratDisplay";
-import { getStrat } from "@/src/strats";
+import { getStrat } from "@/src/strats/strats";
 
 export default async function Page({
   params: paramsRaw,

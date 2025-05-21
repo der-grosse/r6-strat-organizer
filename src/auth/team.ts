@@ -1,6 +1,6 @@
 "use server";
 import { and, eq } from "drizzle-orm";
-import db from "../db";
+import db from "../db/db";
 import { team, users } from "../db/schema";
 import { getPayload } from "./getPayload";
 import { revalidatePath } from "next/cache";

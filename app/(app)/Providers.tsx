@@ -11,6 +11,7 @@ export interface ProvidersProps {
   cookieFilter?: Filter;
   jwt?: string;
   defaultLeading?: boolean;
+  allStrats: Strat[];
 }
 
 export default function Providers(props: Readonly<ProvidersProps>) {
@@ -19,6 +20,7 @@ export default function Providers(props: Readonly<ProvidersProps>) {
       <FilterProvider
         defaultFilter={props.cookieFilter}
         defaultLeading={props.defaultLeading}
+        allStrats={props.allStrats}
       >
         <DragProvider>
           <ResizeProvider>{props.children}</ResizeProvider>

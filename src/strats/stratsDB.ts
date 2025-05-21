@@ -1,6 +1,6 @@
 import { and, eq, sql } from "drizzle-orm";
-import db from "./db";
-import { powerOPs, rotationIndexes, strats } from "./db/schema";
+import db from "../db/db";
+import { powerOPs, rotationIndexes, strats } from "../db/schema";
 
 class StratsDBClass {
   async create(user: User, strat: Strat): Promise<number> {

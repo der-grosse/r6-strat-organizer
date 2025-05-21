@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { updateStrat } from "@/src/strats";
+import { updateStrat } from "@/src/strats/strats";
 import { FolderPen, MapPinned } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 

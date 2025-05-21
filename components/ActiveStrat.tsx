@@ -1,5 +1,5 @@
 "use client";
-import { getActive } from "@/src/strats";
+import { getActive } from "@/src/strats/strats";
 import { useEffect, useState } from "react";
 import StratDisplay from "./StratDisplay";
 

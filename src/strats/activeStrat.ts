@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
-import db from "./db";
-import { activeStrat } from "./db/schema";
+import db from "../db/db";
+import { activeStrat } from "../db/schema";
 import StratsDB from "./stratsDB";
 
 class ActiveStratClass {

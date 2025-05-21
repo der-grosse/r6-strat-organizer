@@ -32,7 +32,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../../../components/ui/collapsible";
-import { setActive } from "@/src/strats";
+import { setActive } from "@/src/strats/strats";
 import { Checkbox } from "../../../components/ui/checkbox";
 import { useRouter } from "next/navigation";
 import { DEFENDERS } from "@/src/static/operator";

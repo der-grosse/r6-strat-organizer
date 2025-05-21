@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
-import { deleteStrat } from "@/src/actions/strats";
+import { deleteStrat } from "@/src/strats/strats";
 import { toast } from "sonner";
 import { useFilter } from "@/components/context/FilterContext";
 
@@ -26,7 +26,6 @@ export function DeleteStratDialog({
   stratName,
 }: Readonly<DeleteStratDialogProps>) {
   const [open, setOpen] = useState(false);
-  const { refreshStrats } = useFilter();
 
   async function handleDelete() {
     try {
@@ -37,7 +36,6 @@ export function DeleteStratDialog({
       }
 
       setOpen(false);
-      await refreshStrats();
       toast.success("Strat deleted successfully");
     } catch (error) {
       console.error("Error deleting strat:", error);

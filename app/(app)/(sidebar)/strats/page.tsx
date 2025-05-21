@@ -13,7 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DEFENDERS } from "@/src/static/operator";
-import { setActive } from "@/src/strats";
+import { setActive } from "@/src/strats/strats";
 import { Eye, Pencil } from "lucide-react";
 import Link from "next/link";
 

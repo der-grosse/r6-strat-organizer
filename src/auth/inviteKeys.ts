@@ -1,6 +1,6 @@
 "use server";
 import { eq } from "drizzle-orm";
-import db from "../db";
+import db from "../db/db";
 import { teamInvites } from "../db/schema";
 import { generate } from "random-words";
 import { getPayload } from "./getPayload";
