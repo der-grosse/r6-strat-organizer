@@ -2,7 +2,9 @@ import {
   getGoogleDrawingsEditURL,
   getGoogleDrawingsPreviewURL,
 } from "@/src/googleDrawings";
-import { Ban } from "lucide-react";
+import { Ban, Pencil } from "lucide-react";
+import Link from "next/link";
+import { Button } from "./ui/button";
 
 export interface StratDisplayProps {
   strat: Strat | null;
@@ -28,6 +30,18 @@ export default function StratDisplay(props: StratDisplayProps) {
             {props.strat.site}
             {" | "}
             {props.strat.name}
+            <Link
+              href={`/editor/${props.strat.id}`}
+              className="text-muted-foreground hover:text-primary"
+            >
+              <Button
+                variant="ghost"
+                size="icon"
+                className="cursor-pointer -my-2"
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </>
       ) : (

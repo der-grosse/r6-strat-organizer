@@ -1,7 +1,7 @@
 "use client";
 import { useFilter } from "@/components/context/FilterContext";
 import { CreateStratDialog } from "@/components/CreateStratDialog";
-import { DeleteStratDialog } from "@/components/DeleteStratDialog";
+import { DeleteStratDialog } from "@/app/(app)/(sidebar)/strats/DeleteStratDialog";
 import OperatorIcon from "@/components/OperatorIcon";
 import { Button } from "@/components/ui/button";
 import {
@@ -43,7 +43,7 @@ export default function StratsPage() {
               <TableCell>{strat.site}</TableCell>
               <TableCell>{strat.name}</TableCell>
               <TableCell>
-                <div className="flex gap-1">
+                <div className="flex gap-1 -my-2">
                   {strat.powerOPs
                     .map((op) => DEFENDERS.find((o) => o.name === op))
                     .filter(Boolean)
@@ -52,10 +52,10 @@ export default function StratsPage() {
                     ))}
                 </div>
               </TableCell>
-              <TableCell className="flex gap-1">
+              <TableCell className="flex gap-1 -my-2">
                 <Link href={isLeading ? "/" : `/strat/${strat.id}`}>
                   <Button
-                    variant="outline"
+                    variant="ghost"
                     size="icon"
                     className="cursor-pointer"
                     onClick={async () => {
@@ -69,7 +69,7 @@ export default function StratsPage() {
                 </Link>
                 <Link href={`/editor/${strat.id}`}>
                   <Button
-                    variant="outline"
+                    variant="ghost"
                     size="icon"
                     className="cursor-pointer"
                   >

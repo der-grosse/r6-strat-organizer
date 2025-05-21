@@ -1,9 +1,4 @@
 "use client";
-import { Menu, Save } from "lucide-react";
-import { Button } from "../ui/button";
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
-import { Separator } from "../ui/separator";
-import { useState } from "react";
 import StratEditorSidebar, { StratEditorSidebarProps } from "./sidebar/Sidebar";
 
 export default function StratEditorLayout(
@@ -32,17 +27,6 @@ export default function StratEditorLayout(
           {props.children}
         </div>
       </div>
-
-      {/* Save Button */}
-      <Button
-        className="absolute top-4 right-4"
-        size="icon"
-        onClick={() => {
-          alert("Not implemented");
-        }}
-      >
-        <Save />
-      </Button>
     </div>
   );
 }

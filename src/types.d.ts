@@ -35,7 +35,13 @@ interface JWTPayload {
 
 interface StratDrawing extends Strat {
   assets: PlacedAsset[];
+  operators: PickedOperator[];
 }
+
+type PickedOperator = {
+  operator: string;
+  player?: number;
+};
 
 type PlacedAsset = Asset & {
   position: Position;
@@ -51,7 +57,14 @@ interface Size {
   height: number;
 }
 
-type Asset = BaseAsset & (MarkerAsset | OperatorAsset | GadgetAsset);
+type Asset = BaseAsset &
+  (
+    | MarkerAsset
+    | OperatorAsset
+    | GadgetAsset
+    | RotateAsset
+    | ReinforcementAsset
+  );
 
 interface BaseAsset {
   id: string;
@@ -62,6 +75,23 @@ interface BaseAsset {
 interface MarkerAsset {
   id: `marker-${string}`;
   type: "marker";
+}
+
+interface ReinforcementAsset {
+  id: `reinforcement-${string}`;
+  type: "reinforcement";
+}
+
+interface RotateAsset {
+  id: `rotate-${string}`;
+  type: "rotate";
+  variant:
+    | "full"
+    | "crouch"
+    | "jump"
+    | "headholes"
+    | "floorholes"
+    | "ceilingholes";
 }
 
 interface OperatorAsset {

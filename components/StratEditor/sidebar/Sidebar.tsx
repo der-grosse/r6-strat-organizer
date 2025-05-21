@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import StratEditorOperatorsSidebar from "./Operator";
 import {
   CircleUserRound,
+  DoorOpen,
   Fingerprint,
   Info,
   LayoutGrid,
@@ -18,10 +19,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import StratEditorGadgetsSidebar from "./Gadgets";
 import StratEditorMetaSidebar from "./Meta";
 import { cn } from "@/src/utils";
+import Reinforcement from "@/components/icons/reinforcement";
+import { MAX_REINFORCEMENT } from "@/src/static/general";
+import Link from "next/link";
 
 export interface StratEditorSidebarProps {
   onAssetAdd: (asset: Asset) => void;
-  strat: Strat;
+  strat: StratDrawing;
 }
 
 export default function StratEditorSidebar(
@@ -43,6 +47,11 @@ export default function StratEditorSidebar(
       setSidebarOpen(false);
     },
     [props.onAssetAdd]
+  );
+
+  const placedReeinforcements = useMemo(
+    () => props.strat.assets.filter((a) => a.type === "reinforcement").length,
+    [props.strat.assets]
   );
 
   const sidebarContent = useMemo(() => {
@@ -144,6 +153,37 @@ export default function StratEditorSidebar(
           }}
           active={openTab === "operator-assets"}
         />
+        <div className="flex-1" />
+        <Tooltip delayDuration={500}>
+          <TooltipTrigger asChild>
+            <div className="flex gap-1 p-1 items-center">
+              <span className="text-sm text-muted-foreground text-right">
+                {MAX_REINFORCEMENT - placedReeinforcements}
+              </span>
+              <div className="h-2.5 flex-1">
+                <Reinforcement color="white" />
+              </div>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="right">
+            <p className="text-sm">
+              {MAX_REINFORCEMENT - placedReeinforcements} Reinforcements
+              remaining
+            </p>
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip delayDuration={500}>
+          <TooltipTrigger asChild>
+            <Link href="/">
+              <Button size="icon" variant="ghost">
+                <DoorOpen />
+              </Button>
+            </Link>
+          </TooltipTrigger>
+          <TooltipContent side="right">
+            <p className="text-sm">Leave editor</p>
+          </TooltipContent>
+        </Tooltip>
       </div>
       <Separator orientation="vertical" className="h-full" />
       <div

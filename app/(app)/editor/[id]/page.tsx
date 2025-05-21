@@ -27,6 +27,7 @@ export default async function StratEditorPage({
         teamMembers={teamMembers}
         strat={{
           assets: [],
+          operators: [],
           ...strat,
         }}
       />

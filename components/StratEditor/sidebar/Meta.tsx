@@ -37,7 +37,6 @@ export default function StratEditorMetaSidebar(
   return (
     <ScrollArea className="h-screen">
       <div className="p-2 flex flex-col gap-2">
-        <Separator />
         <div className="flex items-center gap-2">
           <MapPinned className="text-muted-foreground" />
           <Label className="text-muted-foreground">Map + Site</Label>
