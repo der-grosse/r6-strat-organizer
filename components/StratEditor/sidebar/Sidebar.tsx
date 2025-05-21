@@ -153,6 +153,13 @@ export default function StratEditorSidebar(
         )}
       >
         {sidebarContent}
+        <div
+          className={cn(
+            "xl:hidden w-screen h-full absolute top-0 left-[100%]",
+            !sidebarOpen && "hidden"
+          )}
+          onClick={() => setSidebarOpen(false)}
+        />
       </div>
     </div>
   );
