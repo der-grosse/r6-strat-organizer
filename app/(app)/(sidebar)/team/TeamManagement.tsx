@@ -17,6 +17,8 @@ import {
   changeUsername,
   changePassword,
   setUserColor,
+  TeamMember,
+  InviteKey,
 } from "@/src/auth/team";
 import {
   Table,
@@ -60,20 +62,9 @@ import ColorPickerDialog, {
 import { createInviteKey, deleteInviteKey } from "@/src/auth/inviteKeys";
 
 export interface TeamManagementProps {
-  teamUsers: {
-    isAdmin: boolean;
-    id: number;
-    name: string;
-    defaultColor: string | null;
-    createdAt: string;
-  }[];
+  teamUsers: TeamMember[];
   teamName: string | undefined;
-  inviteKeys: {
-    inviteKey: string;
-    teamID: number;
-    usedBy: number | null;
-    usedAt: string | null;
-  }[];
+  inviteKeys: InviteKey[];
 }
 
 export default function TeamManagement(props: TeamManagementProps) {

@@ -4,12 +4,17 @@ import MAPS from "@/src/static/maps";
 import StratEditorLayout from "./Layout";
 import StratEditorCanvas from "./Canvas";
 import useMountAssets from "./Assets";
+import { TeamMember } from "@/src/auth/team";
 
 interface StratEditorProps {
   strat: StratDrawing;
+  teamMembers: TeamMember[];
 }
 
-export function StratEditor({ strat }: Readonly<StratEditorProps>) {
+export function StratEditor({
+  strat,
+  teamMembers,
+}: Readonly<StratEditorProps>) {
   const [assets, setAssets] = useState<PlacedAsset[]>([
     {
       id: "operator-smoke",
@@ -39,14 +44,19 @@ export function StratEditor({ strat }: Readonly<StratEditorProps>) {
     },
   ]);
 
-  const { renderAsset, UI } = useMountAssets({
-    deleteAsset(asset) {
-      setAssets((assets) => assets.filter((a) => a.id !== asset.id));
-    },
-    updateAsset(asset) {
-      setAssets((assets) => assets.map((a) => (a.id === asset.id ? asset : a)));
-    },
-  });
+  const { renderAsset, UI } = useMountAssets(
+    { teamMembers },
+    {
+      deleteAsset(asset) {
+        setAssets((assets) => assets.filter((a) => a.id !== asset.id));
+      },
+      updateAsset(asset) {
+        setAssets((assets) =>
+          assets.map((a) => (a.id === asset.id ? asset : a))
+        );
+      },
+    }
+  );
 
   const map = useMemo(
     () => MAPS.find((map) => map.name === strat.map) ?? null,

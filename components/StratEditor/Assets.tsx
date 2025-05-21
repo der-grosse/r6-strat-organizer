@@ -2,8 +2,8 @@ import { Brush, Eye, EyeOff, GripVertical, Trash } from "lucide-react";
 import { Button } from "../ui/button";
 import Operator from "./assets/Operator";
 import { cn } from "@/src/utils";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { getTeamUsers } from "@/src/auth/team";
+import { useCallback, useMemo, useState } from "react";
+import { TeamMember } from "@/src/auth/team";
 import ColorPickerDialog from "../ColorPickerDialog";
 
 export interface TeamUsers {
@@ -11,27 +11,16 @@ export interface TeamUsers {
   defaultColor: string | null;
 }
 
-export default function useMountAssets({
-  deleteAsset,
-  updateAsset,
-}: {
-  deleteAsset: (asset: PlacedAsset) => void;
-  updateAsset: (asset: PlacedAsset) => void;
-}) {
-  const [teamUsers, setTeamUsers] = useState<TeamUsers[]>([]);
-  useEffect(() => {
-    let cancel = false;
-
-    getTeamUsers().then((users) => {
-      if (cancel) return;
-      setTeamUsers(users);
-    });
-
-    return () => {
-      cancel = true;
-    };
-  }, []);
-
+export default function useMountAssets(
+  { teamMembers }: { teamMembers: TeamMember[] },
+  {
+    deleteAsset,
+    updateAsset,
+  }: {
+    deleteAsset: (asset: PlacedAsset) => void;
+    updateAsset: (asset: PlacedAsset) => void;
+  }
+) {
   const [colorPickerOpen, setColorPickerOpen] = useState(false);
   const [colorPickerAsset, setColorPickerAsset] = useState<PlacedAsset | null>(
     null
@@ -46,7 +35,7 @@ export default function useMountAssets({
       >
         <GripVertical />
         <div className="bg-border w-[1px] h-6" />
-        {teamUsers.map((user) => (
+        {teamMembers.map((user) => (
           <Button
             key={user.id}
             size="icon"
@@ -113,7 +102,7 @@ export default function useMountAssets({
         </Button>
       </div>
     ),
-    [teamUsers, deleteAsset, updateAsset]
+    [teamMembers, deleteAsset, updateAsset]
   );
 
   const dialog = useMemo(
@@ -140,7 +129,7 @@ export default function useMountAssets({
       const assetElement = (() => {
         switch (asset.type) {
           case "operator":
-            return <Operator asset={asset} teamUsers={teamUsers} />;
+            return <Operator asset={asset} teamUsers={teamMembers} />;
           default:
             return <>Missing Asset</>;
         }
@@ -152,7 +141,7 @@ export default function useMountAssets({
         </>
       );
     },
-    [menu, teamUsers]
+    [menu, teamMembers]
   );
 
   return { renderAsset, UI: dialog };

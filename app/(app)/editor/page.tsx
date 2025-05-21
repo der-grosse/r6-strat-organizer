@@ -6,6 +6,7 @@ export default async function StratEditorPage() {
   return (
     <div className="h-screen w-screen overflow-hidden">
       <StratEditor
+        teamMembers={teamMembers}
         strat={{
           assets: [],
           description: "",

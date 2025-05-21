@@ -1,3 +1,4 @@
+"use server";
 import { and, eq } from "drizzle-orm";
 import db from "../db";
 import { team, users } from "../db/schema";
@@ -264,6 +265,21 @@ export async function setUserColor(color: string, userID?: User["id"]) {
 
   // team page
   revalidatePath("/team");
-  // sidebar
-  revalidatePath("/");
+  // editor
+  revalidatePath("/editor");
 }
+
+export type TeamMember = {
+  isAdmin: boolean;
+  id: number;
+  name: string;
+  defaultColor: string | null;
+  createdAt: string;
+};
+
+export type InviteKey = {
+  inviteKey: string;
+  teamID: number;
+  usedBy: number | null;
+  usedAt: string | null;
+};
