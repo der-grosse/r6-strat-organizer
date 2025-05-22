@@ -20,7 +20,10 @@ const MAPS: R6Map[] = [
     name: "Chalet",
     sites: ["1F Bar", "2F Master", "B Snow", "1F Kitchen"],
     floors: [
-      { floor: "B", src: "/map_blueprints/chalet/B.jpg" },
+      {
+        floor: "B",
+        src: "/map_blueprints/chalet/B.jpg",
+      },
       { floor: "1F", src: "/map_blueprints/chalet/1F.jpg" },
       { floor: "2F", src: "/map_blueprints/chalet/2F.jpg" },
     ],
@@ -29,9 +32,9 @@ const MAPS: R6Map[] = [
     name: "Clubhouse",
     sites: ["2F Gym", "B Church", "2F CCTV"],
     floors: [
-      { floor: "B", src: "/map_blueprints/clubhouse/B.jpg" },
-      { floor: "1F", src: "/map_blueprints/clubhouse/1F.jpg" },
-      { floor: "2F", src: "/map_blueprints/clubhouse/2F.jpg" },
+      { floor: "B", src: "/map_blueprints/clubhouse/B.png" },
+      { floor: "1F", src: "/map_blueprints/clubhouse/1F.png" },
+      { floor: "2F", src: "/map_blueprints/clubhouse/2F.png" },
     ],
   },
   {

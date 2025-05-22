@@ -7,7 +7,7 @@ import OperatorIcon from "../../OperatorIcon";
 
 export interface StratEditorOperatorsSidebarProps {
   onAssetAdd: (asset: Asset) => void;
-  selectedOPs: { id: string; player: number }[];
+  selectedOPs: { id: string; player?: number }[];
 }
 
 export default function StratEditorOperatorsSidebar(
@@ -23,12 +23,7 @@ export default function StratEditorOperatorsSidebar(
       };
     })
     .filter(Boolean);
-  const selectedPrimaryGadetIDs = selectedOperators
-    .map((op) => ("gadget" in op ? op.gadget?.id : undefined))
-    .filter(Boolean) as DefenderPrimaryGadget[];
-  const selectedSecondaryGadgetIDs = selectedOperators.flatMap((op) =>
-    "secondaryGadgets" in op ? op.secondaryGadgets ?? [] : []
-  );
+
   return (
     <div className="h-full absolute inset-0">
       <ScrollArea className="h-full p-2">

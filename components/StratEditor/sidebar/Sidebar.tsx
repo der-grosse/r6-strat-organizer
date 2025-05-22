@@ -64,12 +64,25 @@ export default function StratEditorSidebar(
         return (
           <StratEditorOperatorsSidebar
             onAssetAdd={onAssetAdd}
-            selectedOPs={[]}
+            selectedOPs={props.strat.operators
+              .map((op) => ({
+                id: op.operator,
+                player: op.player,
+              }))
+              .filter(Boolean)}
           />
         );
       case "operator-gadgets":
         return (
-          <StratEditorGadgetsSidebar onAssetAdd={onAssetAdd} selectedOPs={[]} />
+          <StratEditorGadgetsSidebar
+            onAssetAdd={onAssetAdd}
+            selectedOPs={props.strat.operators
+              .map((op) => ({
+                id: op.operator,
+                player: op.player,
+              }))
+              .filter(Boolean)}
+          />
         );
       case "meta":
         return <StratEditorMetaSidebar strat={props.strat} />;

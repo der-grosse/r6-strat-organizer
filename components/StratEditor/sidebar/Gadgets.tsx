@@ -13,7 +13,7 @@ import SecondaryGadgetIcon from "@/components/SecondaryGadgetIcon";
 
 export interface StratEditorGadgetsSidebarProps {
   onAssetAdd: (asset: Asset) => void;
-  selectedOPs: { id: string; player: number }[];
+  selectedOPs: { id: string; player?: number }[];
 }
 
 export default function StratEditorGadgetsSidebar(

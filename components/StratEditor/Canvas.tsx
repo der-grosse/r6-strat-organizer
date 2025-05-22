@@ -42,12 +42,12 @@ export default function StratEditorCanvas<A extends Asset>({
   });
   // Calculate viewBox based on map dimensions
   useEffect(() => {
-    if (map) {
-      const aspectRatio = map.floors.length > 2 ? 4 / 3 : 8 / 3;
-      const width = BASE_SIZE;
-      const height = width / aspectRatio;
-      setViewBox({ width, height });
-    }
+    if (!map) return;
+    const aspectRatio =
+      map.floors.length === 1 || map.floors.length > 2 ? 4 / 3 : 8 / 3;
+    const width = BASE_SIZE;
+    const height = width / aspectRatio;
+    setViewBox({ width, height });
   }, [map]);
 
   const [zoomFactor, setZoomFactor] = useState(1);
@@ -354,7 +354,7 @@ export default function StratEditorCanvas<A extends Asset>({
           <image
             key={floor.floor}
             href={floor.src}
-            width={viewBox.width / (map.floors.length > 2 ? 2 : 1)}
+            width={viewBox.width / (map.floors.length > 1 ? 2 : 1)}
             height={viewBox.height / (map.floors.length > 2 ? 2 : 1)}
             x={i % 2 === 0 ? 0 : viewBox.width / 2}
             y={(Math.floor(i / 2) * viewBox.height) / 2}
