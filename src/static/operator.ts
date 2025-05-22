@@ -437,9 +437,51 @@ const DEFENDERS = [
   },
 ] as const;
 
-export const DEFENDER_SECONDARY_GADGETS = Array.from(
-  new Set(DEFENDERS.flatMap((op) => op.secondaryGadgets ?? []))
-);
+export const DEFENDER_SECONDARY_GADGETS = [
+  {
+    id: "deployable_shield",
+    name: "Deployable Shield",
+    icon: "/gadget/deployable_shield.webp",
+    count: 1,
+  },
+  {
+    id: "bulletproof_camera",
+    name: "Bulletproof Camera",
+    icon: "/gadget/bulletproof_camera.webp",
+    count: 1,
+  },
+  {
+    id: "barbed_wire",
+    name: "Barbed Wire",
+    icon: "/gadget/barbed_wire.webp",
+    count: 2,
+  },
+  {
+    id: "observation_blocker",
+    name: "Observation Blocker",
+    icon: "/gadget/observation_blocker.webp",
+    count: 3,
+  },
+  {
+    id: "impact_grenade",
+    name: "Impact Grenade",
+    icon: "/gadget/impact_grenade.webp",
+    count: 2,
+  },
+  {
+    id: "c4",
+    name: "C4 Explosive Charge",
+    icon: "/gadget/c4.webp",
+    count: 1,
+  },
+  {
+    id: "proximity_alarm",
+    name: "Proximity Alarm",
+    icon: "/gadget/proximity_alarm.webp",
+    count: 2,
+  },
+] as const;
+
 export const DEFENDER_PRIMARY_GADGETS = Array.from(
   new Set(
     DEFENDERS.flatMap((op) => ("gadget" in op ? op.gadget?.id ?? [] : []))

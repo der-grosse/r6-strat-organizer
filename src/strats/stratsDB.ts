@@ -145,14 +145,85 @@ class StratsDBClass {
             gadget: asset.type === "gadget" ? asset.gadget : undefined,
             operator: asset.type === "operator" ? asset.operator : undefined,
             side: asset.type === "operator" ? asset.side : undefined,
+            showIcon: asset.type === "operator" ? (asset.showIcon ? 1 : 0) : 0,
             rotate: asset.type === "rotate" ? asset.variant : undefined,
             player: asset.player,
+            width: asset.size.width,
+            height: asset.size.height,
           })
           .run();
       }
     }
 
     return Promise.resolve(undefined);
+  }
+
+  updateAsset(user: JWTPayload, stratID: Strat["id"], asset: PlacedAsset) {
+    const strat = db.select().from(strats).where(eq(strats.id, stratID)).all();
+    if (strat[0]?.teamID !== user.teamID) throw new Error("Strat not found");
+    db.update(placedAssets)
+      .set({
+        assetID: asset.id,
+        positionX: asset.position.x,
+        positionY: asset.position.y,
+        customColor: asset.customColor,
+        type: asset.type,
+        gadget: asset.type === "gadget" ? asset.gadget : undefined,
+        operator: asset.type === "operator" ? asset.operator : undefined,
+        side: asset.type === "operator" ? asset.side : undefined,
+        showIcon: asset.type === "operator" ? (asset.showIcon ? 1 : 0) : 0,
+        rotate: asset.type === "rotate" ? asset.variant : undefined,
+        player: asset.player,
+        width: asset.size.width,
+        height: asset.size.height,
+      })
+      .where(
+        and(
+          eq(placedAssets.stratsID, stratID),
+          eq(placedAssets.assetID, asset.id)
+        )
+      )
+      .run();
+  }
+
+  addAsset(user: JWTPayload, stratID: Strat["id"], asset: PlacedAsset) {
+    const strat = db.select().from(strats).where(eq(strats.id, stratID)).all();
+    if (strat[0]?.teamID !== user.teamID) throw new Error("Strat not found");
+    db.insert(placedAssets)
+      .values({
+        assetID: asset.id,
+        positionX: asset.position.x,
+        positionY: asset.position.y,
+        customColor: asset.customColor,
+        stratsID: stratID,
+        type: asset.type,
+        gadget: asset.type === "gadget" ? asset.gadget : undefined,
+        operator: asset.type === "operator" ? asset.operator : undefined,
+        side: asset.type === "operator" ? asset.side : undefined,
+        showIcon: asset.type === "operator" ? (asset.showIcon ? 1 : 0) : 0,
+        rotate: asset.type === "rotate" ? asset.variant : undefined,
+        player: asset.player,
+        width: asset.size.width,
+        height: asset.size.height,
+      })
+      .run();
+  }
+
+  deleteAssets(
+    user: JWTPayload,
+    stratID: Strat["id"],
+    assetIDs: PlacedAsset["id"][]
+  ) {
+    const strat = db.select().from(strats).where(eq(strats.id, stratID)).all();
+    if (strat[0]?.teamID !== user.teamID) throw new Error("Strat not found");
+    db.delete(placedAssets)
+      .where(
+        and(
+          eq(placedAssets.stratsID, stratID),
+          inArray(placedAssets.assetID, assetIDs)
+        )
+      )
+      .run();
   }
 
   async delete(id: Strat["id"]): Promise<void> {
@@ -183,8 +254,11 @@ class StratsDBClass {
       type: string;
       operator: string | null;
       side: "att" | "def" | null;
+      showIcon: number | null;
       gadget: string | null;
       rotate: string | null;
+      width: number;
+      height: number;
     }[];
     pickedOperators: {
       operator: string;
@@ -203,6 +277,7 @@ class StratsDBClass {
         .map((r) => ({
           id: r.assetID,
           position: { x: r.positionX, y: r.positionY },
+          size: { width: r.width, height: r.height },
           player: r.player,
           customColor: r.customColor,
           type: r.type,
@@ -216,6 +291,7 @@ class StratsDBClass {
                 return {
                   operator: r.operator,
                   side: r.side,
+                  showIcon: r.showIcon === 1,
                 };
               case "rotate":
                 return {

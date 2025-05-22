@@ -1,7 +1,7 @@
 "use server";
 
 import db from "@/src/db/db";
-import { strats } from "@/src/db/schema";
+import { placedAssets, strats } from "@/src/db/schema";
 import { getPayload } from "@/src/auth/getPayload";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -95,5 +95,41 @@ export async function updateStrat(
   revalidatePath(`/editor/${updatedStrat.id}`);
   revalidatePath("/strats");
   revalidatePath(`/strat/${updatedStrat.id}`);
+  revalidatePath("/", "layout");
+}
+
+export async function updateStratAsset(
+  stratID: Strat["id"],
+  asset: PlacedAsset
+) {
+  const user = await getPayload();
+  StratsDB.updateAsset(user!, stratID, asset);
+
+  revalidatePath(`/editor/${stratID}`);
+  revalidatePath("/strats");
+  revalidatePath(`/strat/${stratID}`);
+  revalidatePath("/", "layout");
+}
+
+export async function deleteStratAssets(
+  stratID: Strat["id"],
+  assetIDs: PlacedAsset["id"][]
+) {
+  const user = await getPayload();
+  StratsDB.deleteAssets(user!, stratID, assetIDs);
+
+  revalidatePath(`/editor/${stratID}`);
+  revalidatePath("/strats");
+  revalidatePath(`/strat/${stratID}`);
+  revalidatePath("/", "layout");
+}
+
+export async function addAsset(stratID: Strat["id"], asset: PlacedAsset) {
+  const user = await getPayload();
+  StratsDB.addAsset(user!, stratID, asset);
+
+  revalidatePath(`/editor/${stratID}`);
+  revalidatePath("/strats");
+  revalidatePath(`/strat/${stratID}`);
   revalidatePath("/", "layout");
 }

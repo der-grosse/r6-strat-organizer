@@ -1,10 +1,17 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import MAPS from "@/src/static/maps";
 import StratEditorLayout from "./Layout";
 import StratEditorCanvas from "./Canvas";
 import useMountAssets from "./Assets";
 import { TeamMember } from "@/src/auth/team";
+import useDebounced from "../hooks/useDebounced";
+import {
+  addAsset,
+  deleteStratAssets,
+  updateStrat,
+  updateStratAsset,
+} from "@/src/strats/strats";
 
 interface StratEditorProps {
   strat: Strat;
@@ -15,34 +22,16 @@ export function StratEditor({
   strat,
   teamMembers,
 }: Readonly<StratEditorProps>) {
-  const [assets, setAssets] = useState<PlacedAsset[]>([
-    {
-      id: "operator-smoke",
-      operator: "Smoke",
-      type: "operator",
-      player: 1,
-      position: { x: 450, y: 200 },
-      side: "def",
-      showIcon: true,
-      size: {
-        width: 25,
-        height: 25,
-      },
-    },
-    {
-      id: "operator-frost",
-      operator: "Frost",
-      type: "operator",
-      player: 1,
-      position: { x: 100, y: 600 },
-      side: "def",
-      showIcon: true,
-      size: {
-        width: 25,
-        height: 25,
-      },
-    },
-  ]);
+  const [assets, setAssets] = useState<PlacedAsset[]>(strat.assets);
+  const getHightestID = useCallback(
+    (assets: PlacedAsset[]) =>
+      assets.reduce((acc, asset) => {
+        const id = Number(asset.id.split("-").at(-1));
+        if (isNaN(id)) return acc;
+        return Math.max(acc, id);
+      }, 0),
+    []
+  );
 
   const { renderAsset, UI } = useMountAssets(
     { teamMembers },
@@ -65,23 +54,47 @@ export function StratEditor({
 
   return (
     <StratEditorLayout
-      onAssetAdd={(asset) =>
-        setAssets((assets) => [
-          ...assets,
-          {
-            ...asset,
-            size: { width: 25, height: 25 },
-            position: { x: 0, y: 0 },
-          },
-        ])
-      }
+      onAssetAdd={(asset) => {
+        const placedAsset = {
+          ...asset,
+          id: `${asset.id}-${getHightestID(assets) + 1}` as any,
+          size: { width: 20, height: 20 },
+          position: { x: 590, y: 440 },
+        };
+        setAssets((assets) => [...assets, placedAsset]);
+        addAsset(strat.id, placedAsset);
+      }}
       strat={strat}
       teamMembers={teamMembers}
     >
       <StratEditorCanvas
         map={map}
         assets={assets}
-        onAssetChange={setAssets}
+        onAssetInput={(assets) => {
+          setAssets((existing) =>
+            existing.map((a) => {
+              const newAsset = assets.find((asset) => asset.id === a.id);
+              if (!newAsset) return a;
+              return newAsset;
+            })
+          );
+        }}
+        onAssetChange={(assets) => {
+          setAssets((existing) =>
+            existing.map((a) => {
+              const newAsset = assets.find((asset) => asset.id === a.id);
+              if (!newAsset) return a;
+              return newAsset;
+            })
+          );
+          for (const asset of assets) {
+            updateStratAsset(strat.id, asset);
+          }
+        }}
+        onAssetRemove={(ids) => {
+          setAssets((assets) => assets.filter((a) => ids.includes(a.id)));
+          deleteStratAssets(strat.id, ids);
+        }}
         renderAsset={renderAsset}
       />
       {UI}

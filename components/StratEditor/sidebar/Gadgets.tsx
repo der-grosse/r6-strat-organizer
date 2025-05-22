@@ -7,9 +7,9 @@ import {
 import { Badge } from "../../ui/badge";
 import { ScrollArea } from "../../ui/scroll-area";
 import { Button } from "../../ui/button";
-import OperatorIcon from "../../OperatorIcon";
 import PrimaryGadgetIcon from "@/components/PrimaryGadgetIcon";
 import SecondaryGadgetIcon from "@/components/SecondaryGadgetIcon";
+import { Separator } from "@/components/ui/separator";
 
 export interface StratEditorGadgetsSidebarProps {
   onAssetAdd: (asset: Asset) => void;
@@ -106,25 +106,6 @@ export default function StratEditorGadgetsSidebar(
             </>
           )}
           <Badge className="sticky top-0 w-full col-span-full">
-            Secondary Gadgets
-          </Badge>
-          {DEFENDER_SECONDARY_GADGETS.map((gadget) => (
-            <Button
-              variant="outline"
-              key={gadget}
-              className="p-1 h-auto"
-              onClick={() => {
-                props.onAssetAdd({
-                  id: `gadget-${gadget}`,
-                  type: "gadget",
-                  gadget,
-                });
-              }}
-            >
-              <SecondaryGadgetIcon id={gadget} />
-            </Button>
-          ))}
-          <Badge className="sticky top-0 w-full col-span-full">
             Primary Gadgets
           </Badge>
           {DEFENDER_PRIMARY_GADGETS.map((gadget) => (
@@ -141,6 +122,25 @@ export default function StratEditorGadgetsSidebar(
               }}
             >
               <PrimaryGadgetIcon id={gadget} />
+            </Button>
+          ))}
+          <Badge className="sticky top-0 w-full col-span-full">
+            Secondary Gadgets
+          </Badge>
+          {DEFENDER_SECONDARY_GADGETS.map((gadget) => (
+            <Button
+              variant="outline"
+              key={gadget.id}
+              className="p-1 h-auto"
+              onClick={() => {
+                props.onAssetAdd({
+                  id: `gadget-${gadget}`,
+                  type: "gadget",
+                  gadget: gadget.id,
+                });
+              }}
+            >
+              <SecondaryGadgetIcon id={gadget.id} />
             </Button>
           ))}
         </div>

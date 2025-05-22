@@ -3,7 +3,6 @@ import { useRef } from "react";
 import { cn } from "@/src/utils";
 
 interface SVGAssetProps {
-  id: string;
   position: { x: number; y: number };
   size: { width: number; height: number };
   onMouseDown: (e: React.MouseEvent, isResizeHandle: boolean) => void;
@@ -13,7 +12,6 @@ interface SVGAssetProps {
 }
 
 export default function SVGAsset({
-  id,
   position,
   size,
   onMouseDown,

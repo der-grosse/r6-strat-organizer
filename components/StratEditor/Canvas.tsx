@@ -14,6 +14,8 @@ interface CanvasProps<A extends Asset> {
   map: R6Map | null;
   assets: A[];
   onAssetChange: (assets: A[]) => void;
+  onAssetInput: (assets: A[]) => void;
+  onAssetRemove: (assets: A["id"][]) => void;
   renderAsset: (asset: A, selected: boolean) => React.ReactNode;
 }
 
@@ -29,6 +31,8 @@ export default function StratEditorCanvas<A extends Asset>({
   map,
   assets,
   onAssetChange,
+  onAssetInput,
+  onAssetRemove,
   renderAsset,
 }: Readonly<CanvasProps<A>>) {
   const assetsRef = useRef<A[]>(assets);
@@ -172,25 +176,24 @@ export default function StratEditorCanvas<A extends Asset>({
         const distance = Math.sqrt(dx ** 2 + dy ** 2);
         if (distance < DRAG_DEADZONE) return;
 
-        onAssetChange(
-          assets.map((asset) =>
-            selectedAssets.includes(asset.id)
-              ? (() => {
-                  const startPos = actionStart.startPositions.find(
-                    (pos) => pos.id === asset.id
-                  );
-                  if (!startPos) return asset;
+        onAssetInput(
+          selectedAssets
+            .map((s) => assets.find((a) => a.id === s)!)
+            .filter(Boolean)
+            .map((asset) => {
+              const startPos = actionStart.startPositions.find(
+                (pos) => pos.id === asset.id
+              );
+              if (!startPos) return asset;
 
-                  return {
-                    ...asset,
-                    position: {
-                      x: startPos.x + dx,
-                      y: startPos.y + dy,
-                    },
-                  };
-                })()
-              : asset
-          )
+              return {
+                ...asset,
+                position: {
+                  x: startPos.x + dx,
+                  y: startPos.y + dy,
+                },
+              };
+            })
         );
       } else if (isResizing) {
         const selected = assets.filter((a) => selectedAssets.includes(a.id));
@@ -200,36 +203,29 @@ export default function StratEditorCanvas<A extends Asset>({
 
           const makeSquare = e.shiftKey;
 
-          onAssetChange(
-            assets.map((a) =>
-              selectedAssets.includes(a.id)
-                ? {
-                    ...a,
-                    size: (() => {
-                      const startPos = actionStart.startPositions.find(
-                        (pos) => pos.id === a.id
-                      );
-                      if (!startPos) return a.size;
-                      const newSize = {
-                        width: Math.max(
-                          MIN_ASSET_SIZE,
-                          startPos.width + deltaX
-                        ),
-                        height: Math.max(
-                          MIN_ASSET_SIZE,
-                          startPos.height + deltaY
-                        ),
-                      };
-                      if (!makeSquare) return newSize;
-                      const maxSide = Math.max(newSize.width, newSize.height);
-                      return {
-                        width: maxSide,
-                        height: maxSide,
-                      };
-                    })(),
-                  }
-                : a
-            )
+          onAssetInput(
+            selectedAssets
+              .map((s) => assets.find((a) => a.id === s)!)
+              .filter(Boolean)
+              .map((a) => ({
+                ...a,
+                size: (() => {
+                  const startPos = actionStart.startPositions.find(
+                    (pos) => pos.id === a.id
+                  );
+                  if (!startPos) return a.size;
+                  const newSize = {
+                    width: Math.max(MIN_ASSET_SIZE, startPos.width + deltaX),
+                    height: Math.max(MIN_ASSET_SIZE, startPos.height + deltaY),
+                  };
+                  if (!makeSquare) return newSize;
+                  const maxSide = Math.max(newSize.width, newSize.height);
+                  return {
+                    width: maxSide,
+                    height: maxSide,
+                  };
+                })(),
+              }))
           );
         }
       }
@@ -238,9 +234,16 @@ export default function StratEditorCanvas<A extends Asset>({
   );
 
   const handleMouseUp = useCallback(() => {
+    if (isDragging || isResizing) {
+      onAssetChange(
+        selectedAssets
+          .map((s) => assetsRef.current.find((a) => a.id === s)!)
+          .filter(Boolean)
+      );
+    }
     setIsDragging(false);
     setIsResizing(false);
-  }, []);
+  }, [isDragging, isResizing, selectedAssets]);
 
   const handleWheel = useCallback(
     (e: WheelEvent) => {
@@ -312,7 +315,7 @@ export default function StratEditorCanvas<A extends Asset>({
       shortcut: ["Backspace", "Delete"],
       action() {
         if (document.activeElement !== svgRef.current) return;
-        onAssetChange(assets.filter((a) => !selectedAssets.includes(a.id)));
+        onAssetRemove(selectedAssets);
       },
     },
     {
@@ -367,7 +370,6 @@ export default function StratEditorCanvas<A extends Asset>({
         {assets.map((asset) => (
           <SVGAsset
             key={asset.id}
-            id={asset.id}
             position={asset.position}
             size={asset.size}
             onMouseDown={(e, isResizeHandle) =>

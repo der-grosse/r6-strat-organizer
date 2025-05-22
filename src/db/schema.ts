@@ -71,6 +71,8 @@ export const placedAssets = sqliteTable("placed_assets", {
   assetID: text("asset_id").notNull(),
   positionX: int("position_x").notNull(),
   positionY: int("position_y").notNull(),
+  width: int("width").notNull(),
+  height: int("height").notNull(),
   player: int("player").references(() => users.id, {
     onDelete: "set null",
     onUpdate: "cascade",
@@ -81,6 +83,7 @@ export const placedAssets = sqliteTable("placed_assets", {
   // Operator type
   operator: text("operator"),
   side: text("side", { enum: ["att", "def"] }),
+  showIcon: int("show_icon"),
 
   // Gadget type
   gadget: text("gadget"),
