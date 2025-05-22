@@ -42,8 +42,8 @@ export const FilterProvider: React.FC<{
         if (filter.map && filter.map !== strat.map) return false;
         if (filter.site && filter.site !== strat.site) return false;
         if (filter.bannedOPs.length > 0) {
-          const hasBannedOP = strat.powerOPs.some((op) =>
-            filter.bannedOPs.includes(op)
+          const hasBannedOP = strat.operators.some(
+            (op) => op.isPowerOP && filter.bannedOPs.includes(op.operator)
           );
           if (hasBannedOP) return false;
         }
