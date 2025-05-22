@@ -35,37 +35,17 @@ import {
 import { setActive } from "@/src/strats/strats";
 import { Checkbox } from "../../../components/ui/checkbox";
 import { useRouter } from "next/navigation";
-import { DEFENDERS } from "@/src/static/operator";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandShortcut,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "../../../components/ui/popover";
-import OperatorIcon from "../../../components/OperatorIcon";
 import { getGoogleDrawingsEditURL } from "@/src/googleDrawings";
-import { useUser } from "../../../components/context/UserContext";
-import { getTeamName } from "@/src/auth/team";
-import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/src/auth/auth";
 import MapSelector from "@/components/MapSelector";
 import SiteSelector from "@/components/SiteSelector";
+import OperatorPicker from "@/components/OperatorPicker";
 
 export function AppSidebar(props: { teamName: string }) {
   const router = useRouter();
   const { filter, setFilter, filteredStrats, isLeading, setIsLeading } =
     useFilter();
-
-  const bannedOPInput = useRef<HTMLInputElement>(null);
 
   return (
     <Sidebar variant="inset">
@@ -184,74 +164,17 @@ export function AppSidebar(props: { teamName: string }) {
                   </SidebarMenuItem>
                   {/* banned OPs selector */}
                   <SidebarMenuItem>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <SidebarMenuButton>
-                          {filter.bannedOPs.length
-                            ? filter.bannedOPs
-                                .map((op) =>
-                                  DEFENDERS.find((o) => o.name === op)
-                                )
-                                .filter(Boolean)
-                                .map((op) => (
-                                  <OperatorIcon key={op!.name} op={op!} />
-                                ))
-                            : "Select banned OPs"}
-                          <ChevronRight className="ml-auto" />
-                        </SidebarMenuButton>
-                      </PopoverTrigger>
-                      <PopoverContent className="p-0" side="right">
-                        <Command key={filter.bannedOPs.join(",")}>
-                          <CommandInput
-                            placeholder="Type a command or search..."
-                            ref={bannedOPInput}
-                          />
-                          <CommandList>
-                            <CommandEmpty>No results found.</CommandEmpty>
-                            <CommandGroup>
-                              <CommandItem
-                                key="clear"
-                                onSelect={() =>
-                                  setFilter({ ...filter, bannedOPs: [] })
-                                }
-                              >
-                                <em>Clear</em>
-                              </CommandItem>
-                              {DEFENDERS.toSorted((a) =>
-                                filter.bannedOPs.includes(a.name) ? -1 : 1
-                              ).map((op) => (
-                                <CommandItem
-                                  key={op.name}
-                                  onSelect={() => {
-                                    setFilter((filter) => ({
-                                      ...filter,
-                                      bannedOPs: filter.bannedOPs.includes(
-                                        op.name
-                                      )
-                                        ? filter.bannedOPs.filter(
-                                            (op2) => op2 !== op.name
-                                          )
-                                        : [...filter.bannedOPs, op.name],
-                                    }));
-                                    requestAnimationFrame(() => {
-                                      bannedOPInput.current?.focus();
-                                    });
-                                  }}
-                                >
-                                  <OperatorIcon op={op} />
-                                  {op.name}
-                                  <CommandShortcut>
-                                    {filter.bannedOPs.includes(op.name) && (
-                                      <Check className="text-muted-foreground" />
-                                    )}
-                                  </CommandShortcut>
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
+                    <OperatorPicker
+                      multiple
+                      selected={filter.bannedOPs}
+                      onChange={(bannedOPs) => {
+                        setFilter({
+                          ...filter,
+                          bannedOPs,
+                        });
+                      }}
+                      trigger={SidebarMenuButton}
+                    />
                   </SidebarMenuItem>
                 </SidebarMenu>
                 <SidebarSeparator />

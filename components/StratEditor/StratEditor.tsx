@@ -7,7 +7,7 @@ import useMountAssets from "./Assets";
 import { TeamMember } from "@/src/auth/team";
 
 interface StratEditorProps {
-  strat: StratDrawing;
+  strat: Strat;
   teamMembers: TeamMember[];
 }
 
@@ -76,6 +76,7 @@ export function StratEditor({
         ])
       }
       strat={strat}
+      teamMembers={teamMembers}
     >
       <StratEditorCanvas
         map={map}

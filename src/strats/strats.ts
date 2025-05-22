@@ -1,7 +1,7 @@
 "use server";
 
 import db from "@/src/db/db";
-import { strats, powerOPs } from "@/src/db/schema";
+import { strats } from "@/src/db/schema";
 import { getPayload } from "@/src/auth/getPayload";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -14,8 +14,6 @@ export async function createStrat(data: {
   name: string;
   description: string;
   drawingID: string;
-  powerOPs: string[];
-  teamID: number;
 }) {
   try {
     const session = await getPayload();
@@ -23,15 +21,7 @@ export async function createStrat(data: {
       throw new Error("Unauthorized");
     }
 
-    const {
-      map,
-      site,
-      name,
-      description,
-      drawingID,
-      powerOPs: ops,
-      teamID,
-    } = data;
+    const { map, site, name, description, drawingID } = data;
 
     const [newStrat] = await db
       .insert(strats)
@@ -41,19 +31,9 @@ export async function createStrat(data: {
         name,
         description,
         drawingID,
-        teamID,
+        teamID: session.teamID,
       })
       .returning();
-
-    // Insert power operators
-    if (ops && ops.length > 0) {
-      await db.insert(powerOPs).values(
-        ops.map((op: string) => ({
-          op,
-          stratsID: newStrat.id,
-        }))
-      );
-    }
 
     revalidatePath("/", "layout");
 
@@ -112,8 +92,8 @@ export async function updateStrat(
   const user = await getPayload();
   await StratsDB.update(user!, updatedStrat);
 
-  revalidatePath("/editor/[id]");
+  revalidatePath(`/editor/${updatedStrat.id}`);
   revalidatePath("/strats");
-  revalidatePath("/strat/[id]");
+  revalidatePath(`/strat/${updatedStrat.id}`);
   revalidatePath("/", "layout");
 }

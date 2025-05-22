@@ -50,17 +50,6 @@ export const rotationIndexes = sqliteTable(
   (table) => [primaryKey({ columns: [table.rotationIndex, table.stratsID] })]
 );
 
-export const powerOPs = sqliteTable(
-  "power_ops",
-  {
-    op: text("op").notNull(),
-    stratsID: int("strats_id")
-      .notNull()
-      .references(() => strats.id, { onDelete: "cascade" }),
-  },
-  (table) => [primaryKey({ columns: [table.op, table.stratsID] })]
-);
-
 export const activeStrat = sqliteTable(
   "active_strat",
   {
@@ -76,6 +65,9 @@ export const activeStrat = sqliteTable(
 
 export const placedAssets = sqliteTable("placed_assets", {
   id: int("id").primaryKey({ autoIncrement: true }),
+  stratsID: int("strats_id")
+    .notNull()
+    .references(() => strats.id, { onDelete: "cascade" }),
   assetID: text("asset_id").notNull(),
   positionX: int("position_x").notNull(),
   positionY: int("position_y").notNull(),
@@ -84,6 +76,7 @@ export const placedAssets = sqliteTable("placed_assets", {
     onUpdate: "cascade",
   }),
   customColor: text("custom_color"),
+  type: text("type").notNull(),
 
   // Operator type
   operator: text("operator"),
@@ -92,6 +85,19 @@ export const placedAssets = sqliteTable("placed_assets", {
   // Gadget type
   gadget: text("gadget"),
 
-  // Marker type
-  marker: text("marker"),
+  // Rotate type
+  rotate: text("rotate"),
+});
+
+export const pickedOperators = sqliteTable("picked_operators", {
+  id: int("id").primaryKey({ autoIncrement: true }),
+  operator: text("operator").notNull(),
+  player: int("player").references(() => users.id, {
+    onDelete: "set null",
+    onUpdate: "cascade",
+  }),
+  stratsID: int("strats_id")
+    .notNull()
+    .references(() => strats.id, { onDelete: "cascade" }),
+  isPowerOP: int("is_power_op").notNull(),
 });

@@ -90,12 +90,14 @@ export function ColorButton(props: {
   onClick?: (color: string) => void;
   disabled?: boolean;
   size: "small" | "large";
+  className?: string;
 }) {
   return (
     <button
       className={cn(
-        "rounded-full hover:shadow-lg focus:outline-none focus:ring-2 disabled:cursor-not-allowed cursor-pointer",
-        props.size === "small" ? "w-6 h-6" : "w-12 h-12"
+        "rounded-full hover:shadow-lg focus:outline-none focus:ring-2 not:disabled:cursor-pointer",
+        props.size === "small" ? "w-6 h-6" : "w-12 h-12",
+        props.className
       )}
       disabled={props.disabled}
       style={{ backgroundColor: props.color }}

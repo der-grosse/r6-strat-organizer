@@ -22,10 +22,13 @@ import { cn } from "@/src/utils";
 import Reinforcement from "@/components/icons/reinforcement";
 import { MAX_REINFORCEMENT } from "@/src/static/general";
 import Link from "next/link";
+import StratEditorPlayerOperatorsSidebar from "./PlayerOPs";
+import { TeamMember } from "@/src/auth/team";
 
 export interface StratEditorSidebarProps {
   onAssetAdd: (asset: Asset) => void;
-  strat: StratDrawing;
+  strat: Strat;
+  teamMembers: TeamMember[];
 }
 
 export default function StratEditorSidebar(
@@ -69,6 +72,13 @@ export default function StratEditorSidebar(
         );
       case "meta":
         return <StratEditorMetaSidebar strat={props.strat} />;
+      case "player-ops":
+        return (
+          <StratEditorPlayerOperatorsSidebar
+            strat={props.strat}
+            teamMembers={props.teamMembers}
+          />
+        );
       default:
         return (
           <div className="flex items-center justify-center h-full">
@@ -76,7 +86,7 @@ export default function StratEditorSidebar(
           </div>
         );
     }
-  }, [openTab, onAssetAdd, props.strat]);
+  }, [openTab, onAssetAdd, props.strat, props.teamMembers]);
 
   return (
     <div className="flex relative z-10">

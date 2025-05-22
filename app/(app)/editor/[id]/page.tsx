@@ -1,5 +1,5 @@
 import { StratEditor } from "@/components/StratEditor/StratEditor";
-import { getTeamUsers } from "@/src/auth/team";
+import { getTeamMembers } from "@/src/auth/team";
 import { getStrat } from "@/src/strats/strats";
 import { CircleX } from "lucide-react";
 
@@ -10,7 +10,7 @@ export default async function StratEditorPage({
 }>) {
   const id = Number((await paramsRaw).id);
   const strat = await getStrat(id);
-  const teamMembers = await getTeamUsers();
+  const teamMembers = await getTeamMembers();
 
   if (!strat) {
     return (

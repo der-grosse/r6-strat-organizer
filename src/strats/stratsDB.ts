@@ -1,6 +1,11 @@
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, inArray, is, min, sql } from "drizzle-orm";
 import db from "../db/db";
-import { powerOPs, rotationIndexes, strats } from "../db/schema";
+import {
+  pickedOperators,
+  placedAssets,
+  rotationIndexes,
+  strats,
+} from "../db/schema";
 
 class StratsDBClass {
   async create(user: User, strat: Strat): Promise<number> {
@@ -12,33 +17,82 @@ class StratsDBClass {
   }
 
   async list(user: User): Promise<Strat[]> {
-    const data = db
-      .select()
+    const stratRows = db
+      .select({
+        id: strats.id,
+        map: strats.map,
+        site: strats.site,
+        name: strats.name,
+        description: strats.description,
+        drawingID: strats.drawingID,
+        rotationIndex: min(rotationIndexes.rotationIndex).as("rotationIndex"),
+      })
       .from(strats)
-      .leftJoin(powerOPs, eq(strats.id, powerOPs.stratsID))
       .leftJoin(rotationIndexes, eq(strats.id, rotationIndexes.stratsID))
       .where(eq(strats.teamID, user.teamID))
-      .orderBy(
-        strats.map,
-        sql`${rotationIndexes.rotationIndex} asc nulls last`,
-        strats.site
-      )
+      .groupBy(strats.id)
+      .orderBy(strats.map, sql`rotationIndex asc nulls last`, strats.site)
       .all();
 
-    return this.parseStratRows(data);
+    const stratsIDs = stratRows.map((strat) => strat.id);
+
+    const rotationIndexRows = db
+      .select()
+      .from(rotationIndexes)
+      .where(inArray(rotationIndexes.stratsID, stratsIDs))
+      .all();
+    const placedAssetsRows = db
+      .select()
+      .from(placedAssets)
+      .where(inArray(placedAssets.stratsID, stratsIDs))
+      .all();
+    const pickedOperatorsRows = db
+      .select()
+      .from(pickedOperators)
+      .where(inArray(pickedOperators.stratsID, stratsIDs))
+      .all();
+
+    return this.parseStratRows({
+      strat: stratRows,
+      rotationIndexes: rotationIndexRows,
+      placedAssets: placedAssetsRows,
+      pickedOperators: pickedOperatorsRows,
+    });
   }
 
   async get(user: User, id: Strat["id"]): Promise<Strat | null> {
-    const data = db
+    const stratRows = db
       .select()
       .from(strats)
-      .leftJoin(powerOPs, eq(strats.id, powerOPs.stratsID))
-      .leftJoin(rotationIndexes, eq(strats.id, rotationIndexes.stratsID))
       .where(and(eq(strats.id, id), eq(strats.teamID, user.teamID)))
       .all();
 
-    if (data.length === 0) return null;
-    return this.parseStratRows(data)[0] ?? null;
+    if (stratRows.length === 0) return null;
+
+    const rotationIndexRows = db
+      .select()
+      .from(rotationIndexes)
+      .where(eq(rotationIndexes.stratsID, id))
+      .all();
+    const placedAssetsRows = db
+      .select()
+      .from(placedAssets)
+      .where(eq(placedAssets.stratsID, id))
+      .all();
+    const pickedOperatorsRows = db
+      .select()
+      .from(pickedOperators)
+      .where(eq(pickedOperators.stratsID, id))
+      .all();
+
+    return (
+      this.parseStratRows({
+        strat: stratRows,
+        rotationIndexes: rotationIndexRows,
+        placedAssets: placedAssetsRows,
+        pickedOperators: pickedOperatorsRows,
+      })[0] ?? null
+    );
   }
 
   update(
@@ -49,13 +103,6 @@ class StratsDBClass {
     if (!strat) return Promise.reject(new Error("Strat not found"));
     const newStrat = { ...strat, ...updatedStrat };
     db.update(strats).set(newStrat).where(eq(strats.id, updatedStrat.id)).run();
-
-    if (updatedStrat.powerOPs) {
-      db.delete(powerOPs).where(eq(powerOPs.stratsID, updatedStrat.id)).run();
-      for (const op of updatedStrat.powerOPs ?? []) {
-        db.insert(powerOPs).values({ op, stratsID: updatedStrat.id }).run();
-      }
-    }
 
     if (updatedStrat.rotationIndex) {
       db.delete(rotationIndexes)
@@ -68,6 +115,43 @@ class StratsDBClass {
       }
     }
 
+    if (updatedStrat.operators) {
+      db.delete(pickedOperators)
+        .where(eq(pickedOperators.stratsID, updatedStrat.id))
+        .run();
+      for (const op of updatedStrat.operators) {
+        db.insert(pickedOperators)
+          .values({
+            operator: op.operator,
+            stratsID: updatedStrat.id,
+            player: op.player,
+            isPowerOP: op.isPowerOP ? 1 : 0,
+          })
+          .run();
+      }
+    }
+
+    if (updatedStrat.assets) {
+      db.delete(placedAssets).where(eq(placedAssets.id, updatedStrat.id)).run();
+      for (const asset of updatedStrat.assets) {
+        db.insert(placedAssets)
+          .values({
+            assetID: asset.id,
+            positionX: asset.position.x,
+            positionY: asset.position.y,
+            customColor: asset.customColor,
+            stratsID: updatedStrat.id,
+            type: asset.type,
+            gadget: asset.type === "gadget" ? asset.gadget : undefined,
+            operator: asset.type === "operator" ? asset.operator : undefined,
+            side: asset.type === "operator" ? asset.side : undefined,
+            rotate: asset.type === "rotate" ? asset.variant : undefined,
+            player: asset.player,
+          })
+          .run();
+      }
+    }
+
     return Promise.resolve(undefined);
   }
 
@@ -75,57 +159,92 @@ class StratsDBClass {
     db.delete(strats).where(eq(strats.id, id)).run();
   }
 
-  private parseStratRows(
-    rows: {
-      strats: {
-        id: number;
-        map: string;
-        site: string;
-        name: string;
-        description: string;
-        drawingID: string;
-      };
-      power_ops: {
-        op: string;
-        stratsID: number;
-      } | null;
-      rotation_indexes: {
-        rotationIndex: number;
-        stratsID: number;
-      } | null;
-    }[]
-  ): Strat[] {
+  private parseStratRows(data: {
+    strat: {
+      id: number;
+      map: string;
+      site: string;
+      name: string;
+      description: string;
+      drawingID: string;
+    }[];
+    rotationIndexes: {
+      rotationIndex: number;
+      stratsID: number;
+    }[];
+    placedAssets: {
+      id: number;
+      stratsID: number;
+      assetID: string;
+      positionX: number;
+      positionY: number;
+      player: number | null;
+      customColor: string | null;
+      type: string;
+      operator: string | null;
+      side: "att" | "def" | null;
+      gadget: string | null;
+      rotate: string | null;
+    }[];
+    pickedOperators: {
+      operator: string;
+      player: number | null;
+      stratsID: number;
+      isPowerOP: number;
+    }[];
+  }): Strat[] {
     const parsedStrats: Strat[] = [];
-    for (const row of rows) {
-      const strat = parsedStrats.find((strat) => strat.id === row.strats.id);
-      if (strat) {
-        if (row.power_ops && !strat.powerOPs?.includes(row.power_ops.op)) {
-          strat.powerOPs.push(row.power_ops.op);
-        }
-        if (row.rotation_indexes?.rotationIndex) {
-          if (!strat.rotationIndex) {
-            strat.rotationIndex = [];
-          }
-          if (
-            !strat.rotationIndex.includes(row.rotation_indexes.rotationIndex)
-          ) {
-            strat.rotationIndex.push(row.rotation_indexes.rotationIndex);
-          }
-        }
-      } else {
-        parsedStrats.push({
-          id: row.strats.id,
-          map: row.strats.map,
-          site: row.strats.site,
-          name: row.strats.name,
-          description: row.strats.description,
-          drawingID: row.strats.drawingID,
-          powerOPs: row.power_ops ? [row.power_ops.op] : [],
-          rotationIndex: row.rotation_indexes?.rotationIndex
-            ? [row.rotation_indexes.rotationIndex]
-            : [],
-        });
-      }
+    for (const row of data.strat) {
+      const rotationIndexes = data.rotationIndexes
+        .filter((r) => r.stratsID === row.id)
+        .map((r) => r.rotationIndex);
+      const placedAssets = data.placedAssets
+        .filter((r) => r.stratsID === row.id)
+        .map((r) => ({
+          id: r.assetID,
+          position: { x: r.positionX, y: r.positionY },
+          player: r.player,
+          customColor: r.customColor,
+          type: r.type,
+          ...(() => {
+            switch (r.type) {
+              case "gadget":
+                return {
+                  gadget: r.gadget,
+                };
+              case "operator":
+                return {
+                  operator: r.operator,
+                  side: r.side,
+                };
+              case "rotate":
+                return {
+                  variant: r.rotate,
+                };
+              default:
+                return {};
+            }
+          })(),
+        })) as PlacedAsset[];
+      const operators = data.pickedOperators
+        .filter((r) => r.stratsID === row.id)
+        .map((r) => ({
+          operator: r.operator,
+          player: r.player ?? undefined,
+          isPowerOP: r.isPowerOP === 1,
+        }));
+
+      parsedStrats.push({
+        id: row.id,
+        map: row.map,
+        site: row.site,
+        name: row.name,
+        description: row.description,
+        drawingID: row.drawingID,
+        rotationIndex: rotationIndexes,
+        assets: placedAssets,
+        operators,
+      });
     }
 
     return parsedStrats;

@@ -83,7 +83,7 @@ export async function getTeamName() {
   return teamData?.name;
 }
 
-export async function getTeamUsers() {
+export async function getTeamMembers() {
   const user = await getPayload();
   const teamUsers = db
     .select({

@@ -1,14 +1,3 @@
-interface Strat {
-  id: number;
-  map: string;
-  site: string;
-  name: string;
-  description: string;
-  rotationIndex: number[] | null;
-  powerOPs: string[];
-  drawingID: string;
-}
-
 interface R6Map {
   name: string;
   sites: string[];
@@ -33,7 +22,15 @@ interface JWTPayload {
   isAdmin: boolean;
 }
 
-interface StratDrawing extends Strat {
+interface Strat {
+  id: number;
+  map: string;
+  site: string;
+  name: string;
+  description: string;
+  rotationIndex: number[] | null;
+  drawingID: string;
+
   assets: PlacedAsset[];
   operators: PickedOperator[];
 }
@@ -41,6 +38,7 @@ interface StratDrawing extends Strat {
 type PickedOperator = {
   operator: string;
   player?: number;
+  isPowerOP?: boolean;
 };
 
 type PlacedAsset = Asset & {

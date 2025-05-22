@@ -25,30 +25,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useUser } from "@/components/context/UserContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { DEFENDERS } from "@/src/static/operator";
 import { createStrat } from "@/src/strats/strats";
 import { toast } from "sonner";
 import MAPS from "@/src/static/maps";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import OperatorIcon from "@/components/OperatorIcon";
+import OperatorPicker from "./OperatorPicker";
 
 const formSchema = z.object({
   map: z.string().min(1, "Map is required"),
@@ -56,12 +41,10 @@ const formSchema = z.object({
   name: z.string().optional(),
   description: z.string().optional(),
   drawingID: z.string().min(1, "Drawing ID is required"),
-  powerOPs: z.array(z.string()),
 });
 
 export function CreateStratDialog() {
   const [open, setOpen] = useState(false);
-  const { user } = useUser();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -71,7 +54,6 @@ export function CreateStratDialog() {
       name: "",
       description: "",
       drawingID: "",
-      powerOPs: [],
     },
   });
 
@@ -98,7 +80,6 @@ export function CreateStratDialog() {
         name: "",
         description: "",
         ...values,
-        teamID: user?.teamID!,
         drawingID,
       });
 
@@ -226,67 +207,6 @@ export function CreateStratDialog() {
                   <FormControl>
                     <Input placeholder="Enter Google Drawing ID" {...field} />
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="powerOPs"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Power Operators</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          className="w-full justify-start"
-                        >
-                          {field.value.length > 0
-                            ? field.value
-                                .map((op) =>
-                                  DEFENDERS.find((o) => o.name === op)
-                                )
-                                .filter(Boolean)
-                                .map((op) => (
-                                  <OperatorIcon key={op!.name} op={op!} />
-                                ))
-                            : "Select power operators"}
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-full p-0">
-                      <Command>
-                        <CommandInput placeholder="Search operators..." />
-                        <CommandList>
-                          <CommandEmpty>No operators found.</CommandEmpty>
-                          <CommandGroup>
-                            {DEFENDERS.map((op) => (
-                              <CommandItem
-                                key={op.name}
-                                onSelect={() => {
-                                  const newValue = field.value.includes(op.name)
-                                    ? field.value.filter(
-                                        (value) => value !== op.name
-                                      )
-                                    : [...field.value, op.name];
-                                  field.onChange(newValue);
-                                }}
-                              >
-                                <OperatorIcon op={op} />
-                                {op.name}
-                                {field.value.includes(op.name) && (
-                                  <span className="ml-auto">✓</span>
-                                )}
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
                   <FormMessage />
                 </FormItem>
               )}
