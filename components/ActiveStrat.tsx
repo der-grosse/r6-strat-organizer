@@ -16,7 +16,11 @@ export default function ActiveStrat(props: ActiveStratProps) {
     (async () => {
       while (!stop) {
         const current = await getActive();
-        if (current) setStrat(current);
+        if (stop) return;
+        if (current) {
+          document.title = `Current Strat | ${current.name} | ${current.site}`;
+          setStrat(current);
+        }
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     })();
