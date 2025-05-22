@@ -16,6 +16,7 @@ import { DEFENDERS } from "@/src/static/operator";
 import { setActive } from "@/src/strats/strats";
 import { Eye, Pencil } from "lucide-react";
 import Link from "next/link";
+import config from "@/src/static/config";
 
 export default function StratsPage() {
   const { filteredStrats, isLeading } = useFilter();
@@ -31,7 +32,9 @@ export default function StratsPage() {
           </span>
         </p>
         <div className="flex justify-end">
-          <CreateStratDialog />
+          {!config.disabledFeatures.includes("create-strat") && (
+            <CreateStratDialog />
+          )}
         </div>
       </div>
       <Table className="mb-2">
@@ -55,8 +58,9 @@ export default function StratsPage() {
               <TableCell>{strat.name}</TableCell>
               <TableCell>
                 <div className="flex gap-1 -my-2">
-                  {strat.powerOPs
-                    .map((op) => DEFENDERS.find((o) => o.name === op))
+                  {strat.operators
+                    .filter((o) => o.isPowerOP)
+                    .map((op) => DEFENDERS.find((o) => o.name === op.operator))
                     .filter(Boolean)
                     .map((op) => (
                       <OperatorIcon key={op!.name} op={op!} />

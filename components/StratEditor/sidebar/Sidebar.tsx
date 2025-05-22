@@ -24,6 +24,7 @@ import { MAX_REINFORCEMENT } from "@/src/static/general";
 import Link from "next/link";
 import StratEditorPlayerOperatorsSidebar from "./PlayerOPs";
 import { TeamMember } from "@/src/auth/team";
+import config from "@/src/static/config";
 
 export interface StratEditorSidebarProps {
   onAssetAdd: (asset: Asset) => void;
@@ -120,6 +121,7 @@ export default function StratEditorSidebar(
         />
         {/* operator gadget assets */}
         <SidebarButton
+          disabled={config.disabledFeatures.includes("editor")}
           icon={<Fingerprint />}
           onClick={() => {
             setOpenTab("operator-gadgets");
@@ -135,6 +137,7 @@ export default function StratEditorSidebar(
         />
         {/* layout assets - rotate, reinforcement */}
         <SidebarButton
+          disabled={config.disabledFeatures.includes("editor")}
           icon={<LayoutGrid />}
           onClick={() => {
             setOpenTab("layout-assets");
@@ -150,6 +153,7 @@ export default function StratEditorSidebar(
         />
         {/* operator assets - extra operators */}
         <SidebarButton
+          disabled={config.disabledFeatures.includes("editor")}
           icon={<CircleUserRound />}
           onClick={() => {
             setOpenTab("operator-assets");
@@ -224,6 +228,7 @@ function SidebarButton(props: {
     description: string;
   };
   active?: boolean;
+  disabled?: boolean;
 }) {
   return (
     <Tooltip delayDuration={500}>
@@ -232,6 +237,7 @@ function SidebarButton(props: {
           size="icon"
           variant={props.active ? "default" : "ghost"}
           onClick={props.onClick}
+          disabled={props.disabled}
         >
           {props.icon}
         </Button>

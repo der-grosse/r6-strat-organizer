@@ -1,4 +1,6 @@
 "use client";
+import config from "@/src/static/config";
+import StratDisplay from "../StratDisplay";
 import StratEditorSidebar, { StratEditorSidebarProps } from "./sidebar/Sidebar";
 
 export default function StratEditorLayout({
@@ -18,7 +20,11 @@ export default function StratEditorLayout({
       {/* Canvas */}
       <div className="flex-1 relative h-screen overflow-hidden py-0 block">
         <div className="relative h-full w-full flex items-center justify-center">
-          {children}
+          {config.disabledFeatures.includes("editor") ? (
+            <StratDisplay strat={props.strat} />
+          ) : (
+            children
+          )}
         </div>
       </div>
     </div>
