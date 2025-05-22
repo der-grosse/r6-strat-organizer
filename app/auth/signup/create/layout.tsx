@@ -1,8 +1,9 @@
 import { Metadata } from "next";
-import { Fragment } from "react";
 
 export const metadata: Metadata = {
   title: "Create a Team",
 };
 
-export default Fragment;
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return children;
+}
