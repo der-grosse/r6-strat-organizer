@@ -31,7 +31,7 @@ export default function StratEditorGadgetsSidebar(
     .filter(Boolean);
   const selectedPrimaryGadetIDs = selectedOperators
     .map((op) =>
-      "gadget" in op ? { id: op.gadget?.id, player: op.player } : undefined!
+      "gadget" in op ? { id: op.gadget, player: op.player } : undefined!
     )
     .filter(Boolean);
   const selectedSecondaryGadgetIDs = selectedOperators
@@ -111,17 +111,17 @@ export default function StratEditorGadgetsSidebar(
           {DEFENDER_PRIMARY_GADGETS.map((gadget) => (
             <Button
               variant="outline"
-              key={gadget}
+              key={gadget.id}
               className="p-1 h-auto"
               onClick={() => {
                 props.onAssetAdd({
                   id: `gadget-${gadget}`,
                   type: "gadget",
-                  gadget,
+                  gadget: gadget.id,
                 });
               }}
             >
-              <PrimaryGadgetIcon id={gadget} />
+              <PrimaryGadgetIcon id={gadget.id} />
             </Button>
           ))}
           <Badge className="sticky top-0 w-full col-span-full">

@@ -10,7 +10,7 @@ import {
   addAsset,
   deleteStratAssets,
   updateStrat,
-  updateStratAsset,
+  updateStratAssets,
 } from "@/src/strats/strats";
 
 interface StratEditorProps {
@@ -38,11 +38,13 @@ export function StratEditor({
     {
       deleteAsset(asset) {
         setAssets((assets) => assets.filter((a) => a.id !== asset.id));
+        deleteStratAssets(strat.id, [asset.id]);
       },
       updateAsset(asset) {
         setAssets((assets) =>
           assets.map((a) => (a.id === asset.id ? asset : a))
         );
+        updateStratAssets(strat.id, [asset]);
       },
     }
   );
@@ -87,12 +89,10 @@ export function StratEditor({
               return newAsset;
             })
           );
-          for (const asset of assets) {
-            updateStratAsset(strat.id, asset);
-          }
+          updateStratAssets(strat.id, assets);
         }}
         onAssetRemove={(ids) => {
-          setAssets((assets) => assets.filter((a) => ids.includes(a.id)));
+          setAssets((assets) => assets.filter((a) => !ids.includes(a.id)));
           deleteStratAssets(strat.id, ids);
         }}
         renderAsset={renderAsset}

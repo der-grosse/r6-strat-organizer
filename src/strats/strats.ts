@@ -98,12 +98,14 @@ export async function updateStrat(
   revalidatePath("/", "layout");
 }
 
-export async function updateStratAsset(
+export async function updateStratAssets(
   stratID: Strat["id"],
-  asset: PlacedAsset
+  asset: PlacedAsset[]
 ) {
   const user = await getPayload();
-  StratsDB.updateAsset(user!, stratID, asset);
+  for (const a of asset) {
+    StratsDB.updateAsset(user!, stratID, a);
+  }
 
   revalidatePath(`/editor/${stratID}`);
   revalidatePath("/strats");
