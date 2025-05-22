@@ -11,7 +11,7 @@ import {
   CommandList,
   CommandShortcut,
 } from "./ui/command";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 export interface OperatorPickerProps<
   Multiple extends boolean,
@@ -22,6 +22,7 @@ export interface OperatorPickerProps<
   onChange: (value: Value) => void;
   trigger: React.FC<{ children: React.ReactNode }>;
   modal?: boolean;
+  closeOnSelect?: boolean;
 }
 
 export default function OperatorPicker<
@@ -35,11 +36,14 @@ export default function OperatorPicker<
   multiple,
   onChange,
   modal,
+  closeOnSelect,
 }: OperatorPickerProps<Multiple, Value>) {
   const bannedOPInput = useRef<HTMLInputElement>(null);
 
+  const [open, setOpen] = useState(false);
+
   return (
-    <Popover modal={modal}>
+    <Popover modal={modal} open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Trigger>
           {Array.isArray(selected) ? (
@@ -70,7 +74,10 @@ export default function OperatorPicker<
             <CommandGroup>
               <CommandItem
                 key="clear"
-                onSelect={() => onChange((multiple ? [] : null) as Value)}
+                onSelect={() => {
+                  onChange((multiple ? [] : null) as Value);
+                  if (closeOnSelect) setOpen(false);
+                }}
               >
                 <em>Clear</em>
               </CommandItem>
@@ -93,9 +100,11 @@ export default function OperatorPicker<
                           : [...(selected as string[]), op.name]
                         : op.name) as Value
                     );
-                    requestAnimationFrame(() => {
-                      bannedOPInput.current?.focus();
-                    });
+                    if (closeOnSelect) setOpen(false);
+                    else
+                      requestAnimationFrame(() => {
+                        bannedOPInput.current?.focus();
+                      });
                   }}
                 >
                   <OperatorIcon op={op} />

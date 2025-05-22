@@ -2,6 +2,20 @@ import { StratEditor } from "@/components/StratEditor/StratEditor";
 import { getTeamMembers } from "@/src/auth/team";
 import { getStrat } from "@/src/strats/strats";
 import { CircleX } from "lucide-react";
+import { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const strat = await getStrat(Number(id));
+
+  return {
+    title: `${strat?.name} | ${strat?.map} - ${strat?.site}`,
+  };
+}
 
 export default async function StratEditorPage({
   params: paramsRaw,

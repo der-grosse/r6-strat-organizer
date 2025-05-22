@@ -42,4 +42,4 @@ next-env.d.ts
 
 # custom
 /data/activeStrat.json
-/data/db.sqlite
+/data/*.sqlite

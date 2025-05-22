@@ -100,6 +100,7 @@ export default function StratEditorPlayerOperatorsSidebar({
           )}
           <div className="flex-1" />
           <OperatorPicker
+            closeOnSelect
             selected={operator?.operator ?? null}
             onChange={(op) =>
               updateStrat({

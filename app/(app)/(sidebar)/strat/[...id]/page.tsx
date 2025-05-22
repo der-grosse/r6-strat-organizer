@@ -1,5 +1,20 @@
 import StratDisplay from "@/components/StratDisplay";
 import { getStrat } from "@/src/strats/strats";
+import { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const strat = await getStrat(Number(id));
+
+  return {
+    title: `${strat?.name} | ${strat?.map} - ${strat?.site}`,
+    description: `${strat?.map} | ${strat?.site}`,
+  };
+}
 
 export default async function Page({
   params: paramsRaw,
