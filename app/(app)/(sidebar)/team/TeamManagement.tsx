@@ -75,7 +75,9 @@ export default function TeamManagement(props: TeamManagementProps) {
   const [isChangeUsernameOpen, setIsChangeUsernameOpen] = useState(false);
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
   const [newUsername, setNewUsername] = useState("");
+  const newUsernameRef = useRef<HTMLInputElement | null>(null);
   const [newPassword, setNewPassword] = useState("");
+  const newPasswordRef = useRef<HTMLInputElement | null>(null);
 
   const [userColorChangeOpen, setUserColorChangeOpen] = useState(false);
   const [userColorID, setUserColorID] = useState<number | null>(null);
@@ -303,7 +305,7 @@ export default function TeamManagement(props: TeamManagementProps) {
                       })}
                     </TableCell>
                     <TableCell>
-                      <DropdownMenu>
+                      <DropdownMenu modal>
                         <DropdownMenuTrigger asChild>
                           <Button
                             variant="ghost"
@@ -317,13 +319,25 @@ export default function TeamManagement(props: TeamManagementProps) {
                           {member.id === user?.id && (
                             <>
                               <DropdownMenuItem
-                                onClick={() => setIsChangeUsernameOpen(true)}
+                                onClick={() => {
+                                  setIsChangeUsernameOpen(true);
+                                  setNewUsername(member.name);
+                                  requestAnimationFrame(() => {
+                                    newUsernameRef.current?.focus();
+                                  });
+                                }}
                               >
                                 <Edit2 className="mr-2 h-4 w-4" />
                                 Change Username
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                onClick={() => setIsChangePasswordOpen(true)}
+                                onClick={() => {
+                                  setIsChangePasswordOpen(true);
+                                  setNewPassword("");
+                                  requestAnimationFrame(() => {
+                                    newPasswordRef.current?.focus();
+                                  });
+                                }}
                               >
                                 <Lock className="mr-2 h-4 w-4" />
                                 Change Password
@@ -489,10 +503,13 @@ export default function TeamManagement(props: TeamManagementProps) {
           </DialogHeader>
           <div className="space-y-4">
             <Input
+              ref={newUsernameRef}
               value={newUsername}
               onChange={(e) => setNewUsername(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleChangeUsername();
+              }}
               placeholder="New username"
-              autoFocus
             />
           </div>
           <DialogFooter>
@@ -524,11 +541,14 @@ export default function TeamManagement(props: TeamManagementProps) {
           </DialogHeader>
           <div className="space-y-4">
             <Input
+              ref={newPasswordRef}
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleChangePassword();
+              }}
               placeholder="New password"
-              autoFocus
             />
           </div>
           <DialogFooter>
