@@ -1,4 +1,9 @@
-const ATTACKERS = [
+export type Attacker = {
+  name: string;
+  icon: string;
+};
+
+export const ATTACKERS = [
   {
     name: "Striker",
     icon: "/ops/att/striker.webp",
@@ -153,7 +158,21 @@ const ATTACKERS = [
   },
 ];
 
-const DEFENDERS = [
+export type Defender = {
+  name: string;
+  icon: string;
+  gadget?: PrimaryGadget;
+  secondaryGadgets?: DefenderSecondaryGadget[];
+  hasPrimaryShotgun?: boolean;
+  hasSecondaryShotgun?: boolean;
+};
+
+export type PrimaryGadget = {
+  id: DefenderPrimaryGadget;
+  count?: number;
+};
+
+export const DEFENDERS = [
   {
     name: "Sentry",
     icon: "/ops/def/sentry.webp",
@@ -435,51 +454,6 @@ const DEFENDERS = [
   },
 ] as const;
 
-export const DEFENDER_SECONDARY_GADGETS = [
-  {
-    id: "deployable_shield",
-    name: "Deployable Shield",
-    icon: ["/gadgets/Shield.png"],
-    count: 1,
-  },
-  {
-    id: "bulletproof_camera",
-    name: "Bulletproof Camera",
-    icon: ["/gadgets/BulletProofCam.png", "/gadgets/BulletProofCamArrow.png"],
-    count: 1,
-  },
-  {
-    id: "barbed_wire",
-    name: "Barbed Wire",
-    icon: ["/gadgets/Barb.png"],
-    count: 2,
-  },
-  {
-    id: "observation_blocker",
-    name: "Observation Blocker",
-    icon: ["MISSING"],
-    count: 3,
-  },
-  {
-    id: "impact_grenade",
-    name: "Impact Grenade",
-    icon: ["/gadgets/ImpactGrenade.png"],
-    count: 2,
-  },
-  {
-    id: "c4",
-    name: "Nitro Cell",
-    icon: ["/gadgets/NitroCell.png"],
-    count: 1,
-  },
-  {
-    id: "proximity_alarm",
-    name: "Proximity Alarm",
-    icon: ["/gadgets/ProximityMine.png"],
-    count: 2,
-  },
-] as const;
-
 export const DEFENDER_PRIMARY_GADGETS = [
   {
     id: "toxic_canister",
@@ -651,39 +625,55 @@ export const DEFENDER_PRIMARY_GADGETS = [
   },
 ] as const;
 
-export type Defender = {
-  name: string;
-  icon: string;
-  gadget?: PrimaryGadget;
-  secondaryGadgets?: DefenderSecondaryGadget[];
-  hasPrimaryShotgun?: boolean;
-  hasSecondaryShotgun?: boolean;
-};
-
-export type PrimaryGadget = {
-  id: DefenderPrimaryGadget;
-  count?: number;
-};
-
-export type Attacker = {
-  name: string;
-  icon: string;
-};
-
-export type Operator = Defender | Attacker;
-
-export type DefenderSecondaryGadget =
-  | "deployable_shield"
-  | "bulletproof_camera"
-  | "barbed_wire"
-  | "observation_blocker"
-  | "impact_grenade"
-  | "c4"
-  | "proximity_alarm";
-
 export type DefenderPrimaryGadget = Extract<
   (typeof DEFENDERS)[number],
   { gadget: any }
 >["gadget"];
 
-export { ATTACKERS, DEFENDERS };
+export const DEFENDER_SECONDARY_GADGETS = [
+  {
+    id: "deployable_shield",
+    name: "Deployable Shield",
+    icon: ["/gadgets/Shield.png"],
+    count: 1,
+  },
+  {
+    id: "bulletproof_camera",
+    name: "Bulletproof Camera",
+    icon: ["/gadgets/BulletProofCam.png", "/gadgets/BulletProofCamArrow.png"],
+    count: 1,
+  },
+  {
+    id: "barbed_wire",
+    name: "Barbed Wire",
+    icon: ["/gadgets/Barb.png"],
+    count: 2,
+  },
+  {
+    id: "observation_blocker",
+    name: "Observation Blocker",
+    icon: ["MISSING"],
+    count: 3,
+  },
+  {
+    id: "impact_grenade",
+    name: "Impact Grenade",
+    icon: ["/gadgets/ImpactGrenade.png"],
+    count: 2,
+  },
+  {
+    id: "c4",
+    name: "Nitro Cell",
+    icon: ["/gadgets/NitroCell.png"],
+    count: 1,
+  },
+  {
+    id: "proximity_alarm",
+    name: "Proximity Alarm",
+    icon: ["/gadgets/ProximityMine.png"],
+    count: 2,
+  },
+] as const;
+
+export type DefenderSecondaryGadget =
+  (typeof DEFENDER_SECONDARY_GADGETS)[number]["id"];

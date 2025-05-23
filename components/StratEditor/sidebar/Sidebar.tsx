@@ -15,7 +15,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import StratEditorGadgetsSidebar from "./Gadgets";
 import StratEditorMetaSidebar from "./Meta";
 import { cn } from "@/src/utils";
@@ -183,11 +183,11 @@ export default function StratEditorSidebar(
         <div className="flex-1" />
         <Tooltip delayDuration={500}>
           <TooltipTrigger asChild>
-            <div className="flex gap-1 p-1 items-center">
-              <span className="text-sm text-muted-foreground text-right">
+            <div className="flex gap-1 p-1 items-center cursor-default">
+              <span className="text-xs text-muted-foreground text-right">
                 {MAX_REINFORCEMENT - placedReeinforcements}
               </span>
-              <div className="h-2.5 flex-1">
+              <div className="flex-1">
                 <Reinforcement color="white" />
               </div>
             </div>

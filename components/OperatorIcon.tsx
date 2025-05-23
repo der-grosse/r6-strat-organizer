@@ -1,8 +1,13 @@
-import { ATTACKERS, DEFENDERS, Operator } from "@/src/static/operator";
+import {
+  Attacker,
+  ATTACKERS,
+  Defender,
+  DEFENDERS,
+} from "@/src/static/operator";
 import { cn } from "@/src/utils";
 
 export interface OperatorIconProps {
-  op: Operator | string;
+  op: Attacker | Defender | string;
   className?: string;
 }
 
