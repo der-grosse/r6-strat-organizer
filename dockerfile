@@ -21,9 +21,6 @@ RUN npm run build
 # Use node for production
 FROM node:20-slim AS production
 
-# Install SQLite runtime
-RUN apt-get update && apt-get install -y sqlite3 && rm -rf /var/lib/apt/lists/*
-
 # Set the working directory
 WORKDIR /app
 
@@ -33,7 +30,6 @@ COPY --from=base /app/.next ./.next
 COPY --from=base /app/public ./public
 COPY --from=base /app/node_modules ./node_modules
 COPY --from=base /app/src ./src
-COPY --from=base /app/data ./data
 
 # Expose the port the app runs on
 EXPOSE 3000

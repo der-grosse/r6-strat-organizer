@@ -7,7 +7,8 @@ You can access the tool youself at [r6.dorf-cloud.de](https://r6.dorf-cloud.de).
 
 ### Technical
 
-- migrate from sqlite to postgres
+- deploy with new postgres database
+- use better docker image for lighter container
 
 ### Editor
 

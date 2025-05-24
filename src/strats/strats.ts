@@ -41,22 +41,19 @@ export async function createStrat(data: {
       })
       .returning();
 
-    const positions = db
+    const positions = await db
       .select()
       .from(playerPositions)
-      .where(eq(playerPositions.teamID, session.teamID))
-      .all();
+      .where(eq(playerPositions.teamID, session.teamID));
 
-    db.insert(pickedOperators)
-      .values(
-        Array.from({ length: PLAYER_COUNT }, (_, i) => ({
-          isPowerOP: 0,
-          operator: null,
-          positionID: positions[i]?.id,
-          stratsID: newStrat.id,
-        }))
-      )
-      .run();
+    await db.insert(pickedOperators).values(
+      Array.from({ length: PLAYER_COUNT }, (_, i) => ({
+        isPowerOP: 0,
+        operator: null,
+        positionID: positions[i]?.id,
+        stratsID: newStrat.id,
+      }))
+    );
 
     revalidatePath("/", "layout");
 
@@ -165,7 +162,9 @@ export async function updatePickedOperator(
   const user = await getPayload();
   if (!user) throw new Error("User not found");
   if (!user.isAdmin) throw new Error("Only admins can set user position name");
-  const strat = db.select().from(strats).where(eq(strats.id, stratID)).get();
+  const strat = (
+    await db.select().from(strats).where(eq(strats.id, stratID))
+  )[0];
   if (!strat) throw new Error("Strat not found");
   if (strat.teamID !== user.teamID)
     throw new Error("Strat must be in the same team");
@@ -176,8 +175,7 @@ export async function updatePickedOperator(
       positionID: operator.positionID,
       stratsID: stratID,
     })
-    .where(eq(pickedOperators.id, operator.id))
-    .run();
+    .where(eq(pickedOperators.id, operator.id));
 
   revalidatePath(`/editor/${stratID}`);
   revalidatePath("/strats");

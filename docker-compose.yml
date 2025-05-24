@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: POSTGRES_USER
+      POSTGRES_PASSWORD: POSTGRES_PASSWORD
+      POSTGRES_DB: strats
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  web:
+    image: dergrosse/r6-strat-organizer:latest
+    container_name: r6-strat-organizer
+    restart: unless-stopped
+    ports:
+      - "8002:3000"
+    environment:
+      NEXT_PUBLIC_DISABLED_FEATURES: editor,create-strat
+      JWT_PUBLIC_KEY: >
+        %-----PUBLIC KEY GOES HERE-----%
+      JWT_PRIVATE_KEY: >
+        %-----PRIVATE KEY GOES HERE-----%
+
+volumes:
+  postgres_data:
+    driver: local

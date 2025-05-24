@@ -10,14 +10,12 @@ import { PLAYER_COUNT } from "../static/general";
 
 class StratsDBClass {
   async create(user: JWTPayload, strat: Strat): Promise<number> {
-    const { lastInsertRowid } = db
+    const [{ id: stratID }] = await db
       .insert(strats)
       .values({ ...strat, teamID: user.teamID })
-      .run();
+      .returning({ id: strats.id });
 
-    const stratID = lastInsertRowid as number;
-
-    db.insert(pickedOperators).values(
+    await db.insert(pickedOperators).values(
       Array.from({ length: PLAYER_COUNT }, () => ({
         operator: null,
         positionID: null,
@@ -30,7 +28,7 @@ class StratsDBClass {
   }
 
   async list(user: JWTPayload): Promise<Strat[]> {
-    const stratRows = db
+    const stratRows = await db
       .select({
         id: strats.id,
         map: strats.map,
@@ -38,32 +36,28 @@ class StratsDBClass {
         name: strats.name,
         description: strats.description,
         drawingID: strats.drawingID,
-        rotationIndex: min(rotationIndexes.rotationIndex).as("rotationIndex"),
+        rotationIndex: min(rotationIndexes.rotationIndex).as("rotation_index"),
       })
       .from(strats)
       .leftJoin(rotationIndexes, eq(strats.id, rotationIndexes.stratsID))
       .where(and(eq(strats.teamID, user.teamID), eq(strats.archived, 0)))
       .groupBy(strats.id)
-      .orderBy(strats.map, sql`rotationIndex asc nulls last`, strats.site)
-      .all();
+      .orderBy(strats.map, sql`rotation_index asc nulls last`, strats.site);
 
     const stratsIDs = stratRows.map((strat) => strat.id);
 
-    const rotationIndexRows = db
+    const rotationIndexRows = await db
       .select()
       .from(rotationIndexes)
-      .where(inArray(rotationIndexes.stratsID, stratsIDs))
-      .all();
-    const placedAssetsRows = db
+      .where(inArray(rotationIndexes.stratsID, stratsIDs));
+    const placedAssetsRows = await db
       .select()
       .from(placedAssets)
-      .where(inArray(placedAssets.stratsID, stratsIDs))
-      .all();
-    const pickedOperatorsRows = db
+      .where(inArray(placedAssets.stratsID, stratsIDs));
+    const pickedOperatorsRows = await db
       .select()
       .from(pickedOperators)
-      .where(inArray(pickedOperators.stratsID, stratsIDs))
-      .all();
+      .where(inArray(pickedOperators.stratsID, stratsIDs));
 
     return this.parseStratRows({
       strat: stratRows,
@@ -74,29 +68,25 @@ class StratsDBClass {
   }
 
   async get(user: JWTPayload, id: Strat["id"]): Promise<Strat | null> {
-    const stratRows = db
+    const stratRows = await db
       .select()
       .from(strats)
-      .where(and(eq(strats.id, id), eq(strats.teamID, user.teamID)))
-      .all();
+      .where(and(eq(strats.id, id), eq(strats.teamID, user.teamID)));
 
     if (stratRows.length === 0) return null;
 
-    const rotationIndexRows = db
+    const rotationIndexRows = await db
       .select()
       .from(rotationIndexes)
-      .where(eq(rotationIndexes.stratsID, id))
-      .all();
-    const placedAssetsRows = db
+      .where(eq(rotationIndexes.stratsID, id));
+    const placedAssetsRows = await db
       .select()
       .from(placedAssets)
-      .where(eq(placedAssets.stratsID, id))
-      .all();
-    const pickedOperatorsRows = db
+      .where(eq(placedAssets.stratsID, id));
+    const pickedOperatorsRows = await db
       .select()
       .from(pickedOperators)
-      .where(eq(pickedOperators.stratsID, id))
-      .all();
+      .where(eq(pickedOperators.stratsID, id));
 
     return (
       this.parseStratRows({
@@ -108,73 +98,74 @@ class StratsDBClass {
     );
   }
 
-  update(
+  async update(
     user: JWTPayload,
     updatedStrat: Partial<Strat> & Pick<Strat, "id">
   ): Promise<undefined> {
     const strat = this.get(user, updatedStrat.id);
     if (!strat) return Promise.reject(new Error("Strat not found"));
     const newStrat = { ...strat, ...updatedStrat };
-    db.update(strats).set(newStrat).where(eq(strats.id, updatedStrat.id)).run();
+    await db.update(strats).set(newStrat).where(eq(strats.id, updatedStrat.id));
 
     if (updatedStrat.rotationIndex) {
-      db.delete(rotationIndexes)
-        .where(eq(rotationIndexes.stratsID, updatedStrat.id))
-        .run();
+      await db
+        .delete(rotationIndexes)
+        .where(eq(rotationIndexes.stratsID, updatedStrat.id));
       for (const rotationIndex of updatedStrat.rotationIndex) {
-        db.insert(rotationIndexes)
-          .values({ rotationIndex, stratsID: updatedStrat.id })
-          .run();
+        await db
+          .insert(rotationIndexes)
+          .values({ rotationIndex, stratsID: updatedStrat.id });
       }
     }
 
     if (updatedStrat.operators) {
-      db.delete(pickedOperators)
-        .where(eq(pickedOperators.stratsID, updatedStrat.id))
-        .run();
+      await db
+        .delete(pickedOperators)
+        .where(eq(pickedOperators.stratsID, updatedStrat.id));
       for (const op of updatedStrat.operators) {
-        db.insert(pickedOperators)
-          .values({
-            operator: op.operator,
-            stratsID: updatedStrat.id,
-            positionID: op.positionID,
-            isPowerOP: op.isPowerOP ? 1 : 0,
-          })
-          .run();
+        await db.insert(pickedOperators).values({
+          operator: op.operator,
+          stratsID: updatedStrat.id,
+          positionID: op.positionID,
+          isPowerOP: op.isPowerOP ? 1 : 0,
+        });
       }
     }
 
     if (updatedStrat.assets) {
-      db.delete(placedAssets).where(eq(placedAssets.id, updatedStrat.id)).run();
+      await db.delete(placedAssets).where(eq(placedAssets.id, updatedStrat.id));
       for (const asset of updatedStrat.assets) {
-        db.insert(placedAssets)
-          .values({
-            assetID: asset.id,
-            positionX: asset.position.x,
-            positionY: asset.position.y,
-            customColor: asset.customColor,
-            stratsID: updatedStrat.id,
-            type: asset.type,
-            gadget: asset.type === "gadget" ? asset.gadget : undefined,
-            operator: asset.type === "operator" ? asset.operator : undefined,
-            side: asset.type === "operator" ? asset.side : undefined,
-            showIcon: asset.type === "operator" ? (asset.showIcon ? 1 : 0) : 0,
-            rotate: asset.type === "rotate" ? asset.variant : undefined,
-            pickedOPID: asset.pickedOPID,
-            width: asset.size.width,
-            height: asset.size.height,
-          })
-          .run();
+        await db.insert(placedAssets).values({
+          assetID: asset.id,
+          positionX: asset.position.x,
+          positionY: asset.position.y,
+          customColor: asset.customColor,
+          stratsID: updatedStrat.id,
+          type: asset.type,
+          gadget: asset.type === "gadget" ? asset.gadget : undefined,
+          operator: asset.type === "operator" ? asset.operator : undefined,
+          side: asset.type === "operator" ? asset.side : undefined,
+          showIcon: asset.type === "operator" ? (asset.showIcon ? 1 : 0) : 0,
+          rotate: asset.type === "rotate" ? asset.variant : undefined,
+          pickedOPID: asset.pickedOPID,
+          width: asset.size.width,
+          height: asset.size.height,
+        });
       }
     }
 
     return Promise.resolve(undefined);
   }
 
-  updateAsset(user: JWTPayload, stratID: Strat["id"], asset: PlacedAsset) {
-    const strat = db.select().from(strats).where(eq(strats.id, stratID)).all();
+  async updateAsset(
+    user: JWTPayload,
+    stratID: Strat["id"],
+    asset: PlacedAsset
+  ) {
+    const strat = await db.select().from(strats).where(eq(strats.id, stratID));
     if (strat[0]?.teamID !== user.teamID) throw new Error("Strat not found");
-    db.update(placedAssets)
+    await db
+      .update(placedAssets)
       .set({
         assetID: asset.id,
         positionX: asset.position.x,
@@ -195,55 +186,52 @@ class StratsDBClass {
           eq(placedAssets.stratsID, stratID),
           eq(placedAssets.assetID, asset.id)
         )
-      )
-      .run();
+      );
   }
 
-  addAsset(user: JWTPayload, stratID: Strat["id"], asset: PlacedAsset) {
-    const strat = db.select().from(strats).where(eq(strats.id, stratID)).all();
+  async addAsset(user: JWTPayload, stratID: Strat["id"], asset: PlacedAsset) {
+    const strat = await db.select().from(strats).where(eq(strats.id, stratID));
     if (strat[0]?.teamID !== user.teamID) throw new Error("Strat not found");
-    db.insert(placedAssets)
-      .values({
-        assetID: asset.id,
-        positionX: asset.position.x,
-        positionY: asset.position.y,
-        customColor: asset.customColor,
-        stratsID: stratID,
-        type: asset.type,
-        gadget: asset.type === "gadget" ? asset.gadget : undefined,
-        operator: asset.type === "operator" ? asset.operator : undefined,
-        side: asset.type === "operator" ? asset.side : undefined,
-        showIcon: asset.type === "operator" ? (asset.showIcon ? 1 : 0) : 0,
-        rotate: asset.type === "rotate" ? asset.variant : undefined,
-        pickedOPID: asset.pickedOPID,
-        width: asset.size.width,
-        height: asset.size.height,
-      })
-      .run();
+    await db.insert(placedAssets).values({
+      assetID: asset.id,
+      positionX: asset.position.x,
+      positionY: asset.position.y,
+      customColor: asset.customColor,
+      stratsID: stratID,
+      type: asset.type,
+      gadget: asset.type === "gadget" ? asset.gadget : undefined,
+      operator: asset.type === "operator" ? asset.operator : undefined,
+      side: asset.type === "operator" ? asset.side : undefined,
+      showIcon: asset.type === "operator" ? (asset.showIcon ? 1 : 0) : 0,
+      rotate: asset.type === "rotate" ? asset.variant : undefined,
+      pickedOPID: asset.pickedOPID,
+      width: asset.size.width,
+      height: asset.size.height,
+    });
   }
 
-  deleteAssets(
+  async deleteAssets(
     user: JWTPayload,
     stratID: Strat["id"],
     assetIDs: PlacedAsset["id"][]
   ) {
-    const strat = db.select().from(strats).where(eq(strats.id, stratID)).all();
+    const strat = await db.select().from(strats).where(eq(strats.id, stratID));
     if (strat[0]?.teamID !== user.teamID) throw new Error("Strat not found");
-    db.delete(placedAssets)
+    await db
+      .delete(placedAssets)
       .where(
         and(
           eq(placedAssets.stratsID, stratID),
           inArray(placedAssets.assetID, assetIDs)
         )
-      )
-      .run();
+      );
   }
 
   async archive(user: JWTPayload, id: Strat["id"]): Promise<void> {
-    db.update(strats)
+    await db
+      .update(strats)
       .set({ archived: 1 })
-      .where(and(eq(strats.id, id), eq(strats.teamID, user.teamID)))
-      .run();
+      .where(and(eq(strats.id, id), eq(strats.teamID, user.teamID)));
   }
 
   private parseStratRows(data: {

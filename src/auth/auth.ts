@@ -17,11 +17,13 @@ export async function resetJWT(payload?: JWTPayload) {
   if (!payload) {
     const userid = (await getPayload())?.id;
     if (!userid) throw new Error("User not found");
-    const user = db.select().from(users).where(eq(users.id, userid)).get();
+    const [user] = await db.select().from(users).where(eq(users.id, userid));
     if (!user) throw new Error("User not found");
     payload = {
-      ...user,
-      isAdmin: user.isAdmin === 1,
+      id: user.id,
+      isAdmin: user.isAdmin,
+      name: user.name,
+      teamID: user.teamID,
     };
   }
   if (!payload) throw new Error("User not found");
@@ -33,14 +35,9 @@ export async function resetJWT(payload?: JWTPayload) {
 }
 
 export async function login(name: string, password: string) {
-  const userRaw = db.select().from(users).where(eq(users.name, name)).get();
+  const [user] = await db.select().from(users).where(eq(users.name, name));
 
-  if (!userRaw) return null;
-
-  const user = {
-    ...userRaw,
-    isAdmin: userRaw.isAdmin === 1,
-  };
+  if (!user) return null;
 
   // hash password and compare with db password
   const isValid = await bcrypt.compare(password, user.password);
@@ -56,31 +53,30 @@ export async function register(
   password: string,
   invite_key: string
 ) {
-  const invite = db
+  const [invite] = await db
     .select()
     .from(teamInvites)
-    .where(eq(teamInvites.inviteKey, invite_key))
-    .get();
+    .where(eq(teamInvites.inviteKey, invite_key));
   if (!invite || invite.usedAt) throw new Error("Invalid invite key");
   const hash = await hashPassword(password);
-  const { lastInsertRowid } = db
+  const [{ id }] = await db
     .insert(users)
     .values({
       name,
       password: hash,
       createdAt: new Date().toISOString(),
       teamID: invite.teamID,
-      isAdmin: 0,
+      isAdmin: false,
     })
-    .run();
-  db.update(teamInvites)
+    .returning({ id: users.id });
+  await db
+    .update(teamInvites)
     .set({
-      usedBy: lastInsertRowid as number,
+      usedBy: id,
       usedAt: new Date().toISOString(),
     })
-    .where(eq(teamInvites.inviteKey, invite_key))
-    .run();
-  return lastInsertRowid as number;
+    .where(eq(teamInvites.inviteKey, invite_key));
+  return id as number;
 }
 
 export async function logout() {

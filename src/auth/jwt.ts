@@ -1,5 +1,8 @@
 "use server";
 import * as jwt from "jose";
+import db from "../db/db";
+import { users } from "../db/schema";
+import { eq } from "drizzle-orm";
 
 // These should be set as environment variables in your deployment platform
 const JWT_PRIVATE_KEY = process.env.JWT_PRIVATE_KEY;

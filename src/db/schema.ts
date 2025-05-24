@@ -1,93 +1,99 @@
-import { int, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { arch } from "os";
+import {
+  integer,
+  primaryKey,
+  pgTable,
+  text,
+  serial,
+  boolean,
+} from "drizzle-orm/pg-core";
 
-export const team = sqliteTable("team", {
-  id: int("id").primaryKey({ autoIncrement: true }),
+export const team = pgTable("team", {
+  id: serial("id").primaryKey(),
   name: text("name").notNull(),
   createdAt: text("created_at").notNull(),
 });
 
-export const teamInvites = sqliteTable("team_invites", {
+export const teamInvites = pgTable("team_invites", {
   inviteKey: text("invite_key").primaryKey().notNull(),
-  teamID: int("team_id")
+  teamID: integer("team_id")
     .notNull()
     .references(() => team.id, { onDelete: "cascade" }),
-  usedBy: int("used_by").references(() => users.id),
+  usedBy: integer("used_by").references(() => users.id),
   usedAt: text("used_at"),
 });
 
-export const users = sqliteTable("users", {
-  id: int("id").primaryKey({ autoIncrement: true }),
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
   name: text("name").notNull(),
   password: text("password").notNull(),
   createdAt: text("created_at").notNull(),
-  teamID: int("team_id")
+  teamID: integer("team_id")
     .notNull()
     .references(() => team.id),
-  isAdmin: int("is_admin").notNull(),
+  isAdmin: boolean("is_admin").notNull().default(false),
   defaultColor: text("default_color"),
 });
 
-export const playerPositions = sqliteTable("player_positions", {
-  id: int("id").primaryKey({ autoIncrement: true }),
-  playerID: int("player_id").references(() => users.id, {
+export const playerPositions = pgTable("player_positions", {
+  id: serial("id").primaryKey(),
+  playerID: integer("player_id").references(() => users.id, {
     onDelete: "set null",
     onUpdate: "cascade",
   }),
   positionName: text("position_name").notNull(),
-  teamID: int("team_id")
+  teamID: integer("team_id")
     .notNull()
     .references(() => team.id, { onDelete: "cascade" }),
 });
 
-export const strats = sqliteTable("strats", {
-  id: int("id").primaryKey({ autoIncrement: true }),
+export const strats = pgTable("strats", {
+  id: serial("id").primaryKey(),
   map: text("map").notNull(),
   site: text("site").notNull(),
   name: text("name").notNull(),
   description: text("description").notNull(),
   drawingID: text("drawing_id").notNull(),
-  teamID: int("team_id")
+  teamID: integer("team_id")
     .notNull()
     .references(() => team.id, { onDelete: "cascade" }),
-  archived: int("archived").notNull().default(0),
+  archived: integer("archived").notNull().default(0),
 });
 
-export const rotationIndexes = sqliteTable(
+export const rotationIndexes = pgTable(
   "rotation_indexes",
   {
-    rotationIndex: int("rotation_index").notNull(),
-    stratsID: int("strats_id")
+    rotationIndex: integer("rotation_index").notNull(),
+    stratsID: integer("strats_id")
       .notNull()
       .references(() => strats.id, { onDelete: "cascade" }),
   },
   (table) => [primaryKey({ columns: [table.rotationIndex, table.stratsID] })]
 );
 
-export const activeStrat = sqliteTable(
+export const activeStrat = pgTable(
   "active_strat",
   {
-    teamID: int("team_id")
+    teamID: integer("team_id")
       .notNull()
       .references(() => team.id, { onDelete: "cascade" }),
-    stratID: int("strat_id").references(() => strats.id, {
+    stratID: integer("strat_id").references(() => strats.id, {
       onDelete: "cascade",
     }),
   },
   (table) => [primaryKey({ columns: [table.teamID, table.stratID] })]
 );
 
-export const placedAssets = sqliteTable("placed_assets", {
-  id: int("id").primaryKey({ autoIncrement: true }),
-  stratsID: int("strats_id")
+export const placedAssets = pgTable("placed_assets", {
+  id: serial("id").primaryKey(),
+  stratsID: integer("strats_id")
     .notNull()
     .references(() => strats.id, { onDelete: "cascade" }),
   assetID: text("asset_id").notNull(),
-  positionX: int("position_x").notNull(),
-  positionY: int("position_y").notNull(),
-  width: int("width").notNull(),
-  height: int("height").notNull(),
-  pickedOPID: int("picked_op_id").references(() => pickedOperators.id, {
+  positionX: integer("position_x").notNull(),
+  positionY: integer("position_y").notNull(),
+  width: integer("width").notNull(),
+  height: integer("height").notNull(),
+  pickedOPID: integer("picked_op_id").references(() => pickedOperators.id, {
     onDelete: "set null",
     onUpdate: "cascade",
   }),
@@ -97,7 +103,7 @@ export const placedAssets = sqliteTable("placed_assets", {
   // Operator type
   operator: text("operator"),
   side: text("side", { enum: ["att", "def"] }),
-  showIcon: int("show_icon"),
+  showIcon: integer("show_icon"),
 
   // Gadget type
   gadget: text("gadget"),
@@ -106,15 +112,15 @@ export const placedAssets = sqliteTable("placed_assets", {
   rotate: text("rotate"),
 });
 
-export const pickedOperators = sqliteTable("picked_operators", {
-  id: int("id").primaryKey({ autoIncrement: true }),
+export const pickedOperators = pgTable("picked_operators", {
+  id: serial("id").primaryKey(),
   operator: text("operator"),
-  positionID: int("positionID").references(() => playerPositions.id, {
+  positionID: integer("positionID").references(() => playerPositions.id, {
     onDelete: "set null",
     onUpdate: "cascade",
   }),
-  stratsID: int("strats_id")
+  stratsID: integer("strats_id")
     .notNull()
     .references(() => strats.id, { onDelete: "cascade" }),
-  isPowerOP: int("is_power_op").notNull(),
+  isPowerOP: integer("is_power_op").notNull(),
 });
