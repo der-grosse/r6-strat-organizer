@@ -42,7 +42,7 @@ class StratsDBClass {
       })
       .from(strats)
       .leftJoin(rotationIndexes, eq(strats.id, rotationIndexes.stratsID))
-      .where(eq(strats.teamID, user.teamID))
+      .where(and(eq(strats.teamID, user.teamID), eq(strats.archived, 0)))
       .groupBy(strats.id)
       .orderBy(strats.map, sql`rotationIndex asc nulls last`, strats.site)
       .all();
@@ -239,8 +239,11 @@ class StratsDBClass {
       .run();
   }
 
-  async delete(id: Strat["id"]): Promise<void> {
-    db.delete(strats).where(eq(strats.id, id)).run();
+  async archive(user: JWTPayload, id: Strat["id"]): Promise<void> {
+    db.update(strats)
+      .set({ archived: 1 })
+      .where(and(eq(strats.id, id), eq(strats.teamID, user.teamID)))
+      .run();
   }
 
   private parseStratRows(data: {

@@ -1,4 +1,5 @@
 import { int, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { arch } from "os";
 
 export const team = sqliteTable("team", {
   id: int("id").primaryKey({ autoIncrement: true }),
@@ -49,6 +50,7 @@ export const strats = sqliteTable("strats", {
   teamID: int("team_id")
     .notNull()
     .references(() => team.id, { onDelete: "cascade" }),
+  archived: int("archived").notNull().default(0),
 });
 
 export const rotationIndexes = sqliteTable(

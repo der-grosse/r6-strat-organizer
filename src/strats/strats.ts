@@ -1,12 +1,18 @@
 "use server";
 
 import db from "@/src/db/db";
-import { pickedOperators, placedAssets, strats } from "@/src/db/schema";
+import {
+  pickedOperators,
+  placedAssets,
+  playerPositions,
+  strats,
+} from "@/src/db/schema";
 import { getPayload } from "@/src/auth/getPayload";
-import { eq } from "drizzle-orm";
+import { eq, is } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import StratsDB from "./stratsDB";
 import ActiveStratDB from "./activeStrat";
+import { PLAYER_COUNT } from "../static/general";
 
 export async function createStrat(data: {
   map: string;
@@ -35,6 +41,23 @@ export async function createStrat(data: {
       })
       .returning();
 
+    const positions = db
+      .select()
+      .from(playerPositions)
+      .where(eq(playerPositions.teamID, session.teamID))
+      .all();
+
+    db.insert(pickedOperators)
+      .values(
+        Array.from({ length: PLAYER_COUNT }, (_, i) => ({
+          isPowerOP: 0,
+          operator: null,
+          positionID: positions[i]?.id,
+          stratsID: newStrat.id,
+        }))
+      )
+      .run();
+
     revalidatePath("/", "layout");
 
     return { success: true, data: newStrat };
@@ -44,15 +67,14 @@ export async function createStrat(data: {
   }
 }
 
-export async function deleteStrat(stratId: number) {
+export async function archiveStrat(stratId: number) {
   try {
     const session = await getPayload();
     if (!session) {
       throw new Error("Unauthorized");
     }
 
-    // Delete the strat
-    await db.delete(strats).where(eq(strats.id, stratId));
+    StratsDB.archive(session, stratId);
 
     revalidatePath("/", "layout");
 

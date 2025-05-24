@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
-import { deleteStrat } from "@/src/strats/strats";
+import { archiveStrat } from "@/src/strats/strats";
 import { toast } from "sonner";
 import { useFilter } from "@/components/context/FilterContext";
 
@@ -29,7 +29,7 @@ export function DeleteStratDialog({
 
   async function handleDelete() {
     try {
-      const result = await deleteStrat(stratId);
+      const result = await archiveStrat(stratId);
 
       if (!result.success) {
         throw new Error(result.error);
