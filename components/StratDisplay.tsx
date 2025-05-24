@@ -13,12 +13,16 @@ import OperatorIcon from "./OperatorIcon";
 export interface StratDisplayProps {
   strat: Strat | null;
   editView?: boolean;
+  team: Pick<Team, "members">;
 }
 
 export default function StratDisplay(props: StratDisplayProps) {
   const user = useUser();
+  const teamMember = props.team.members.find(
+    (member) => member.id === user?.user?.id
+  );
   const playedOP = props.strat?.operators.find(
-    (op) => op.player === user?.user?.id
+    (op) => op.positionID === teamMember?.positionID
   )?.operator;
   return (
     <div className="relative h-full w-full flex justify-center items-center flex-col z-0">

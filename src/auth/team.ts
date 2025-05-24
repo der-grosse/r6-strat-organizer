@@ -1,10 +1,11 @@
 "use server";
 import { and, eq } from "drizzle-orm";
 import db from "../db/db";
-import { team, users } from "../db/schema";
+import { playerPositions, team, users } from "../db/schema";
 import { getPayload } from "./getPayload";
 import { revalidatePath } from "next/cache";
 import { hashPassword, resetJWT } from "./auth";
+import { PLAYER_COUNT } from "../static/general";
 
 export async function createTeam(input: {
   teamName: string;
@@ -64,6 +65,14 @@ export async function createTeam(input: {
           createdAt: new Date().toISOString(),
         })
         .returning();
+
+      await tx.insert(playerPositions).values(
+        Array.from({ length: PLAYER_COUNT }, (_, i) => ({
+          playerID: null,
+          positionName: `Position ${i + 1}`,
+          teamID,
+        }))
+      );
     });
 
     return { success: true };
@@ -73,36 +82,43 @@ export async function createTeam(input: {
   }
 }
 
-export async function getTeamName() {
+export async function getTeam() {
   const user = await getPayload();
   const teamData = db
     .select()
     .from(team)
     .where(eq(team.id, user!.teamID))
     .get();
-  return teamData?.name;
-}
-
-export async function getTeamMembers() {
-  const user = await getPayload();
-  const teamUsers = db
-    .select({
-      id: users.id,
-      name: users.name,
-      defaultColor: users.defaultColor,
-      isAdmin: users.isAdmin,
-      createdAt: users.createdAt,
-    })
+  const positionData = db
+    .select()
+    .from(playerPositions)
+    .where(eq(playerPositions.teamID, user!.teamID))
+    .all();
+  const membersData = db
+    .select()
     .from(users)
     .where(eq(users.teamID, user!.teamID))
     .all();
-  return teamUsers.map((user) => ({
-    ...user,
-    isAdmin: user.isAdmin === 1,
-  }));
+  return {
+    ...teamData,
+    playerPositions: positionData.map((pos) => ({
+      id: pos.id,
+      playerID: pos.playerID,
+      positionName: pos.positionName,
+    })),
+    members: membersData.map((member) => ({
+      id: member.id,
+      name: member.name,
+      defaultColor: member.defaultColor,
+      createdAt: member.createdAt,
+      isAdmin: member.isAdmin === 1,
+      positionID:
+        positionData.find((pos) => pos.playerID === member.id)?.id || null,
+    })),
+  } as Team;
 }
 
-export async function removeUser(userID: number) {
+export async function removeMember(userID: number) {
   const user = await getPayload();
   if (!user?.isAdmin) throw new Error("Only admins can remove users");
   const targetUser = db.select().from(users).where(eq(users.id, userID)).get();
@@ -247,7 +263,7 @@ export async function changePassword(newPassword: string) {
   return true;
 }
 
-export async function setUserColor(color: string, userID?: User["id"]) {
+export async function setMemberColor(color: string, userID?: TeamMember["id"]) {
   if (!color) throw new Error("Color is required");
   const user = await getPayload();
   if (!user) throw new Error("User not found");
@@ -269,17 +285,58 @@ export async function setUserColor(color: string, userID?: User["id"]) {
   revalidatePath("/editor");
 }
 
-export type TeamMember = {
-  isAdmin: boolean;
-  id: number;
-  name: string;
-  defaultColor: string | null;
-  createdAt: string;
-};
+export async function setMemberPosition(
+  positionID: PlayerPosition["id"],
+  memberID: TeamMember["id"] | null
+) {
+  const user = await getPayload();
+  if (!user) throw new Error("User not found");
+  if (!user.isAdmin) throw new Error("Only admins can set user position");
+  if (memberID) {
+    const targetUser = db
+      .select()
+      .from(users)
+      .where(eq(users.id, memberID))
+      .get();
+    if (!targetUser) throw new Error("User not found");
+    if (targetUser.teamID !== user.teamID)
+      throw new Error("User must be in the same team");
+  }
+  db.update(playerPositions)
+    .set({ playerID: memberID })
+    .where(
+      and(
+        eq(playerPositions.id, positionID),
+        eq(playerPositions.teamID, user.teamID)
+      )
+    )
+    .run();
 
-export type InviteKey = {
-  inviteKey: string;
-  teamID: number;
-  usedBy: number | null;
-  usedAt: string | null;
-};
+  // team page
+  revalidatePath("/team");
+  // editor
+  revalidatePath("/editor");
+}
+
+export async function setMemberPositionName(
+  positionID: PlayerPosition["id"],
+  positionName: string
+) {
+  const user = await getPayload();
+  if (!user) throw new Error("User not found");
+  if (!user.isAdmin) throw new Error("Only admins can set user position name");
+  db.update(playerPositions)
+    .set({ positionName })
+    .where(
+      and(
+        eq(playerPositions.id, positionID),
+        eq(playerPositions.teamID, user.teamID)
+      )
+    )
+    .run();
+
+  // team page
+  revalidatePath("/team");
+  // editor
+  revalidatePath("/editor");
+}

@@ -5,6 +5,7 @@ import StratDisplay from "./StratDisplay";
 
 export interface ActiveStratProps {
   defaultOpen?: Strat | null;
+  team: Team;
 }
 
 export default function ActiveStrat(props: ActiveStratProps) {
@@ -30,5 +31,5 @@ export default function ActiveStrat(props: ActiveStratProps) {
     };
   }, [setStrat]);
 
-  return <StratDisplay strat={strat} />;
+  return <StratDisplay strat={strat} team={props.team} />;
 }

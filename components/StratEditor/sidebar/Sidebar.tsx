@@ -23,13 +23,12 @@ import Reinforcement from "@/components/icons/reinforcement";
 import { MAX_REINFORCEMENT } from "@/src/static/general";
 import Link from "next/link";
 import StratEditorPlayerOperatorsSidebar from "./PlayerOPs";
-import { TeamMember } from "@/src/auth/team";
 import config from "@/src/static/config";
 
 export interface StratEditorSidebarProps {
   onAssetAdd: (asset: Asset) => void;
   strat: Strat;
-  teamMembers: TeamMember[];
+  team: Team;
 }
 
 export default function StratEditorSidebar(
@@ -64,24 +63,14 @@ export default function StratEditorSidebar(
         return (
           <StratEditorOperatorsSidebar
             onAssetAdd={onAssetAdd}
-            selectedOPs={props.strat.operators
-              .map((op) => ({
-                id: op.operator,
-                player: op.player,
-              }))
-              .filter(Boolean)}
+            operators={props.strat.operators}
           />
         );
       case "operator-gadgets":
         return (
           <StratEditorGadgetsSidebar
             onAssetAdd={onAssetAdd}
-            selectedOPs={props.strat.operators
-              .map((op) => ({
-                id: op.operator,
-                player: op.player,
-              }))
-              .filter(Boolean)}
+            operators={props.strat.operators}
           />
         );
       case "meta":
@@ -90,7 +79,7 @@ export default function StratEditorSidebar(
         return (
           <StratEditorPlayerOperatorsSidebar
             strat={props.strat}
-            teamMembers={props.teamMembers}
+            team={props.team}
           />
         );
       default:
@@ -100,7 +89,7 @@ export default function StratEditorSidebar(
           </div>
         );
     }
-  }, [openTab, onAssetAdd, props.strat, props.teamMembers]);
+  }, [openTab, onAssetAdd, props.strat, props.team]);
 
   return (
     <div className="flex relative z-10">

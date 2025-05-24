@@ -6,17 +6,30 @@ import {
   rotationIndexes,
   strats,
 } from "../db/schema";
+import { PLAYER_COUNT } from "../static/general";
 
 class StratsDBClass {
-  async create(user: User, strat: Strat): Promise<number> {
+  async create(user: JWTPayload, strat: Strat): Promise<number> {
     const { lastInsertRowid } = db
       .insert(strats)
       .values({ ...strat, teamID: user.teamID })
       .run();
-    return lastInsertRowid as number;
+
+    const stratID = lastInsertRowid as number;
+
+    db.insert(pickedOperators).values(
+      Array.from({ length: PLAYER_COUNT }, () => ({
+        operator: null,
+        positionID: null,
+        stratsID: stratID,
+        isPowerOP: 0,
+      }))
+    );
+
+    return stratID;
   }
 
-  async list(user: User): Promise<Strat[]> {
+  async list(user: JWTPayload): Promise<Strat[]> {
     const stratRows = db
       .select({
         id: strats.id,
@@ -60,7 +73,7 @@ class StratsDBClass {
     });
   }
 
-  async get(user: User, id: Strat["id"]): Promise<Strat | null> {
+  async get(user: JWTPayload, id: Strat["id"]): Promise<Strat | null> {
     const stratRows = db
       .select()
       .from(strats)
@@ -96,7 +109,7 @@ class StratsDBClass {
   }
 
   update(
-    user: User,
+    user: JWTPayload,
     updatedStrat: Partial<Strat> & Pick<Strat, "id">
   ): Promise<undefined> {
     const strat = this.get(user, updatedStrat.id);
@@ -124,7 +137,7 @@ class StratsDBClass {
           .values({
             operator: op.operator,
             stratsID: updatedStrat.id,
-            player: op.player,
+            positionID: op.positionID,
             isPowerOP: op.isPowerOP ? 1 : 0,
           })
           .run();
@@ -147,7 +160,7 @@ class StratsDBClass {
             side: asset.type === "operator" ? asset.side : undefined,
             showIcon: asset.type === "operator" ? (asset.showIcon ? 1 : 0) : 0,
             rotate: asset.type === "rotate" ? asset.variant : undefined,
-            player: asset.player,
+            pickedOPID: asset.pickedOPID,
             width: asset.size.width,
             height: asset.size.height,
           })
@@ -173,7 +186,7 @@ class StratsDBClass {
         side: asset.type === "operator" ? asset.side : undefined,
         showIcon: asset.type === "operator" ? (asset.showIcon ? 1 : 0) : 0,
         rotate: asset.type === "rotate" ? asset.variant : undefined,
-        player: asset.player,
+        pickedOPID: asset.pickedOPID,
         width: asset.size.width,
         height: asset.size.height,
       })
@@ -202,7 +215,7 @@ class StratsDBClass {
         side: asset.type === "operator" ? asset.side : undefined,
         showIcon: asset.type === "operator" ? (asset.showIcon ? 1 : 0) : 0,
         rotate: asset.type === "rotate" ? asset.variant : undefined,
-        player: asset.player,
+        pickedOPID: asset.pickedOPID,
         width: asset.size.width,
         height: asset.size.height,
       })
@@ -249,7 +262,7 @@ class StratsDBClass {
       assetID: string;
       positionX: number;
       positionY: number;
-      player: number | null;
+      pickedOPID: number | null;
       customColor: string | null;
       type: string;
       operator: string | null;
@@ -261,8 +274,9 @@ class StratsDBClass {
       height: number;
     }[];
     pickedOperators: {
-      operator: string;
-      player: number | null;
+      id: number;
+      operator: string | null;
+      positionID: number | null;
       stratsID: number;
       isPowerOP: number;
     }[];
@@ -278,7 +292,7 @@ class StratsDBClass {
           id: r.assetID,
           position: { x: r.positionX, y: r.positionY },
           size: { width: r.width, height: r.height },
-          player: r.player,
+          pickedOPID: r.pickedOPID,
           customColor: r.customColor,
           type: r.type,
           ...(() => {
@@ -305,8 +319,9 @@ class StratsDBClass {
       const operators = data.pickedOperators
         .filter((r) => r.stratsID === row.id)
         .map((r) => ({
-          operator: r.operator,
-          player: r.player ?? undefined,
+          id: r.id,
+          operator: r.operator ?? undefined,
+          positionID: r.positionID ?? undefined,
           isPowerOP: r.isPowerOP === 1,
         }));
 

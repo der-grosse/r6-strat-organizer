@@ -91,9 +91,12 @@ export function ColorButton(props: {
   disabled?: boolean;
   size: "small" | "large";
   className?: string;
+  component?: React.ElementType;
 }) {
+  const Component = props.component || "button";
   return (
-    <button
+    <Component
+      type="button"
       className={cn(
         "rounded-full hover:shadow-lg focus:outline-none focus:ring-2 not:disabled:cursor-pointer",
         props.size === "small" ? "w-6 h-6" : "w-12 h-12",

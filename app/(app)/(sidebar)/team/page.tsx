@@ -1,7 +1,7 @@
 import TeamManagement from "./TeamManagement";
 import { getPayload } from "@/src/auth/getPayload";
 import { getInviteKeys } from "@/src/auth/inviteKeys";
-import { getTeamName, getTeamMembers } from "@/src/auth/team";
+import { getTeam } from "@/src/auth/team";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,15 +10,8 @@ export const metadata: Metadata = {
 
 export default async function TeamManagementPage() {
   const user = await getPayload();
-  const teamUsers = await getTeamMembers();
-  const teamName = await getTeamName();
+  const team = await getTeam();
   const inviteKeys = user?.isAdmin ? await getInviteKeys() : [];
 
-  return (
-    <TeamManagement
-      teamUsers={teamUsers}
-      teamName={teamName}
-      inviteKeys={inviteKeys}
-    />
-  );
+  return <TeamManagement team={team} inviteKeys={inviteKeys} />;
 }

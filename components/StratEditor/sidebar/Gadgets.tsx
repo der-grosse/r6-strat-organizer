@@ -9,29 +9,28 @@ import { ScrollArea } from "../../ui/scroll-area";
 import { Button } from "../../ui/button";
 import PrimaryGadgetIcon from "@/components/PrimaryGadgetIcon";
 import SecondaryGadgetIcon from "@/components/SecondaryGadgetIcon";
-import { Separator } from "@/components/ui/separator";
 
 export interface StratEditorGadgetsSidebarProps {
   onAssetAdd: (asset: Asset) => void;
-  selectedOPs: { id: string; player?: number }[];
+  operators: PickedOperator[];
 }
 
 export default function StratEditorGadgetsSidebar(
   props: Readonly<StratEditorGadgetsSidebarProps>
 ) {
-  const selectedOperators = props.selectedOPs
+  const selectedOperators = props.operators
     .map((op) => {
-      const operator = DEFENDERS.find((def) => def.name === op.id);
+      const operator = DEFENDERS.find((def) => def.name === op.operator);
       if (!operator) return null!;
       return {
         ...operator,
-        player: op.player,
+        pickedOPID: op.id,
       };
     })
     .filter(Boolean);
   const selectedPrimaryGadetIDs = selectedOperators
     .map((op) =>
-      "gadget" in op ? { id: op.gadget, player: op.player } : undefined!
+      "gadget" in op ? { id: op.gadget, pickedOPID: op.pickedOPID } : undefined!
     )
     .filter(Boolean);
   const selectedSecondaryGadgetIDs = selectedOperators
@@ -39,7 +38,7 @@ export default function StratEditorGadgetsSidebar(
       "secondaryGadgets" in op
         ? op.secondaryGadgets?.map((g) => ({
             id: g,
-            player: op.player,
+            pickedOPID: op.pickedOPID,
           })) ?? []
         : []
     )
@@ -72,7 +71,7 @@ export default function StratEditorGadgetsSidebar(
                       id: `gadget-${gadget.id}`,
                       type: "gadget",
                       gadget: gadget.id,
-                      player: gadget.player,
+                      pickedOPID: gadget.pickedOPID,
                     });
                   }}
                 >
@@ -96,7 +95,7 @@ export default function StratEditorGadgetsSidebar(
                       id: `gadget-${gadget.id}`,
                       type: "gadget",
                       gadget: gadget.id,
-                      player: gadget.player,
+                      pickedOPID: gadget.pickedOPID,
                     });
                   }}
                 >

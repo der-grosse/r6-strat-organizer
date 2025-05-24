@@ -1,5 +1,5 @@
 import { StratEditor } from "@/components/StratEditor/StratEditor";
-import { getTeamMembers } from "@/src/auth/team";
+import { getTeam } from "@/src/auth/team";
 import { getStrat } from "@/src/strats/strats";
 import { CircleX } from "lucide-react";
 import { Metadata } from "next";
@@ -24,7 +24,7 @@ export default async function StratEditorPage({
 }>) {
   const id = Number((await paramsRaw).id);
   const strat = await getStrat(id);
-  const teamMembers = await getTeamMembers();
+  const team = await getTeam();
 
   if (!strat) {
     return (
@@ -37,7 +37,7 @@ export default async function StratEditorPage({
 
   return (
     <div className="h-screen w-screen overflow-hidden">
-      <StratEditor teamMembers={teamMembers} strat={strat} />
+      <StratEditor team={team} strat={strat} />
     </div>
   );
 }

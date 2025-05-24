@@ -1,18 +1,28 @@
 import OperatorIcon from "@/components/OperatorIcon";
-import { TeamUsers } from "../Assets";
 
 export interface OperatorProps {
   asset: Extract<PlacedAsset, { type: "operator" }>;
-  teamUsers: TeamUsers[];
+  operators: PickedOperator[];
+  team: Team;
 }
 
 export default function Operator(props: OperatorProps) {
-  const color =
-    props.asset.customColor ??
-    (props.asset.player
-      ? props.teamUsers.find((user) => user.id === props.asset.player)
-          ?.defaultColor
-      : undefined);
+  const color = (() => {
+    if (props.asset.customColor) return props.asset.customColor;
+    if (!props.asset.pickedOPID) return undefined;
+    const pickedOP = props.operators.find(
+      (op) => op.id === props.asset.pickedOPID
+    );
+    if (!pickedOP) return undefined;
+    const postion = props.team.playerPositions.find(
+      (pos) => pos.id === pickedOP.positionID
+    );
+    if (!postion) return undefined;
+    const teamMember = props.team.members.find(
+      (member) => member.id === postion.playerID
+    );
+    return teamMember?.defaultColor;
+  })();
   return (
     <div className="w-[130%] h-[130%] m-[-15%] relative">
       {props.asset.showIcon && (

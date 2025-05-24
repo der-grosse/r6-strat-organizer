@@ -1,4 +1,5 @@
 import StratDisplay from "@/components/StratDisplay";
+import { getTeam } from "@/src/auth/team";
 import { getStrat } from "@/src/strats/strats";
 import { Metadata } from "next";
 
@@ -24,6 +25,7 @@ export default async function Page({
   const params = (await paramsRaw).id;
   const id = Number(params[0]);
   const strat = await getStrat(id);
+  const team = await getTeam();
 
   const editView = params[1] === "edit";
 
@@ -39,5 +41,5 @@ export default async function Page({
     );
   }
 
-  return <StratDisplay strat={strat} editView={editView} />;
+  return <StratDisplay strat={strat} editView={editView} team={team} />;
 }

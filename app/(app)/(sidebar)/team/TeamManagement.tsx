@@ -10,15 +10,13 @@ import {
 import { useUser } from "@/components/context/UserContext";
 import { useRef, useState } from "react";
 import {
-  removeUser,
+  removeMember,
   promoteToAdmin,
   demoteFromAdmin,
   updateTeamName,
   changeUsername,
   changePassword,
-  setUserColor,
-  TeamMember,
-  InviteKey,
+  setMemberColor,
 } from "@/src/auth/team";
 import {
   Table,
@@ -62,8 +60,7 @@ import ColorPickerDialog, {
 import { createInviteKey, deleteInviteKey } from "@/src/auth/inviteKeys";
 
 export interface TeamManagementProps {
-  teamUsers: TeamMember[];
-  teamName: string | undefined;
+  team: Team;
   inviteKeys: InviteKey[];
 }
 
@@ -84,7 +81,7 @@ export default function TeamManagement(props: TeamManagementProps) {
 
   const handleRemoveUser = async (userID: number) => {
     try {
-      await removeUser(userID);
+      await removeMember(userID);
       toast.success("User removed successfully");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to remove user");
@@ -224,13 +221,13 @@ export default function TeamManagement(props: TeamManagementProps) {
                 </>
               ) : (
                 <>
-                  <div className="text-lg font-semibold">{props.teamName}</div>
+                  <div className="text-lg font-semibold">{props.team.name}</div>
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => {
                       setIsEditingTeamName(true);
-                      setNewTeamName(props.teamName ?? "");
+                      setNewTeamName(props.team.name);
                       setTimeout(() => {
                         teamNameInputRef.current?.focus();
                       }, 0);
@@ -264,7 +261,7 @@ export default function TeamManagement(props: TeamManagementProps) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {props.teamUsers
+              {props.team.members
                 .toSorted((a, b) => {
                   // Sort current user to top
                   if (a.id === user?.id) return -1;
@@ -389,11 +386,11 @@ export default function TeamManagement(props: TeamManagementProps) {
         open={userColorChangeOpen}
         onClose={() => setUserColorChangeOpen(false)}
         color={
-          props.teamUsers.find((u) => u.id === userColorID)?.defaultColor ??
+          props.team.members.find((u) => u.id === userColorID)?.defaultColor ??
           DEFAULT_COLORS[0]
         }
         onChange={async (color) => {
-          if (userColorID) await setUserColor(color, userColorID);
+          if (userColorID) await setMemberColor(color, userColorID);
           setUserColorID(null);
           setUserColorChangeOpen(false);
         }}

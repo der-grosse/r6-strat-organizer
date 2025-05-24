@@ -8,14 +8,14 @@ import {
 import { AppSidebar } from "./AppSidebar";
 
 export interface SidebarLayoutProps {
-  teamName: string;
+  team: Team;
   children: React.ReactNode;
 }
 
 export default function SidebarLayout(props: SidebarLayoutProps) {
   return (
     <SidebarProvider defaultOpen>
-      <AppSidebar teamName={props.teamName} />
+      <AppSidebar teamName={props.team.name} />
       <SidebarInset>
         <SidebarTrigger className="absolute top-0 left-0 z-10 cursor-pointer" />
         {props.children}

@@ -27,6 +27,18 @@ export const users = sqliteTable("users", {
   defaultColor: text("default_color"),
 });
 
+export const playerPositions = sqliteTable("player_positions", {
+  id: int("id").primaryKey({ autoIncrement: true }),
+  playerID: int("player_id").references(() => users.id, {
+    onDelete: "set null",
+    onUpdate: "cascade",
+  }),
+  positionName: text("position_name").notNull(),
+  teamID: int("team_id")
+    .notNull()
+    .references(() => team.id, { onDelete: "cascade" }),
+});
+
 export const strats = sqliteTable("strats", {
   id: int("id").primaryKey({ autoIncrement: true }),
   map: text("map").notNull(),
@@ -73,7 +85,7 @@ export const placedAssets = sqliteTable("placed_assets", {
   positionY: int("position_y").notNull(),
   width: int("width").notNull(),
   height: int("height").notNull(),
-  player: int("player").references(() => users.id, {
+  pickedOPID: int("picked_op_id").references(() => pickedOperators.id, {
     onDelete: "set null",
     onUpdate: "cascade",
   }),
@@ -94,8 +106,8 @@ export const placedAssets = sqliteTable("placed_assets", {
 
 export const pickedOperators = sqliteTable("picked_operators", {
   id: int("id").primaryKey({ autoIncrement: true }),
-  operator: text("operator").notNull(),
-  player: int("player").references(() => users.id, {
+  operator: text("operator"),
+  positionID: int("positionID").references(() => playerPositions.id, {
     onDelete: "set null",
     onUpdate: "cascade",
   }),

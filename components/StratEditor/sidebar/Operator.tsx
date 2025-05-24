@@ -7,19 +7,19 @@ import OperatorIcon from "../../OperatorIcon";
 
 export interface StratEditorOperatorsSidebarProps {
   onAssetAdd: (asset: Asset) => void;
-  selectedOPs: { id: string; player?: number }[];
+  operators: PickedOperator[];
 }
 
 export default function StratEditorOperatorsSidebar(
   props: Readonly<StratEditorOperatorsSidebarProps>
 ) {
-  const selectedOperators = props.selectedOPs
+  const selectedOperators = props.operators
     .map((op) => {
-      const operator = DEFENDERS.find((def) => def.name === op.id);
+      const operator = DEFENDERS.find((def) => def.name === op.operator);
       if (!operator) return null!;
       return {
         ...operator,
-        player: op.player,
+        pickedOPID: op.id,
       };
     })
     .filter(Boolean);
@@ -50,7 +50,7 @@ export default function StratEditorOperatorsSidebar(
                       type: "operator",
                       side: "def",
                       showIcon: true,
-                      player: op.player,
+                      pickedOPID: op.pickedOPID,
                     });
                   }}
                 >

@@ -3,17 +3,11 @@ import { Button } from "../ui/button";
 import Operator from "./assets/Operator";
 import { cn } from "@/src/utils";
 import { useCallback, useMemo, useState } from "react";
-import { TeamMember } from "@/src/auth/team";
 import ColorPickerDialog from "../ColorPickerDialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
-export interface TeamUsers {
-  id: number;
-  defaultColor: string | null;
-}
-
 export default function useMountAssets(
-  { teamMembers }: { teamMembers: TeamMember[] },
+  { team, operators }: { team: Team; operators: PickedOperator[] },
   {
     deleteAsset,
     updateAsset,
@@ -28,88 +22,107 @@ export default function useMountAssets(
   );
 
   const menu = useCallback(
-    (asset: PlacedAsset) => (
-      <div
-        className={cn(
-          "absolute bottom-[110%] left-[50%] -translate-x-1/2 bg-muted text-muted-foreground rounded flex items-center justify-center"
-        )}
-      >
-        <GripVertical />
-        <div className="bg-border w-[1px] h-6" />
-        {teamMembers.map((user) => (
-          <Tooltip delayDuration={200} key={user.id}>
-            <TooltipTrigger asChild>
-              <Button
-                size="icon"
-                variant="ghost"
-                className={cn(
-                  user.id === asset.player && "bg-card dark:hover:bg-card"
-                )}
-                onMouseDown={(e) => e.stopPropagation()}
-                onClick={() => {
-                  updateAsset({
-                    ...asset,
-                    player: user.id,
-                    customColor: undefined,
-                  });
-                }}
-              >
-                <div
-                  className={cn(
-                    "w-4 h-4 rounded-full",
-                    !user.defaultColor &&
-                      "outline outline-2 outline-offset-1 outline-muted"
-                  )}
-                  style={{
-                    background: user.defaultColor ?? undefined,
-                  }}
-                />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="top">
-              <p className="text-sm">{user.name}</p>
-            </TooltipContent>
-          </Tooltip>
-        ))}
-        <Button
-          size="icon"
-          variant="ghost"
-          className={cn(asset.customColor && "bg-card dark:hover:bg-card")}
-          onMouseDown={(e) => e.stopPropagation()}
-          onClick={() => {
-            setColorPickerAsset(asset);
-            setColorPickerOpen(true);
-          }}
+    (asset: PlacedAsset) => {
+      const pickedOperator = operators.find((op) => op.id === asset.pickedOPID);
+      return (
+        <div
+          className={cn(
+            "absolute bottom-[110%] left-[50%] -translate-x-1/2 bg-muted text-muted-foreground rounded flex items-center justify-center"
+          )}
         >
-          <Brush />
-        </Button>
-        <div className="bg-border w-[1px] h-6" />
-        {asset.type === "operator" && (
+          <GripVertical />
+          <div className="bg-border w-[1px] h-6" />
+          {team.members
+            .filter((m) => m.positionID)
+            .map((member) => {
+              const pickedOperatorOfMember = operators?.find(
+                (op) => op.positionID === member.positionID
+              );
+              return (
+                <Tooltip delayDuration={200} key={member.id}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      disabled={!pickedOperatorOfMember}
+                      size="icon"
+                      variant="ghost"
+                      className={cn(
+                        member.positionID === pickedOperator?.positionID &&
+                          "bg-card dark:hover:bg-card"
+                      )}
+                      onMouseDown={(e) => e.stopPropagation()}
+                      onClick={() => {
+                        updateAsset({
+                          ...asset,
+                          pickedOPID: pickedOperatorOfMember?.id,
+                          customColor: undefined,
+                        });
+                      }}
+                    >
+                      <div
+                        className={cn(
+                          "w-4 h-4 rounded-full",
+                          !member.defaultColor &&
+                            "outline-2 outline-offset-1 outline-muted"
+                        )}
+                        style={{
+                          background: member.defaultColor ?? undefined,
+                        }}
+                      />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    <p className="text-sm">
+                      {member.name} |{" "}
+                      {
+                        team.playerPositions.find(
+                          (p) => p.id === member.positionID
+                        )?.positionName
+                      }
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              );
+            })}
           <Button
             size="icon"
             variant="ghost"
+            className={cn(asset.customColor && "bg-card dark:hover:bg-card")}
             onMouseDown={(e) => e.stopPropagation()}
             onClick={() => {
-              updateAsset({
-                ...asset,
-                showIcon: !asset.showIcon,
-              });
+              setColorPickerAsset(asset);
+              setColorPickerOpen(true);
             }}
           >
-            {asset.showIcon ? <Eye /> : <EyeOff />}
+            <Brush />
           </Button>
-        )}
-        <Button
-          size="icon"
-          variant="ghost"
-          onClick={() => deleteAsset(asset)}
-          onMouseDown={(e) => e.stopPropagation()}
-        >
-          <Trash />
-        </Button>
-      </div>
-    ),
-    [teamMembers, deleteAsset, updateAsset]
+          <div className="bg-border w-[1px] h-6" />
+          {asset.type === "operator" && (
+            <Button
+              size="icon"
+              variant="ghost"
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={() => {
+                updateAsset({
+                  ...asset,
+                  showIcon: !asset.showIcon,
+                });
+              }}
+            >
+              {asset.showIcon ? <Eye /> : <EyeOff />}
+            </Button>
+          )}
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => deleteAsset(asset)}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            <Trash />
+          </Button>
+        </div>
+      );
+    },
+    [team, operators, deleteAsset, updateAsset]
   );
 
   const dialog = useMemo(
@@ -120,7 +133,7 @@ export default function useMountAssets(
         onChange={(color) => {
           updateAsset({
             ...colorPickerAsset!,
-            player: undefined,
+            pickedOPID: undefined,
             customColor: color,
           });
           setColorPickerOpen(false);
@@ -136,7 +149,7 @@ export default function useMountAssets(
       const assetElement = (() => {
         switch (asset.type) {
           case "operator":
-            return <Operator asset={asset} teamUsers={teamMembers} />;
+            return <Operator asset={asset} team={team} operators={operators} />;
           default:
             return <>Missing Asset</>;
         }
@@ -148,7 +161,7 @@ export default function useMountAssets(
         </>
       );
     },
-    [menu, teamMembers]
+    [menu, team, operators]
   );
 
   return { renderAsset, UI: dialog };

@@ -1,7 +1,7 @@
 "use server";
 
 import db from "@/src/db/db";
-import { placedAssets, strats } from "@/src/db/schema";
+import { pickedOperators, placedAssets, strats } from "@/src/db/schema";
 import { getPayload } from "@/src/auth/getPayload";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -129,6 +129,33 @@ export async function deleteStratAssets(
 export async function addAsset(stratID: Strat["id"], asset: PlacedAsset) {
   const user = await getPayload();
   StratsDB.addAsset(user!, stratID, asset);
+
+  revalidatePath(`/editor/${stratID}`);
+  revalidatePath("/strats");
+  revalidatePath(`/strat/${stratID}`);
+  revalidatePath("/", "layout");
+}
+
+export async function updatePickedOperator(
+  stratID: Strat["id"],
+  operator: Partial<PickedOperator> & Pick<PickedOperator, "id">
+) {
+  const user = await getPayload();
+  if (!user) throw new Error("User not found");
+  if (!user.isAdmin) throw new Error("Only admins can set user position name");
+  const strat = db.select().from(strats).where(eq(strats.id, stratID)).get();
+  if (!strat) throw new Error("Strat not found");
+  if (strat.teamID !== user.teamID)
+    throw new Error("Strat must be in the same team");
+  db.update(pickedOperators)
+    .set({
+      isPowerOP: operator.isPowerOP ? 1 : 0,
+      operator: operator.operator,
+      positionID: operator.positionID,
+      stratsID: stratID,
+    })
+    .where(eq(pickedOperators.id, operator.id))
+    .run();
 
   revalidatePath(`/editor/${stratID}`);
   revalidatePath("/strats");

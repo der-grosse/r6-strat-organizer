@@ -1,27 +1,21 @@
 "use client";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import MAPS from "@/src/static/maps";
 import StratEditorLayout from "./Layout";
 import StratEditorCanvas from "./Canvas";
 import useMountAssets from "./Assets";
-import { TeamMember } from "@/src/auth/team";
-import useDebounced from "../hooks/useDebounced";
 import {
   addAsset,
   deleteStratAssets,
-  updateStrat,
   updateStratAssets,
 } from "@/src/strats/strats";
 
 interface StratEditorProps {
   strat: Strat;
-  teamMembers: TeamMember[];
+  team: Team;
 }
 
-export function StratEditor({
-  strat,
-  teamMembers,
-}: Readonly<StratEditorProps>) {
+export function StratEditor({ strat, team }: Readonly<StratEditorProps>) {
   const [assets, setAssets] = useState<PlacedAsset[]>(strat.assets);
   const getHightestID = useCallback(
     (assets: PlacedAsset[]) =>
@@ -34,7 +28,7 @@ export function StratEditor({
   );
 
   const { renderAsset, UI } = useMountAssets(
-    { teamMembers },
+    { team, operators: strat.operators },
     {
       deleteAsset(asset) {
         setAssets((assets) => assets.filter((a) => a.id !== asset.id));
@@ -67,7 +61,7 @@ export function StratEditor({
         addAsset(strat.id, placedAsset);
       }}
       strat={strat}
-      teamMembers={teamMembers}
+      team={team}
     >
       <StratEditorCanvas
         map={map}
