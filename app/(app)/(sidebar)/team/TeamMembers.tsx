@@ -13,7 +13,6 @@ import {
   removeMember,
   promoteToAdmin,
   demoteFromAdmin,
-  updateTeamName,
   changeUsername,
   changePassword,
   setMemberColor,
@@ -34,13 +33,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   MoreVertical,
-  Copy,
   Trash2,
   Shield,
   ShieldOff,
   Edit2,
-  Check,
-  X,
   Lock,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -57,18 +53,13 @@ import ColorPickerDialog, {
   ColorButton,
   DEFAULT_COLORS,
 } from "@/components/ColorPickerDialog";
-import { createInviteKey, deleteInviteKey } from "@/src/auth/inviteKeys";
 
-export interface TeamManagementProps {
+export interface TeamMembersProps {
   team: Team;
-  inviteKeys: InviteKey[];
 }
 
-export default function TeamManagement(props: TeamManagementProps) {
+export default function TeamMembers(props: TeamMembersProps) {
   const { user } = useUser();
-  const [isEditingTeamName, setIsEditingTeamName] = useState(false);
-  const teamNameInputRef = useRef<HTMLInputElement | null>(null);
-  const [newTeamName, setNewTeamName] = useState("");
   const [isChangeUsernameOpen, setIsChangeUsernameOpen] = useState(false);
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
   const [newUsername, setNewUsername] = useState("");
@@ -110,46 +101,6 @@ export default function TeamManagement(props: TeamManagementProps) {
     }
   };
 
-  const handleCreateInviteKey = async () => {
-    try {
-      const key = await createInviteKey();
-      navigator.clipboard.writeText(key);
-      toast.success("Invite key created successfully");
-    } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to create invite key"
-      );
-    }
-  };
-
-  const handleDeleteInviteKey = async (key: string) => {
-    try {
-      await deleteInviteKey(key);
-      toast.success("Invite key deleted successfully");
-    } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to delete invite key"
-      );
-    }
-  };
-
-  const handleUpdateTeamName = async () => {
-    try {
-      await updateTeamName(newTeamName);
-      setIsEditingTeamName(false);
-      toast.success("Team name updated successfully");
-    } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to update team name"
-      );
-    }
-  };
-
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    toast.success("Copied to clipboard");
-  };
-
   const handleChangeUsername = async () => {
     try {
       await changeUsername(newUsername);
@@ -178,70 +129,7 @@ export default function TeamManagement(props: TeamManagementProps) {
   };
 
   return (
-    <div className="container mx-auto py-8 px-4 space-y-8">
-      {user?.isAdmin && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Team Settings</CardTitle>
-            <CardDescription>Manage your team settings</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-4">
-              {isEditingTeamName ? (
-                <>
-                  <Input
-                    ref={teamNameInputRef}
-                    value={newTeamName}
-                    onChange={(e) => setNewTeamName(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleUpdateTeamName();
-                      }
-                    }}
-                    placeholder="Enter new team name"
-                    className="max-w-sm"
-                  />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={handleUpdateTeamName}
-                  >
-                    <Check className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                      setIsEditingTeamName(false);
-                      setNewTeamName("");
-                    }}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <div className="text-lg font-semibold">{props.team.name}</div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                      setIsEditingTeamName(true);
-                      setNewTeamName(props.team.name);
-                      setTimeout(() => {
-                        teamNameInputRef.current?.focus();
-                      }, 0);
-                    }}
-                  >
-                    <Edit2 className="h-4 w-4" />
-                  </Button>
-                </>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
+    <>
       <Card>
         <CardHeader>
           <CardTitle>Team Members</CardTitle>
@@ -382,6 +270,7 @@ export default function TeamManagement(props: TeamManagementProps) {
           </Table>
         </CardContent>
       </Card>
+
       <ColorPickerDialog
         open={userColorChangeOpen}
         onClose={() => setUserColorChangeOpen(false)}
@@ -395,93 +284,6 @@ export default function TeamManagement(props: TeamManagementProps) {
           setUserColorChangeOpen(false);
         }}
       />
-
-      {user?.isAdmin && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Invite Keys</CardTitle>
-            <CardDescription>
-              Create and manage invite keys for your team
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <Button onClick={handleCreateInviteKey}>
-                Create New Invite Key
-              </Button>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Invite Key</TableHead>
-                    <TableHead>Used At</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {props.inviteKeys
-                    .toSorted((a, b) => {
-                      if (a.usedAt && b.usedAt) {
-                        return (
-                          new Date(a.usedAt).getTime() -
-                          new Date(b.usedAt).getTime()
-                        );
-                      }
-                      if (a.usedAt) {
-                        return 1;
-                      }
-                      if (b.usedAt) {
-                        return -1;
-                      }
-                      return 0;
-                    })
-                    .map((key) => (
-                      <TableRow key={key.inviteKey}>
-                        <TableCell className="font-mono">
-                          {key.inviteKey}
-                        </TableCell>
-                        <TableCell>
-                          {key.usedAt ? (
-                            new Date(key.usedAt).toLocaleDateString("de-DE", {
-                              year: "numeric",
-                              month: "2-digit",
-                              day: "2-digit",
-                            })
-                          ) : (
-                            <em>Not used</em>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex gap-2 -m-2">
-                            {!key.usedAt && (
-                              <>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => copyToClipboard(key.inviteKey)}
-                                >
-                                  <Copy className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() =>
-                                    handleDeleteInviteKey(key.inviteKey)
-                                  }
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </>
-                            )}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       <Dialog
         open={isChangeUsernameOpen}
@@ -559,6 +361,6 @@ export default function TeamManagement(props: TeamManagementProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 }

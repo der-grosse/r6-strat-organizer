@@ -86,7 +86,7 @@ export default function ColorPickerDialog(props: ColorPickerDialogProps) {
 }
 
 export function ColorButton(props: {
-  color: string;
+  color: string | undefined | null;
   onClick?: (color: string) => void;
   disabled?: boolean;
   size: "small" | "large";
@@ -103,10 +103,10 @@ export function ColorButton(props: {
         props.className
       )}
       disabled={props.disabled}
-      style={{ backgroundColor: props.color }}
+      style={{ backgroundColor: props.color ?? DEFAULT_COLORS[0] }}
       onClick={() => {
         if (props.disabled) return;
-        props.onClick?.(props.color);
+        props.onClick?.(props.color ?? DEFAULT_COLORS[0]);
       }}
     />
   );
