@@ -212,6 +212,8 @@ export default function StratPositionItem({
                   newOps[op.index] = op;
                   updatePickedOperator({
                     operator: op.operator,
+                    secondaryGadget: op.secondaryGadget,
+                    tertiaryGadget: op.tertiaryGadget,
                     pickedOperatorID: op._id,
                   });
                   setOptimisticOps(newOps);

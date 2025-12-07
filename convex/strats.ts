@@ -444,6 +444,21 @@ export const updateStratPosition = mutation({
     if (!stratDoc || stratDoc.teamID !== activeTeamID) {
       return { success: false, error: "Strat not found" };
     }
+    if (args.teamPositionID) {
+      const currentStratPositions = await ctx.db
+        .query("stratPositions")
+        .withIndex("byStrat", (q) => q.eq("stratID", stratDoc._id))
+        .collect();
+      const positionAlreadyUsed = currentStratPositions.find(
+        (pos) =>
+          pos.teamPositionID === args.teamPositionID && pos._id !== args._id
+      );
+      if (positionAlreadyUsed) {
+        await ctx.db.patch(positionAlreadyUsed._id, {
+          teamPositionID: stratPositionDoc.teamPositionID,
+        });
+      }
+    }
     await ctx.db.patch(args._id, {
       ...(args.isPowerPosition !== undefined
         ? { isPowerPosition: args.isPowerPosition }
