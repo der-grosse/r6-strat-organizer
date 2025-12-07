@@ -1,9 +1,10 @@
 import { Fragment } from "react";
-import { clampAssetSize } from "./Canvas";
+import { CanvasAsset, clampAssetSize } from "./Canvas";
 import { R6Map } from "@/lib/types/strat.types";
 import { Asset, PlacedAsset, LayoutAsset } from "@/lib/types/asset.types";
 
 export interface MapBackgroundProps {
+  assets: CanvasAsset[];
   map: R6Map | null;
   viewBox: {
     width: number;
@@ -77,6 +78,23 @@ export default function MapBackground(props: MapBackgroundProps) {
                             return null!;
                         }
                       })();
+
+                      // check if an asset at this position alreaady exists -> prevent duplicate assets
+                      const existingAsset = props.assets?.find((asset) => {
+                        if (asset.type !== baseAsset.type) return false;
+                        const assetCenterX =
+                          asset.position.x + (asset.size?.width || 0) / 2;
+                        const assetCenterY =
+                          asset.position.y + (asset.size?.height || 0) / 2;
+                        const distance = Math.sqrt(
+                          Math.pow(assetCenterX - (abs_x + abs_width / 2), 2) +
+                            Math.pow(assetCenterY - (abs_y + abs_height / 2), 2)
+                        );
+                        return distance < 5; // small threshold to account for minor differences
+                      });
+
+                      if (existingAsset) return;
+
                       props.addAsset({
                         ...baseAsset,
                         position: {

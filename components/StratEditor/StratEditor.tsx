@@ -195,7 +195,6 @@ export function StratEditor({
           });
           return assets.map((a) => (a._id === asset._id ? asset : a));
         });
-        console.log("updating asset", asset);
         updateAssets([asset]).catch((err) =>
           toast.error(
             `Your changes could not be saved! Failed to update assets: ${err.message}`
@@ -516,7 +515,7 @@ function redoSelectionEvent(
 }
 
 function convertPlacedAssetToAPI<
-  T extends PlacedAsset | Omit<PlacedAsset, "_id">,
+  T extends PlacedAsset | Omit<PlacedAsset, "_id">
 >(
   asset: T
 ): {

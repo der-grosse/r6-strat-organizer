@@ -9,10 +9,8 @@ import { Selection } from "./StratEditor";
 import { R6Map } from "@/lib/types/strat.types";
 import { Asset, PlacedAsset } from "@/lib/types/asset.types";
 import { TeamMember } from "@/lib/types/team.types";
-import { Id } from "@/convex/_generated/dataModel";
-// import { useSocket } from "../context/SocketContext";
 
-interface CanvasAsset {
+export interface CanvasAsset {
   _id: string;
   type: string;
   position: { x: number; y: number };
@@ -537,6 +535,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
         </defs>
 
         <MapBackground
+          assets={assets}
           map={map}
           viewBox={viewBox}
           addAsset={onAssetAdd}
