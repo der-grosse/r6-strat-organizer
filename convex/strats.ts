@@ -245,6 +245,36 @@ export const create = mutation({
       archived: false,
       mapIndex: maxIndex + 1,
     });
+
+    // create strat positions for each team position
+    const teamPositions = await ctx.db
+      .query("teamPositions")
+      .withIndex("byTeam", (q) => q.eq("teamID", activeTeamID))
+      .collect();
+
+    for (const teamPosition of teamPositions) {
+      await ctx.db.insert("stratPositions", {
+        stratID,
+        teamPositionID: teamPosition._id,
+        index: teamPosition.index,
+        isPowerPosition: false,
+        shouldBringShotgun: false,
+      });
+    }
+
+    // check that five positions were created
+    if (teamPositions.length < 5) {
+      for (let i = teamPositions.length; i < 5; i++) {
+        await ctx.db.insert("stratPositions", {
+          stratID,
+          teamPositionID: undefined,
+          index: i,
+          isPowerPosition: false,
+          shouldBringShotgun: false,
+        });
+      }
+    }
+
     return { success: true, stratID };
   },
 });
