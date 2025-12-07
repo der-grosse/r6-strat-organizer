@@ -63,7 +63,7 @@ export default function StratEditorSidebar(
     () =>
       Array.from(
         props.assets
-          .filter((a) => a.type === "layout")
+          .filter((a) => a.type === "layout" && a.variant === "reinforcement")
           .reduce(
             (acc, asset) => {
               const cur = asset.stratPositionID

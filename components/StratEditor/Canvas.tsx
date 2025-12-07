@@ -201,22 +201,24 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
         svg.getScreenCTM()?.inverse() || new DOMMatrix()
       );
 
-      if (e.shiftKey) {
-        if (userSelectedAssets.includes(assetId)) {
-          onDeselect([assetId]);
-        } else {
-          onSelect([assetId]);
-        }
-      } else {
-        if (userSelectedAssets.includes(assetId)) {
-          if (userSelectedAssets.length > 1) {
-            onDeselect(userSelectedAssets.filter((id) => id !== assetId));
+      if (handle === "none") {
+        if (e.shiftKey) {
+          if (userSelectedAssets.includes(assetId)) {
+            onDeselect([assetId]);
+          } else {
+            onSelect([assetId]);
           }
         } else {
-          if (userSelectedAssets.length > 0) {
-            onDeselect(userSelectedAssets);
+          if (userSelectedAssets.includes(assetId)) {
+            if (userSelectedAssets.length > 1) {
+              onDeselect(userSelectedAssets.filter((id) => id !== assetId));
+            }
+          } else {
+            if (userSelectedAssets.length > 0) {
+              onDeselect(userSelectedAssets);
+            }
+            onSelect([assetId]);
           }
-          onSelect([assetId]);
         }
       }
 
@@ -285,11 +287,17 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
             );
             if (!startPos) return asset;
 
+            // clamp to not go out of bounds of the canvas
+            let newX = startPos.x + dx;
+            let newY = startPos.y + dy;
+            newX = clamp(newX, 0, viewBox.width - asset.size.width);
+            newY = clamp(newY, 0, viewBox.height - asset.size.height);
+
             return {
               ...asset,
               position: {
-                x: startPos.x + dx,
-                y: startPos.y + dy,
+                x: newX,
+                y: newY,
               },
             };
           })
