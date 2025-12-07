@@ -9,6 +9,7 @@ import { Selection } from "./StratEditor";
 import { R6Map } from "@/lib/types/strat.types";
 import { Asset, PlacedAsset } from "@/lib/types/asset.types";
 import { TeamMember } from "@/lib/types/team.types";
+import { useUser } from "../context/UserContext";
 
 export interface CanvasAsset {
   _id: string;
@@ -64,18 +65,13 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       MIN_ASSET_SIZE = 4;
     };
   }
-
-  // const socket = useSocket();
+  const { user } = useUser();
 
   const userSelectedAssets = useMemo(
-    () => selectedAssets.map((s) => s._id),
-    [selectedAssets]
+    () =>
+      selectedAssets.filter((s) => s.userID === user?._id).map((s) => s._id),
+    [selectedAssets, user?._id]
   );
-  // const userSelectedAssets = useMemo(
-  //   () =>
-  //     selectedAssets.filter((s) => s.socketID === socket._id).map((s) => s._id),
-  //   [selectedAssets, socket]
-  // );
 
   const [assets, setAssets] = useState<A[]>(propAssets);
   // update assets when prop changes
@@ -84,10 +80,11 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       const newAssets = propAssets.filter(
         (a) => !assets.some((b) => b._id === a._id)
       );
+      // prevent update for assets that are actively being edited by the user
       const filteredAssets = assets
         .filter((a) => propAssets.some((b) => b._id === a._id))
         .map((a) => {
-          const isEditing = isDragging || isResizing || isRotating;
+          const isEditing = activeAction !== "none";
           if (userSelectedAssets.includes(a._id) && isEditing) return a;
           return propAssets.find((b) => b._id === a._id) ?? a;
         });
@@ -166,9 +163,10 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
   const lastZoomedViewBox = useRef(zoomedViewBox);
   lastZoomedViewBox.current = zoomedViewBox;
 
-  const [isDragging, setIsDragging] = useState(false);
-  const [isResizing, setIsResizing] = useState(false);
-  const [isRotating, setIsRotating] = useState(false);
+  const [activeAction, setActiveAction] = useState<
+    "none" | "dragging" | "resizing" | "rotating"
+  >("none");
+  // store time from last action end to prevent deselect on click right after rotating
   const actionEndTime = useRef(0);
   const [actionStart, setActionStart] = useState({
     x: 0,
@@ -223,14 +221,11 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       }
 
       if (handle === "resize") {
-        // resizing asset
-        setIsResizing(true);
+        setActiveAction("resizing");
       } else if (handle === "rotate") {
-        // rotating asset
-        setIsRotating(true);
+        setActiveAction("rotating");
       } else {
-        // dragging asset
-        setIsDragging(true);
+        setActiveAction("dragging");
       }
       setActionStart({
         x: svgP.x,
@@ -255,11 +250,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
-      if (
-        userSelectedAssets.length === 0 ||
-        (!isDragging && !isResizing && !isRotating)
-      )
-        return;
+      if (userSelectedAssets.length === 0 || activeAction === "none") return;
 
       const svg = svgRef.current;
       if (!svg) return;
@@ -273,7 +264,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
         svg.getScreenCTM()?.inverse() || new DOMMatrix()
       );
 
-      if (isDragging) {
+      if (activeAction === "dragging") {
         const dx = svgP.x - actionStart.x;
         const dy = svgP.y - actionStart.y;
         const distance = Math.sqrt(dx ** 2 + dy ** 2);
@@ -302,13 +293,13 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
             };
           })
         );
-      } else if (isResizing || isRotating) {
+      } else if (activeAction === "resizing" || activeAction === "rotating") {
         const selected = assets.filter((a) =>
           userSelectedAssets.includes(a._id)
         );
         if (selected.length === 0) return;
 
-        if (isRotating || e.ctrlKey) {
+        if (activeAction === "rotating" || e.ctrlKey) {
           // rotating asset
           const startX = actionStart.asset
             ? actionStart.asset.position.x + actionStart.asset.size.width / 2
@@ -384,12 +375,12 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
         }
       }
     },
-    [isDragging, isResizing, isRotating, userSelectedAssets, actionStart]
+    [activeAction, userSelectedAssets, actionStart]
   );
 
   const handleMouseUp = useCallback(
     (e: MouseEvent) => {
-      if (isDragging || isResizing || isRotating) {
+      if (activeAction !== "none") {
         onAssetChange(
           userSelectedAssets
             .map((id) => assetsRef.current.find((a) => a._id === id)!)
@@ -397,11 +388,9 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
         );
         actionEndTime.current = Date.now();
       }
-      setIsDragging(false);
-      setIsResizing(false);
-      setIsRotating(false);
+      setActiveAction("none");
     },
-    [isDragging, isResizing, isRotating, userSelectedAssets]
+    [activeAction, userSelectedAssets]
   );
 
   const handleWheel = useCallback(
@@ -449,8 +438,9 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
     [setZoomOrigin, setZoomFactor]
   );
 
+  // global mousemove and mouseup listeners when dragging/resizing/rotating
   useEffect(() => {
-    if (isDragging || isResizing || isRotating) {
+    if (activeAction !== "none") {
       window.addEventListener("mousemove", handleMouseMove, { passive: false });
       window.addEventListener("mouseup", handleMouseUp);
     }
@@ -458,7 +448,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isDragging, isResizing, isRotating, handleMouseUp, handleMouseMove]);
+  }, [activeAction, handleMouseUp, handleMouseMove]);
 
   // add non-passive handleWheel event listener to svg
   useEffect(() => {
@@ -469,7 +459,9 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
     };
   }, [svgRef.current, handleWheel]);
 
+  // keyboard shortcuts
   useKeys([
+    // remove selected assets
     {
       shortcut: ["Backspace", "Delete"],
       action() {
@@ -478,6 +470,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       },
       active: !readonly,
     },
+    // deselect all
     {
       shortcut: ["Escape"],
       action() {
@@ -486,6 +479,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       },
       active: !readonly,
     },
+    // select all
     {
       shortcut: {
         key: "a",
