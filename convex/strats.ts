@@ -477,8 +477,8 @@ export const updateStratPosition = mutation({
 export const updatePickedOperator = mutation({
   args: {
     pickedOperatorID: v.id("pickedOperators"),
-    secondaryGadget: v.optional(v.string()),
-    tertiaryGadget: v.optional(v.string()),
+    secondaryGadget: v.optional(v.nullable(v.string())),
+    tertiaryGadget: v.optional(v.nullable(v.string())),
     operator: v.optional(v.string()),
   },
   async handler(ctx, args) {
@@ -496,10 +496,10 @@ export const updatePickedOperator = mutation({
     }
     await ctx.db.patch(args.pickedOperatorID, {
       ...(args.secondaryGadget !== undefined
-        ? { secondaryGadget: args.secondaryGadget }
+        ? { secondaryGadget: args.secondaryGadget ?? undefined }
         : {}),
       ...(args.tertiaryGadget !== undefined
-        ? { tertiaryGadget: args.tertiaryGadget }
+        ? { tertiaryGadget: args.tertiaryGadget ?? undefined }
         : {}),
       ...(args.operator !== undefined ? { operator: args.operator } : {}),
     });
