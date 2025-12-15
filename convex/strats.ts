@@ -537,12 +537,14 @@ export const updatePickedOperatorIndex = mutation({
       };
     }
     // Fetch all picked operators for the strat position
-    const pickedOperators = await ctx.db
-      .query("pickedOperators")
-      .withIndex("byStratPosition", (q) =>
-        q.eq("stratPositionID", args.stratPositionID)
-      )
-      .collect();
+    const pickedOperators = (
+      await ctx.db
+        .query("pickedOperators")
+        .withIndex("byStratPosition", (q) =>
+          q.eq("stratPositionID", args.stratPositionID)
+        )
+        .collect()
+    ).sort((a, b) => a.index - b.index); // enforce deterministic ordering
 
     // Find the current index of the picked operator
     const currentIndex = pickedOperators.findIndex(

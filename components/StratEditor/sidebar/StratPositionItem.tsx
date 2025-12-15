@@ -185,10 +185,7 @@ export default function StratPositionItem({
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={optimisticOps.map((item) => ({
-              ...item,
-              id: item._id,
-            }))}
+            items={optimisticOps.map((item) => item._id)}
             strategy={verticalListSortingStrategy}
           >
             {optimisticOps.map((op) => (
