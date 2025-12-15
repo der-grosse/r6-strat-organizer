@@ -5,6 +5,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { Strat } from "@/lib/types/strat.types";
 import { useMutation } from "convex/react";
 import { Pencil } from "lucide-react";
@@ -31,9 +32,9 @@ export default function SidebarStrats(props: SidebarStratsProps) {
     <div className="overflow-hidden">
       <DndList
         items={mappedStrats}
-        onChange={(strats, oldIndex, newIndex) => {
+        onChange={(strats, movedStrat, _oldIndex, newIndex) => {
           updateStratIndex({
-            stratID: strats[oldIndex].id,
+            stratID: movedStrat.id as Id<"strats">,
             newIndex,
           });
         }}

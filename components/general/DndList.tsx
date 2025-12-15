@@ -35,6 +35,7 @@ export interface DndListProps<Item extends { id: string | number }> {
   items: Item[];
   onChange: (
     items: Item[],
+    movedItem: Item,
     oldIndex: number,
     newIndex: number
   ) => void | Promise<void>;
@@ -69,11 +70,12 @@ export default function DndList<Item extends { id: string | number }>(
       );
 
       // Optimistically update the UI
+      const movedItem = optimisticItems[oldIndex];
       const newStrats = arrayMove(optimisticItems, oldIndex, newIndex);
       setOptimisticItems(newStrats);
 
       try {
-        await props.onChange(newStrats, oldIndex, newIndex);
+        await props.onChange(newStrats, movedItem, oldIndex, newIndex);
       } catch (error) {
         console.error("Error during onChange of DndList:", error);
         // Revert optimistic update on error
