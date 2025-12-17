@@ -10,6 +10,8 @@ import { R6Map } from "@/lib/types/strat.types";
 import { Asset, PlacedAsset } from "@/lib/types/asset.types";
 import { TeamMember } from "@/lib/types/team.types";
 import { useUser } from "../context/UserContext";
+import { cn } from "@/lib/utils";
+import { useViewport } from "./useViewport";
 
 export interface CanvasAsset {
   _id: string;
@@ -38,12 +40,9 @@ interface CanvasProps<A extends CanvasAsset> {
 
 // should be a multiple of 4 and 3 to have nicer numbers for aspect ratio
 export const CANVAS_BASE_SIZE = 2400;
-const MIN_ZOOM_FACTOR = 0.15;
 let MIN_ASSET_SIZE = 16;
 let MAX_ASSET_SIZE = 400;
 const DRAG_DEADZONE = 1;
-const ZOOM_MODIFIER = 0.004;
-const SCROLL_MODIFIER = 0.5;
 export const ASSET_BASE_SIZE = 40;
 
 export default function StratEditorCanvas<A extends CanvasAsset>({
@@ -103,65 +102,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
     ];
   }, [assets, userSelectedAssets]);
 
-  const svgRef = useRef<SVGSVGElement>(null);
-
-  const [viewBox, setViewBox] = useState({
-    width: CANVAS_BASE_SIZE,
-    height: (CANVAS_BASE_SIZE / 4) * 3,
-  });
-  // Calculate viewBox based on map dimensions
-  useEffect(() => {
-    if (!map) return;
-    const aspectRatio =
-      map.floors.length === 1 || map.floors.length > 2 ? 4 / 3 : 8 / 3;
-    const width = CANVAS_BASE_SIZE;
-    const height = width / aspectRatio;
-    setViewBox({ width, height });
-  }, [map]);
-
-  const [zoomFactor, setZoomFactor] = useState(1);
-  const [zoomOrigin, setZoomOrigin] = useState({
-    // absolut cursor pos in svg coords
-    x: 600,
-    y: 450,
-    // relative cursor pos in svg -> needed to keep zooming on same point when mouse is not centered
-    relX: 0.5,
-    relY: 0.5,
-  });
-  const zoomedViewBox = useMemo(() => {
-    const size = {
-      width: viewBox.width * zoomFactor,
-      height: viewBox.height * zoomFactor,
-    };
-    const absolutZoomPos = {
-      x: zoomOrigin.x - size.width * zoomOrigin.relX,
-      y: zoomOrigin.y - size.height * zoomOrigin.relY,
-    };
-    const zoomedViewBox = {
-      ...absolutZoomPos,
-      ...size,
-    };
-    // clamp viewbox to not go out of bounds (should not be neccessary, still keep just in case)
-    zoomedViewBox.x = Math.max(0, zoomedViewBox.x);
-    zoomedViewBox.y = Math.max(0, zoomedViewBox.y);
-    if (zoomedViewBox.x + zoomedViewBox.width > viewBox.width) {
-      zoomedViewBox.x = viewBox.width - zoomedViewBox.width;
-      if (zoomedViewBox.x < 0) {
-        zoomedViewBox.x = 0;
-        zoomedViewBox.width = viewBox.width;
-      }
-    }
-    if (zoomedViewBox.y + zoomedViewBox.height > viewBox.height) {
-      zoomedViewBox.y = viewBox.height - zoomedViewBox.height;
-      if (zoomedViewBox.y < 0) {
-        zoomedViewBox.y = 0;
-        zoomedViewBox.height = viewBox.height;
-      }
-    }
-    return zoomedViewBox;
-  }, [viewBox, zoomFactor, zoomOrigin]);
-  const lastZoomedViewBox = useRef(zoomedViewBox);
-  lastZoomedViewBox.current = zoomedViewBox;
+  const svgRef = useRef<SVGSVGElement>(null!);
 
   const [activeAction, setActiveAction] = useState<
     "none" | "dragging" | "resizing" | "rotating"
@@ -182,6 +123,22 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
     }[],
   });
 
+  // viewport management with zoom and pan event listeners
+  const {
+    viewBox,
+    zoomedViewBox,
+    zoomFactor,
+    canDragViewport,
+    isDraggingViewport,
+    handleWheel,
+  } = useViewport({
+    map,
+    svgRef,
+    baseWidth: CANVAS_BASE_SIZE,
+    canMoveViewport: !readonly && activeAction === "none",
+  });
+
+  // mouse down on asset
   const handleMouseDown = useCallback(
     (
       e: React.MouseEvent,
@@ -248,6 +205,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
     [selectedAssets, readonly]
   );
 
+  // mouse move when dragging/resizing/rotating assets
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
       if (userSelectedAssets.length === 0 || activeAction === "none") return;
@@ -378,6 +336,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
     [activeAction, userSelectedAssets, actionStart]
   );
 
+  // mouse up when dragging/resizing/rotating assets
   const handleMouseUp = useCallback(
     (e: MouseEvent) => {
       if (activeAction !== "none") {
@@ -391,51 +350,6 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       setActiveAction("none");
     },
     [activeAction, userSelectedAssets]
-  );
-
-  const handleWheel = useCallback(
-    (e: WheelEvent) => {
-      e.preventDefault();
-      if (e.ctrlKey) {
-        // zoom
-        const svg = svgRef.current;
-        if (!svg) return;
-        const pt = svg.createSVGPoint();
-        pt.x = e.clientX;
-        pt.y = e.clientY;
-        const svgP = pt.matrixTransform(
-          svg.getScreenCTM()?.inverse() || new DOMMatrix()
-        );
-
-        setZoomOrigin({
-          x: svgP.x,
-          y: svgP.y,
-          relX:
-            (svgP.x - lastZoomedViewBox.current.x) /
-            lastZoomedViewBox.current.width,
-          relY:
-            (svgP.y - lastZoomedViewBox.current.y) /
-            lastZoomedViewBox.current.height,
-        });
-        setZoomFactor((factor) =>
-          clamp(factor + e.deltaY * ZOOM_MODIFIER, MIN_ZOOM_FACTOR, 1)
-        );
-      } else {
-        // scroll
-        let deltaX = e.deltaX;
-        let deltaY = e.deltaY;
-        if (e.shiftKey && e.deltaX === 0) {
-          deltaX = deltaY;
-          deltaY = 0;
-        }
-        setZoomOrigin((org) => ({
-          ...org,
-          x: clamp(org.x + deltaX * SCROLL_MODIFIER, 0, viewBox.width),
-          y: clamp(org.y + deltaY * SCROLL_MODIFIER, 0, viewBox.height),
-        }));
-      }
-    },
-    [setZoomOrigin, setZoomFactor]
   );
 
   // global mousemove and mouseup listeners when dragging/resizing/rotating
@@ -457,7 +371,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
     return () => {
       svgRef.current?.removeEventListener("wheel", handleWheel);
     };
-  }, [svgRef.current, handleWheel]);
+  }, [handleWheel]);
 
   // keyboard shortcuts
   useKeys([
@@ -505,7 +419,11 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       <svg
         ref={svgRef}
         viewBox={`${zoomedViewBox.x} ${zoomedViewBox.y} ${zoomedViewBox.width} ${zoomedViewBox.height}`}
-        className="w-full h-full"
+        className={cn(
+          "w-full h-full",
+          canDragViewport &&
+            (isDraggingViewport ? "cursor-grabbing" : "cursor-grab")
+        )}
         preserveAspectRatio="xMidYMid meet"
         onClick={(e) => {
           e.stopPropagation();
