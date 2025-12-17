@@ -171,6 +171,23 @@ export const archive = mutation({
       return { success: false, error: "Strat not found" };
     }
     await ctx.db.patch(stratID, { archived: true, mapIndex: -1 });
+
+    // fix map indexes for other strats on the same map
+    const stratsOnMap = await ctx.db
+      .query("strats")
+      .withIndex("byTeamAndMap", (q) =>
+        q.eq("teamID", activeTeamID).eq("map", stratDoc.map)
+      )
+      .collect();
+
+    for (const strat of stratsOnMap) {
+      if (strat._id !== stratID && strat.mapIndex > stratDoc.mapIndex) {
+        await ctx.db.patch(strat._id, {
+          mapIndex: strat.mapIndex - 1,
+        });
+      }
+    }
+
     return { success: true };
   },
 });
