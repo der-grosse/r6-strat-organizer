@@ -7,8 +7,6 @@ import {
   FILTER_COOKIE_KEY,
   LEADING_COOKIE_KEY,
 } from "./FilterContext.functions";
-import { useMutation, useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 
 interface FilterContextType {
   filter: Filter;
@@ -24,9 +22,6 @@ export const FilterProvider: React.FC<{
   defaultFilter?: Filter;
   defaultLeading?: boolean;
 }> = ({ children, defaultFilter, defaultLeading }) => {
-  const setBannedOps = useMutation(api.bannedOps.set);
-  const bannedOps = useQuery(api.bannedOps.get) || [];
-
   const [filter, setFilter] = useState<Filter>(defaultFilter ?? EMPTY_FILTER);
 
   // set initial filter from cookies
@@ -46,12 +41,6 @@ export const FilterProvider: React.FC<{
   const [isLeading, setIsLeading] = useState(
     defaultLeading ?? Cookie.get(LEADING_COOKIE_KEY) === "true"
   );
-
-  // push banned ops filter change to socket
-  useEffect(() => {
-    if (!isLeading) return;
-    setBannedOps({ operators: bannedOps });
-  }, [bannedOps.join("|"), isLeading]);
 
   // store filter in cookies
   useEffect(() => {
