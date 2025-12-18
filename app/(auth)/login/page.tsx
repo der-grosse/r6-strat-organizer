@@ -46,6 +46,7 @@ export default function Login() {
         } catch (e) {
           toast.error("An unexpected error occurred. Please try again.");
           console.error("Error logging in:", e);
+        } finally {
           if (mounted.current) {
             setLoading(false);
           }
