@@ -4,6 +4,7 @@ import { R6Map } from "@/lib/types/strat.types";
 import { Asset, PlacedAsset, LayoutAsset } from "@/lib/types/asset.types";
 
 export interface MapBackgroundProps {
+  // To check for existing assets when adding new ones
   assets: CanvasAsset[];
   map: R6Map | null;
   viewBox: {
@@ -12,10 +13,12 @@ export interface MapBackgroundProps {
   };
   addAsset: (asset: Omit<Asset & Partial<PlacedAsset>, "_id">) => void;
   readonly?: boolean;
+  showFloorNames: boolean;
 }
 
 export default function MapBackground(props: MapBackgroundProps) {
-  const { map, viewBox } = props;
+  const { map, viewBox, readonly, assets, addAsset, showFloorNames } = props;
+
   return (
     <>
       {/* Render map background */}
@@ -24,6 +27,10 @@ export default function MapBackground(props: MapBackgroundProps) {
         const y = (Math.floor(i / 2) * viewBox.height) / 2;
         const width = viewBox.width / (map.floors.length > 1 ? 2 : 1);
         const height = viewBox.height / (map.floors.length > 2 ? 2 : 1);
+
+        const labelText = floor.floor;
+        const labelPadding = 24;
+        const fontSize = 52;
         return (
           <Fragment key={floor.floor}>
             <image
@@ -36,7 +43,21 @@ export default function MapBackground(props: MapBackgroundProps) {
               preserveAspectRatio="xMidYMid meet"
               className="pointer-events-none"
             />
-            {!props.readonly && floor.clickables && (
+            {showFloorNames && (
+              <g className="pointer-events-none select-none">
+                <text
+                  x={x + labelPadding}
+                  y={y + labelPadding + fontSize / 2}
+                  fill="#f8fafc"
+                  fontSize={fontSize}
+                  fontWeight={700}
+                  dominantBaseline="middle"
+                >
+                  {labelText}
+                </text>
+              </g>
+            )}
+            {!readonly && floor.clickables && (
               <g transform={`translate(${x}, ${y})`}>
                 <foreignObject width={width} height={height}>
                   <floor.clickables
@@ -80,7 +101,7 @@ export default function MapBackground(props: MapBackgroundProps) {
                       })();
 
                       // check if an asset at this position alreaady exists -> prevent duplicate assets
-                      const existingAsset = props.assets?.find((asset) => {
+                      const existingAsset = assets?.find((asset) => {
                         if (asset.type !== baseAsset.type) return false;
                         const assetCenterX =
                           asset.position.x + (asset.size?.width || 0) / 2;
@@ -95,7 +116,7 @@ export default function MapBackground(props: MapBackgroundProps) {
 
                       if (existingAsset) return;
 
-                      props.addAsset({
+                      addAsset({
                         ...baseAsset,
                         position: {
                           x: abs_x,

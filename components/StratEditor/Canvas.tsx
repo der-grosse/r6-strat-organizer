@@ -36,6 +36,7 @@ interface CanvasProps<A extends CanvasAsset> {
   onSelect: (selected: string[]) => void;
   onDeselect: (selected: string[]) => void;
   readonly?: boolean;
+  showFloorNames: boolean;
 }
 
 // should be a multiple of 4 and 3 to have nicer numbers for aspect ratio
@@ -56,6 +57,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
   onSelect,
   onDeselect,
   readonly,
+  showFloorNames,
 }: Readonly<CanvasProps<A>>) {
   if (typeof window !== "undefined") {
     //@ts-ignore
@@ -460,6 +462,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
           viewBox={viewBox}
           addAsset={onAssetAdd}
           readonly={readonly}
+          showFloorNames={showFloorNames}
         />
 
         {/* Render assets */}

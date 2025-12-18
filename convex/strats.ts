@@ -79,6 +79,8 @@ export const list = query({
         drawingID: strat.drawingID,
         archived: strat.archived,
         mapIndex: strat.mapIndex,
+        hiddenFloors: strat.hiddenFloors || [],
+        showFloorNames: strat.showFloorNames ?? true,
         stratPositions: stratPositions
           .map((pos) => ({
             _id: pos._id,
@@ -134,6 +136,8 @@ export async function getStrat(
     drawingID: stratDoc.drawingID,
     archived: stratDoc.archived,
     mapIndex: stratDoc.mapIndex,
+    showFloorNames: stratDoc.showFloorNames ?? true,
+    hiddenFloors: stratDoc.hiddenFloors || [],
     stratPositions: stratPositions
       .map((pos) => ({
         _id: pos._id,
@@ -200,6 +204,8 @@ export const update = mutation({
     map: v.optional(v.string()),
     site: v.optional(v.string()),
     drawingID: v.optional(v.nullable(v.string())),
+    hiddenFloors: v.optional(v.array(v.number())),
+    showFloorNames: v.optional(v.boolean()),
   },
   async handler(ctx, args) {
     const { activeTeamID } = await requireUser(ctx);
@@ -221,6 +227,12 @@ export const update = mutation({
       ...(args.site !== undefined ? { site: args.site } : {}),
       ...(args.drawingID !== undefined
         ? { drawingID: args.drawingID ?? undefined } // when drawingID is null, we want to remove it
+        : {}),
+      ...(args.hiddenFloors !== undefined
+        ? { hiddenFloors: args.hiddenFloors }
+        : {}),
+      ...(args.showFloorNames !== undefined
+        ? { showFloorNames: args.showFloorNames }
         : {}),
     });
     return { success: true };
@@ -261,6 +273,8 @@ export const create = mutation({
       teamID: activeTeamID,
       archived: false,
       mapIndex: maxIndex + 1,
+      hiddenFloors: [],
+      showFloorNames: true,
     });
 
     // create strat positions for each team position
@@ -345,6 +359,8 @@ export const createCopy = mutation({
       archived: false,
       teamID: activeTeamID,
       mapIndex,
+      hiddenFloors: stratDoc.hiddenFloors,
+      showFloorNames: stratDoc.showFloorNames,
     });
 
     const stratPositionIDMap: Record<string, Id<"stratPositions">> = {};

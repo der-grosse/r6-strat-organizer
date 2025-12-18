@@ -2,6 +2,7 @@ import useDebounced from "@/components/hooks/useDebounced";
 import MapSelector from "@/components/general/MapSelector";
 import SiteSelector from "@/components/general/SiteSelector";
 import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
 import {
   Dialog,
   DialogContent,
@@ -18,18 +19,25 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   FolderPen,
   Link,
+  Map,
   MapPinned,
-  RefreshCw,
   Settings2,
   Trash,
   Unlink,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { extractDrawingID } from "@/lib/googleDrawings";
 import { Strat } from "@/lib/types/strat.types";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import MAPS from "@/lib/static/maps";
+import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export interface StratEditorMetaSidebarProps {
   strat: Strat;
@@ -40,24 +48,62 @@ export default function StratEditorMetaSidebar(
 ) {
   const updateStrat = useMutation(api.strats.update);
   const archiveStrat = useMutation(api.strats.archive);
-
   const router = useRouter();
+
+  const usesInternalEditor = !props.strat.drawingID;
+
   const [name, setName] = useState(props.strat.name);
   const [description, setDescription] = useState(props.strat.description);
+  const [showFloorNames, setShowFloorNames] = useState(
+    props.strat.showFloorNames ?? true
+  );
+  const [hiddenFloors, setHiddenFloors] = useState(
+    props.strat.hiddenFloors || []
+  );
 
+  // update local state when strat prop changes
+  useEffect(() => {
+    setHiddenFloors(props.strat.hiddenFloors || []);
+    setName(props.strat.name);
+    setDescription(props.strat.description);
+    setShowFloorNames(props.strat.showFloorNames ?? true);
+  }, [props.strat]);
+
+  // debounced updates
   useDebounced(name, {
     onChange(name) {
-      if (name === props.strat.name) return;
       updateStrat({ _id: props.strat._id, name });
     },
   });
   useDebounced(description, {
     onChange(description) {
-      if (description === props.strat.description) return;
       updateStrat({ _id: props.strat._id, description });
     },
   });
 
+  // show floor names logic
+  const toggleShowFloorNames = (show: boolean) => {
+    setShowFloorNames(show);
+    updateStrat({ _id: props.strat._id, showFloorNames: show });
+  };
+
+  // hidden floors logic
+  const selectedMapFloors =
+    MAPS.find((map) => map.name === props.strat.map)?.floors ?? [];
+
+  const toggleHiddenFloor = (floorIndex: number, shouldHide: boolean) => {
+    const nextHidden = shouldHide
+      ? Array.from(new Set([...hiddenFloors, floorIndex])).sort((a, b) => a - b)
+      : hiddenFloors.filter((index) => index !== floorIndex);
+
+    // Ensure at least one floor remains visible
+    if (nextHidden.length === selectedMapFloors.length) return;
+
+    setHiddenFloors(nextHidden);
+    updateStrat({ _id: props.strat._id, hiddenFloors: nextHidden });
+  };
+
+  // dialog states
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [confirmGoogleDrawingOpen, setConfirmGoogleDrawingOpen] =
     useState(false);
@@ -71,19 +117,22 @@ export default function StratEditorMetaSidebar(
             <MapPinned className="text-muted-foreground" />
             <Label className="text-muted-foreground">Map + Site</Label>
           </div>
+
           <MapSelector
             hideEmpty
             map={props.strat.map}
             onChange={(map) => {
               if (!map) return;
+              setHiddenFloors([]);
               updateStrat({
                 _id: props.strat._id,
                 map: map.name,
                 site: map?.sites[0],
+                hiddenFloors: [],
               });
             }}
             trigger={({ children, ...props }) => (
-              <Button {...props} variant="ghost">
+              <Button {...props} variant="outline">
                 {children}
               </Button>
             )}
@@ -97,11 +146,12 @@ export default function StratEditorMetaSidebar(
               updateStrat({ _id: props.strat._id, site });
             }}
             trigger={({ children, ...props }) => (
-              <Button {...props} variant="ghost">
+              <Button {...props} variant="outline">
                 {children}
               </Button>
             )}
           />
+
           <Separator />
           <div className="flex items-center gap-2">
             <FolderPen className="text-muted-foreground" />
@@ -116,12 +166,112 @@ export default function StratEditorMetaSidebar(
             placeholder="Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            className="max-h-40"
           />
+
+          <Separator />
+          <div className="flex items-center gap-2">
+            <Map className="text-muted-foreground" />
+            <Label className="text-muted-foreground">
+              Map Settings
+              <span className="-ml-1 text-xs font-normal text-muted-foreground opacity-75">
+                (disabled for external editor)
+              </span>
+            </Label>
+          </div>
+
+          {/* show floor names */}
+          <div className="flex flex-row flex-wrap gap-2 rounded-md border bg-muted/50 p-1">
+            <Label className="text-muted-foreground p-1">
+              Show Floor Names
+            </Label>
+            <div className="flex-1" />
+            <ButtonGroup>
+              <Button
+                variant="outline"
+                size="sm"
+                className={cn(
+                  "rounded-md px-3",
+                  !showFloorNames &&
+                    "opacity-50 bg-secondary/10 hover:bg-secondary/20"
+                )}
+                aria-pressed={showFloorNames}
+                disabled={!usesInternalEditor}
+                onClick={() => toggleShowFloorNames(true)}
+              >
+                Yes
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className={cn(
+                  "rounded-md px-3",
+                  showFloorNames &&
+                    "opacity-50 bg-secondary/10 hover:bg-secondary/20"
+                )}
+                aria-pressed={!showFloorNames}
+                disabled={!usesInternalEditor}
+                onClick={() => toggleShowFloorNames(false)}
+              >
+                No
+              </Button>
+            </ButtonGroup>
+          </div>
+
+          {/* visible floors */}
+          {/* {selectedMapFloors.length > 0 && (
+            <div className="flex flex-wrap justify-start gap-2 rounded-md border bg-muted/50 p-1">
+              <Label className="text-muted-foreground p-1">
+                Visible Floors
+              </Label>
+              <div className="flex-1" />
+              <ButtonGroup>
+                {selectedMapFloors.map((floor, index) => {
+                  const isHidden = hiddenFloors.includes(index);
+                  const isVisible = !isHidden;
+                  const button = (
+                    <Button
+                      key={`${floor.floor}-${index}`}
+                      variant="outline"
+                      size="sm"
+                      className={cn(
+                        "rounded-md px-3",
+                        !isVisible &&
+                          "opacity-50 bg-secondary/10 hover:bg-secondary/20"
+                      )}
+                      aria-pressed={isVisible}
+                      onClick={() => toggleHiddenFloor(index, isVisible)}
+                    >
+                      {floor.floor}
+                    </Button>
+                  );
+
+                  if (
+                    selectedMapFloors.length === hiddenFloors.length + 1 &&
+                    isVisible
+                  ) {
+                    return (
+                      <Tooltip key={`${floor.floor}-${index}`}>
+                        <TooltipTrigger asChild>{button}</TooltipTrigger>
+                        <TooltipContent side="bottom">
+                          You must have at least one floor visible.
+                        </TooltipContent>
+                      </Tooltip>
+                    );
+                  }
+
+                  return button;
+                })}
+              </ButtonGroup>
+            </div>
+          )} */}
+
           <Separator />
           <div className="flex items-center gap-2">
             <Settings2 className="text-muted-foreground" />
             <Label className="text-muted-foreground">Actions</Label>
           </div>
+
           <Button
             variant="outline"
             className="w-full"

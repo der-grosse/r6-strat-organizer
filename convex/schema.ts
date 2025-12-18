@@ -68,6 +68,8 @@ const schema = defineSchema({
     teamID: v.id("teams"),
     archived: v.boolean(),
     mapIndex: v.number(),
+    showFloorNames: v.optional(v.boolean()),
+    hiddenFloors: v.optional(v.array(v.number())),
   })
     .index("byTeam", ["teamID"])
     .index("byTeamAndMap", ["teamID", "map"])

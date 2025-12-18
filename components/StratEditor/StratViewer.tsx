@@ -56,6 +56,7 @@ export default function StratViewer({
       onAssetChange={() => {}}
       onAssetRemove={() => {}}
       readonly
+      showFloorNames={strat.showFloorNames}
     />
   );
 }

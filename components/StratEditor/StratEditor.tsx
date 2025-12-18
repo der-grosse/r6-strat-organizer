@@ -326,6 +326,7 @@ export function StratEditor({
             );
           }}
           renderAsset={renderAsset}
+          showFloorNames={strat.showFloorNames}
         />
       )}
       {UI}
@@ -515,7 +516,7 @@ function redoSelectionEvent(
 }
 
 function convertPlacedAssetToAPI<
-  T extends PlacedAsset | Omit<PlacedAsset, "_id">
+  T extends PlacedAsset | Omit<PlacedAsset, "_id">,
 >(
   asset: T
 ): {

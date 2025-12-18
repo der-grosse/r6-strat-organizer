@@ -22,6 +22,8 @@ export interface Strat {
   drawingID: string | undefined;
   archived: boolean;
   mapIndex: number;
+  showFloorNames: boolean;
+  hiddenFloors: number[];
   stratPositions: StratPositions[];
 }
 
