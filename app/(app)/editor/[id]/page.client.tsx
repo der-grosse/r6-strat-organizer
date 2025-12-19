@@ -5,6 +5,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { CircleX } from "lucide-react";
+import { useEffect } from "react";
 
 export interface StratEditorClientProps {
   id: string | undefined;
@@ -16,6 +17,14 @@ export default function StratEditorClient(props: StratEditorClientProps) {
     props.id ? { id: props.id as Id<"strats"> } : "skip"
   );
   const team = useQuery(api.team.get, {});
+
+  useEffect(() => {
+    if (strat) {
+      window.document.title = `${strat.name} | ${strat.map} - ${strat.site}`;
+    } else {
+      window.document.title = "Strat not found";
+    }
+  }, [strat]);
 
   if (!team || strat === undefined) return null;
 
