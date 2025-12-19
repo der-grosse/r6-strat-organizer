@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyJWT } from "./server/jwt";
+import { cookies } from "next/headers";
 
 const AUTH_ROUTES = ["/login", "/signup", "/reset-password"];
 function isAuthRoute(pathname: string) {
@@ -13,7 +14,12 @@ export async function middleware(request: NextRequest) {
   }
 
   const token = request.cookies.get("jwt");
-  const payload = token ? await verifyJWT(token.value) : null;
+  const payload = token
+    ? await verifyJWT(token.value).catch(async () => {
+        (await cookies()).delete("jwt");
+        return null;
+      })
+    : null;
 
   const isAuth = isAuthRoute(request.nextUrl.pathname);
 

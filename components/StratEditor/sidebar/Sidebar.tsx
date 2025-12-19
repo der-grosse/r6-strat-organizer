@@ -111,6 +111,8 @@ export default function StratEditorSidebar(
 
   const sidebarContent = useMemo(() => {
     switch (openTab) {
+      case "meta":
+        return <StratEditorMetaSidebar strat={props.strat} />;
       case "operator-assets":
         return (
           <StratEditorOperatorsSidebar
@@ -125,8 +127,6 @@ export default function StratEditorSidebar(
             stratPositions={props.strat.stratPositions}
           />
         );
-      case "meta":
-        return <StratEditorMetaSidebar strat={props.strat} />;
       case "player-ops":
         return (
           <StratEditorPlayerPositionsSidebar

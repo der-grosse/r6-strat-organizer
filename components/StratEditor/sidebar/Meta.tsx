@@ -339,6 +339,7 @@ export default function StratEditorMetaSidebar(
                 const newParsedID = props.strat.drawingID
                   ? null
                   : extractDrawingID(newDrawingID);
+
                 updateStrat({
                   _id: props.strat._id,
                   drawingID: newParsedID,
