@@ -1,5 +1,5 @@
 import OperatorIcon from "@/components/general/OperatorIcon";
-import { getAssetColor } from "../Assets";
+import { getAssetColor } from "../canvas/useMountedAssets";
 import { cn } from "@/lib/utils";
 import { PlacedAsset } from "@/lib/types/asset.types";
 import { StratPositions } from "@/lib/types/strat.types";

@@ -114,8 +114,10 @@ const schema = defineSchema({
   selectedAssets: defineTable({
     stratID: v.id("strats"),
     userID: v.id("users"),
-    placedAssetID: v.id("placedAssets"),
-  }).index("byStratAndUser", ["stratID", "userID"]),
+    placedAssetIDs: v.array(v.id("placedAssets")),
+  })
+    .index("byStratAndUser", ["stratID", "userID"])
+    .index("byStrat", ["stratID"]),
 });
 
 export default schema;

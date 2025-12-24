@@ -6,19 +6,19 @@ import {
   UserRound,
   UserRoundPen,
 } from "lucide-react";
-import { Button } from "../ui/button";
-import Operator from "./assets/Operator";
+import { Button } from "../../ui/button";
+import Operator from "../assets/Operator";
 import { cn } from "@/lib/utils";
 import { useCallback, useMemo, useState } from "react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-import GadgetIcon from "../general/GadgetIcon";
-import AssetOutline from "./assets/AssetOutline";
-import Reinforcement from "../icons/reinforcement";
-import Rotation from "../icons/rotation";
-import Explosion from "./assets/Explosion";
-import WoodenBarricade from "../icons/woodenBarricade";
-import { useUser } from "../context/UserContext";
-import ColorPickerDialog from "../general/ColorPickerDialog";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/tooltip";
+import GadgetIcon from "../../general/GadgetIcon";
+import AssetOutline from "../assets/AssetOutline";
+import Reinforcement from "../../icons/reinforcement";
+import Rotation from "../../icons/rotation";
+import Explosion from "../assets/Explosion";
+import WoodenBarricade from "../../icons/woodenBarricade";
+import { useUser } from "../../context/UserContext";
+import ColorPickerDialog from "../../general/ColorPickerDialog";
 import { FullTeam, TeamMember } from "@/lib/types/team.types";
 import { StratPositions } from "@/lib/types/strat.types";
 import { PlacedAsset } from "@/lib/types/asset.types";

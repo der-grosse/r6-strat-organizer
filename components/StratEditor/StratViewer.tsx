@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
-import useMountAssets from "./Assets";
-import StratEditorCanvas from "./Canvas";
+import useMountAssets from "./canvas/useMountedAssets";
+import StratEditorCanvas from "./canvas/Canvas";
 import MAPS from "@/lib/static/maps";
 import { Strat } from "@/lib/types/strat.types";
 import { FullTeam } from "@/lib/types/team.types";

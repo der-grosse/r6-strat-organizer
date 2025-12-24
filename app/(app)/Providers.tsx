@@ -4,7 +4,6 @@ import { FilterProvider } from "@/components/context/FilterContext";
 import { Filter } from "@/components/context/FilterContext.functions";
 import { UserProvider } from "@/components/context/UserContext";
 import { SlotProvider } from "@/components/layout/SlotProvider";
-import { DragProvider } from "@/components/ui/draggable-context";
 import { ResizeProvider } from "@/components/ui/resize-context";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Toaster } from "@/components/ui/sonner";
@@ -28,9 +27,7 @@ export default function Providers(props: Readonly<ProvidersProps>) {
             defaultLeading={props.defaultLeading}
           >
             <SlotProvider>
-              <DragProvider>
-                <ResizeProvider>{props.children}</ResizeProvider>
-              </DragProvider>
+              <ResizeProvider>{props.children}</ResizeProvider>
               <Toaster />
             </SlotProvider>
           </FilterProvider>

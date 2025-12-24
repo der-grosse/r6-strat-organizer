@@ -2,8 +2,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import MAPS from "@/lib/static/maps";
 import StratEditorLayout from "./Layout";
-import StratEditorCanvas, { ASSET_BASE_SIZE, CANVAS_BASE_SIZE } from "./Canvas";
-import useMountAssets from "./Assets";
+import StratEditorCanvas, {
+  ASSET_BASE_SIZE,
+  CANVAS_BASE_SIZE,
+} from "./canvas/Canvas";
+import useMountAssets from "./canvas/useMountedAssets";
 import { useKeys } from "../hooks/useKey";
 import { deepCopy, deepEqual } from "../Objects";
 import { toast } from "sonner";
@@ -20,16 +23,15 @@ import {
 import { Id } from "@/convex/_generated/dataModel";
 import { ReactMutation, useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import useDebounced from "../hooks/useDebounced";
+import useOnUnmount from "../hooks/useOnUnmount";
 
 interface StratEditorProps {
   strat: Strat;
   team: FullTeam;
 }
 
-export interface Selection {
-  _id: string;
-  userID: TeamMember["_id"];
-}
+type Selection = Id<"placedAssets">;
 
 export type HistoryEvent = AssetEvent | SelectionEvent;
 
@@ -51,12 +53,12 @@ export interface AssetDeleted {
 }
 export interface AssetSelection {
   type: "selection-selected";
-  selection: string[];
+  selection: Selection[];
   userID: TeamMember["_id"];
 }
 export interface AssetDeselection {
   type: "selection-deselected";
-  selection: string[];
+  selection: Selection[];
   userID: TeamMember["_id"];
 }
 
@@ -69,6 +71,7 @@ export function StratEditor({
   const addAssetFct = useMutation(api.strats.addAsset);
   const updateAssetsFct = useMutation(api.strats.updateAssets);
   const deleteAssets = useMutation(api.strats.deleteAssets);
+  const setSelectedAssets = useMutation(api.strats.setSelectedAssets);
 
   const [strat, setStrat] = useState<Strat>(propStrat);
   // Update local state when prop changes
@@ -105,11 +108,39 @@ export function StratEditor({
     }
   }, [queryAssets]);
 
+  const selectedAssetsOfOtherUsers = useQuery(api.strats.getSelectedAssets, {
+    stratID: strat._id,
+  });
   const [selected, setSelected] = useState<Selection[]>([]);
+  const allSelectedAssets = useMemo(
+    () =>
+      selected
+        .map((s) => ({
+          assetID: s,
+          userID: user?._id as Id<"users">,
+        }))
+        .concat(
+          selectedAssetsOfOtherUsers?.flatMap((s) =>
+            s.placedAssetIDs.map((id) => ({
+              assetID: id,
+              userID: s.userID,
+            }))
+          ) ?? []
+        ),
+    [selected, selectedAssetsOfOtherUsers, user]
+  );
+  useDebounced(selected, {
+    onChange(selected) {
+      setSelectedAssets({ placedAssetIDs: selected, stratID: strat._id });
+    },
+  });
+  useOnUnmount(() =>
+    setSelectedAssets({ placedAssetIDs: [], stratID: strat._id })
+  );
 
   const history = useRef<HistoryEvent[]>([]);
   const historyIndex = useRef(-1);
-  const pushEvent = useCallback((event: HistoryEvent, fromRemote = false) => {
+  const pushEvent = useCallback((event: HistoryEvent) => {
     if (
       JSON.stringify(history.current[historyIndex.current]) ===
       JSON.stringify(event)
@@ -153,6 +184,7 @@ export function StratEditor({
       undoEvent(strat._id, event, fcts);
     }
   }, [setAssets, strat._id]);
+
   useKeys([
     {
       shortcut: {
@@ -163,10 +195,17 @@ export function StratEditor({
       action: undo,
     },
     {
-      shortcut: {
-        key: "y",
-        ctrlKey: true,
-      },
+      shortcut: [
+        {
+          key: "y",
+          ctrlKey: true,
+        },
+        {
+          key: "z",
+          ctrlKey: true,
+          shiftKey: true,
+        },
+      ],
       action: redo,
     },
   ]);
@@ -239,10 +278,10 @@ export function StratEditor({
         <StratDisplay editView hideDetails strat={strat} team={team} />
       ) : (
         <StratEditorCanvas
-          selectedAssets={selected}
+          selectedAssets={allSelectedAssets}
           onDeselect={(deselected) => {
             setSelected((selected) =>
-              selected.filter((s) => !deselected.includes(s._id))
+              selected.filter((s) => !deselected.includes(s))
             );
             if (user?._id) {
               pushEvent({
@@ -253,14 +292,7 @@ export function StratEditor({
             }
           }}
           onSelect={(newSelected) => {
-            setSelected((selected) =>
-              selected.concat(
-                newSelected.map((_id) => ({
-                  _id,
-                  userID: user?._id as Id<"users">,
-                }))
-              )
-            );
+            setSelected((selected) => selected.concat(newSelected));
             if (user?._id)
               pushEvent({
                 type: "selection-selected",
@@ -487,14 +519,9 @@ function undoSelectionEvent(
 ): Selection[] {
   switch (event.type) {
     case "selection-selected":
-      return state.filter((s) => !event.selection.includes(s._id));
+      return state.filter((s) => !event.selection.includes(s));
     case "selection-deselected":
-      return state.concat(
-        event.selection.map((_id) => ({
-          _id,
-          userID: event.userID,
-        }))
-      );
+      return state.concat(event.selection);
   }
 }
 
@@ -504,19 +531,14 @@ function redoSelectionEvent(
 ): Selection[] {
   switch (event.type) {
     case "selection-selected":
-      return state.concat(
-        event.selection.map((_id) => ({
-          _id,
-          userID: event.userID,
-        }))
-      );
+      return state.concat(event.selection);
     case "selection-deselected":
-      return state.filter((s) => !event.selection.includes(s._id));
+      return state.filter((s) => !event.selection.includes(s));
   }
 }
 
 function convertPlacedAssetToAPI<
-  T extends PlacedAsset | Omit<PlacedAsset, "_id">,
+  T extends PlacedAsset | Omit<PlacedAsset, "_id">
 >(
   asset: T
 ): {

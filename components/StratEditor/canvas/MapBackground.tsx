@@ -1,7 +1,8 @@
 import { Fragment } from "react";
-import { CanvasAsset, clampAssetSize } from "./Canvas";
+import { CanvasAsset } from "./Canvas";
 import { R6Map } from "@/lib/types/strat.types";
 import { Asset, PlacedAsset, LayoutAsset } from "@/lib/types/asset.types";
+import { clampAssetSize } from "./Canvas.functions";
 
 export interface MapBackgroundProps {
   // To check for existing assets when adding new ones

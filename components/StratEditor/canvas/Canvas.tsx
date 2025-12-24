@@ -1,17 +1,17 @@
 "use client";
 import { useRef, useState, useEffect, useMemo, useCallback } from "react";
 import SVGAsset from "./SVGAsset";
-import { useKeys } from "../hooks/useKey";
-import isKeyDown from "../hooks/isKeyDown";
-import { deepCopy } from "../Objects";
+import { useKeys } from "../../hooks/useKey";
+import isKeyDown from "../../hooks/isKeyDown";
+import { deepCopy } from "../../Objects";
 import MapBackground from "./MapBackground";
-import { Selection } from "./StratEditor";
 import { R6Map } from "@/lib/types/strat.types";
 import { Asset, PlacedAsset } from "@/lib/types/asset.types";
 import { TeamMember } from "@/lib/types/team.types";
-import { useUser } from "../context/UserContext";
+import { useUser } from "../../context/UserContext";
 import { cn } from "@/lib/utils";
 import { useViewport } from "./useViewport";
+import { clamp, resizeAsset, rotateVector } from "./Canvas.functions";
 
 export interface CanvasAsset {
   _id: string;
@@ -32,17 +32,15 @@ interface CanvasProps<A extends CanvasAsset> {
     selectedBy: TeamMember["_id"][],
     lastestSelected: boolean
   ) => { asset: React.ReactNode; menu: React.ReactNode | null };
-  selectedAssets: Selection[];
-  onSelect: (selected: string[]) => void;
-  onDeselect: (selected: string[]) => void;
+  selectedAssets: { assetID: A["_id"]; userID: TeamMember["_id"] }[];
+  onSelect: (selected: A["_id"][]) => void;
+  onDeselect: (selected: A["_id"][]) => void;
   readonly?: boolean;
   showFloorNames: boolean;
 }
 
 // should be a multiple of 4 and 3 to have nicer numbers for aspect ratio
 export const CANVAS_BASE_SIZE = 2400;
-let MIN_ASSET_SIZE = 16;
-let MAX_ASSET_SIZE = 400;
 const DRAG_DEADZONE = 1;
 export const ASSET_BASE_SIZE = 40;
 
@@ -59,18 +57,13 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
   readonly,
   showFloorNames,
 }: Readonly<CanvasProps<A>>) {
-  if (typeof window !== "undefined") {
-    //@ts-ignore
-    window.disableAssetSizeRestriction = () => {
-      MAX_ASSET_SIZE = Infinity;
-      MIN_ASSET_SIZE = 4;
-    };
-  }
   const { user } = useUser();
 
   const userSelectedAssets = useMemo(
     () =>
-      selectedAssets.filter((s) => s.userID === user?._id).map((s) => s._id),
+      selectedAssets
+        .filter((s) => s.userID === user?._id)
+        .map((s) => s.assetID),
     [selectedAssets, user?._id]
   );
 
@@ -137,7 +130,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
     map,
     svgRef,
     baseWidth: CANVAS_BASE_SIZE,
-    canMoveViewport: !readonly && activeAction === "none",
+    isViewportMovable: !readonly && activeAction === "none",
   });
 
   // mouse down on asset
@@ -470,7 +463,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
           const render = renderAsset(
             asset,
             selectedAssets
-              .filter((s) => s._id === asset._id)
+              .filter((s) => s.assetID === asset._id)
               .map((s) => s.userID),
             userSelectedAssets.at(-1) === asset._id
           );
@@ -494,53 +487,4 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       </svg>
     </div>
   );
-}
-
-function clamp(value: number, min: number, max: number) {
-  return Math.min(max, Math.max(min, value));
-}
-
-function rotateVector(
-  vector: { x: number; y: number },
-  angle: number
-): { x: number; y: number } {
-  const radians = (angle * Math.PI) / 180;
-  return {
-    x: vector.x * Math.cos(radians) - vector.y * Math.sin(radians),
-    y: vector.x * Math.sin(radians) + vector.y * Math.cos(radians),
-  };
-}
-
-function resizeAsset(
-  asset: Pick<CanvasAsset, "size" | "position" | "rotation">,
-  leveledDelta: { x: number; y: number },
-  makeSquare: boolean
-): Pick<CanvasAsset, "size" | "position"> {
-  let newSize = clampAssetSize({
-    width: asset.size.width + leveledDelta.x,
-    height: asset.size.height + leveledDelta.y,
-  });
-  if (makeSquare) {
-    const maxSide = Math.max(newSize.width, newSize.height);
-    newSize = { width: maxSide, height: maxSide };
-  }
-  const newPosition = {
-    x: asset.position.x - (newSize.width - asset.size.width) / 2,
-    y: asset.position.y - (newSize.height - asset.size.height) / 2,
-  };
-  return {
-    size: newSize,
-    position: newPosition,
-  };
-}
-
-export function clampAssetSize(
-  size: { width: number; height: number },
-  min: number = MIN_ASSET_SIZE,
-  max: number = MAX_ASSET_SIZE
-): { width: number; height: number } {
-  return {
-    width: clamp(size.width, min, max),
-    height: clamp(size.height, min, max),
-  };
 }

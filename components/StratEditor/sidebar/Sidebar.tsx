@@ -24,7 +24,7 @@ import { MAX_REINFORCEMENT } from "@/lib/static/general";
 import Link from "next/link";
 import StratEditorPlayerPositionsSidebar from "./StratPositions";
 import StratEditorLayoutSidebar from "./Layout";
-import { getAssetColor } from "../Assets";
+import { getAssetColor } from "../canvas/useMountedAssets";
 import { ColorButton } from "@/components/general/ColorPickerDialog";
 import { Asset, PlacedAsset } from "@/lib/types/asset.types";
 import { Strat } from "@/lib/types/strat.types";

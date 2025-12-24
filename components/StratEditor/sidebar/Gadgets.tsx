@@ -9,7 +9,7 @@ import { ScrollArea } from "../../ui/scroll-area";
 import { Button } from "../../ui/button";
 import PrimaryGadgetIcon from "@/components/general/PrimaryGadgetIcon";
 import SecondaryGadgetIcon from "@/components/general/SecondaryGadgetIcon";
-import { ASSET_BASE_SIZE } from "../Canvas";
+import { ASSET_BASE_SIZE } from "../canvas/Canvas";
 import { Asset, GadgetAsset, PlacedAsset } from "@/lib/types/asset.types";
 import { StratPositions } from "@/lib/types/strat.types";
 

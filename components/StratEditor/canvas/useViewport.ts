@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { R6Map } from "@/lib/types/strat.types";
-import isKeyDown from "../hooks/isKeyDown";
+import isKeyDown from "../../hooks/isKeyDown";
 
 type ViewBox = {
   x: number;
@@ -24,7 +24,7 @@ export interface UseViewportOptions {
   map: R6Map | null;
   svgRef: React.RefObject<SVGSVGElement>;
   baseWidth?: number;
-  canMoveViewport?: boolean;
+  isViewportMovable?: boolean;
 }
 
 export function calculateZoomedViewBox(
@@ -80,7 +80,7 @@ export function useViewport({
   map,
   svgRef,
   baseWidth = DEFAULT_BASE_WIDTH,
-  canMoveViewport = true,
+  isViewportMovable = true,
 }: UseViewportOptions) {
   const baseHeight = (baseWidth / 4) * 3;
   const [viewBox, setViewBox] = useState<ViewBox>({
@@ -245,11 +245,13 @@ export function useViewport({
   const spaceDown = isKeyDown(" ");
   const [isDraggingViewport, setIsDraggingViewport] = useState(false);
   // allow panning when holding space (any mouse button) or using middle mouse alone
-  const canDragViewport = canMoveViewport && (spaceDown || isDraggingViewport);
+  const canDragViewport =
+    isViewportMovable && (spaceDown || isDraggingViewport);
+
   // add mousemove and mouseup listeners for dragging the viewport
   useEffect(() => {
-    if (!canMoveViewport) return;
-    const handleViewportMouseMove = (e: MouseEvent) => {
+    if (!isViewportMovable) return;
+    const handleWindowMouseMove = (e: MouseEvent) => {
       if (!isDraggingViewport) return;
       const svg = svgRef.current;
       if (!svg) return;
@@ -264,7 +266,7 @@ export function useViewport({
       panByDelta(dx, dy);
     };
 
-    const handleViewportMouseUp = (e: MouseEvent) => {
+    const handleWindowMouseUp = (e: MouseEvent) => {
       if (!isDraggingViewport) return;
       setDragViewportStart({ x: 0, y: 0 });
       // commit the imperatively updated origin back into React state
@@ -274,7 +276,7 @@ export function useViewport({
 
     const mouseDownListener = (e: MouseEvent) => {
       const middleMousePressed = e.button === 1;
-      if (!canMoveViewport && !middleMousePressed && !spaceDown) return;
+      if (!canDragViewport && !middleMousePressed && !spaceDown) return;
       const svg = svgRef.current;
       if (!svg) return;
       if (middleMousePressed) {
@@ -292,18 +294,19 @@ export function useViewport({
       });
       setIsDraggingViewport(true);
     };
-    svgRef.current?.addEventListener("mousedown", mouseDownListener);
-    window.addEventListener("mousemove", handleViewportMouseMove, {
+
+    window.addEventListener("mousemove", handleWindowMouseMove, {
       passive: true,
     });
-    window.addEventListener("mouseup", handleViewportMouseUp);
+    window.addEventListener("mouseup", handleWindowMouseUp);
+    svgRef.current?.addEventListener("mousedown", mouseDownListener);
     return () => {
-      window.removeEventListener("mousemove", handleViewportMouseMove);
-      window.removeEventListener("mouseup", handleViewportMouseUp);
+      window.removeEventListener("mousemove", handleWindowMouseMove);
+      window.removeEventListener("mouseup", handleWindowMouseUp);
       svgRef.current?.removeEventListener("mousedown", mouseDownListener);
     };
   }, [
-    canMoveViewport,
+    isViewportMovable,
     isDraggingViewport,
     dragViewportStart.x,
     dragViewportStart.y,

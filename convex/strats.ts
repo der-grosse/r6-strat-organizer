@@ -698,7 +698,7 @@ export const getAssets = query({
           position: { x: asset.posX, y: asset.posY },
           size: { width: asset.width, height: asset.height },
           rotation: asset.rotation,
-        }) as PlacedAsset
+        } as PlacedAsset)
     );
   },
 });
@@ -819,6 +819,70 @@ export const deleteAssets = mutation({
     for (const placedAssetID of placedAssetIDs) {
       await ctx.db.delete(placedAssetID);
     }
+    return { success: true };
+  },
+});
+
+export const getSelectedAssets = query({
+  args: {
+    stratID: v.id("strats"),
+  },
+  async handler(ctx, { stratID }) {
+    const { activeTeamID, _id: userID } = await requireUser(ctx);
+    if (!activeTeamID) {
+      return null;
+    }
+    const selectedAssetsDoc = await ctx.db
+      .query("selectedAssets")
+      .withIndex("byStrat", (q) => q.eq("stratID", stratID))
+      .collect();
+
+    const otherUsersSelectedAssets = selectedAssetsDoc.filter(
+      (doc) => doc.userID !== userID
+    );
+
+    return otherUsersSelectedAssets.map((doc) => ({
+      userID: doc.userID,
+      placedAssetIDs: doc.placedAssetIDs,
+    }));
+  },
+});
+
+export const setSelectedAssets = mutation({
+  args: {
+    stratID: v.id("strats"),
+    placedAssetIDs: v.array(v.id("placedAssets")),
+  },
+  async handler(ctx, { placedAssetIDs, stratID }) {
+    const { activeTeamID, _id: userID } = await requireUser(ctx);
+    if (!activeTeamID) {
+      return { success: false, error: "No active team selected" };
+    }
+
+    let id = (
+      await ctx.db
+        .query("selectedAssets")
+        .withIndex("byStratAndUser", (q) =>
+          q.eq("stratID", stratID).eq("userID", userID)
+        )
+        .first()
+    )?._id;
+
+    if (!id) {
+      id = await ctx.db.insert("selectedAssets", {
+        stratID,
+        userID,
+        placedAssetIDs,
+      });
+    }
+
+    if (placedAssetIDs.length === 0) {
+      await ctx.db.delete(id);
+      return { success: true };
+    }
+    await ctx.db.patch(id, {
+      placedAssetIDs,
+    });
     return { success: true };
   },
 });
