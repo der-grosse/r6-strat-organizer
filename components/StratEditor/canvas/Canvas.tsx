@@ -29,6 +29,7 @@ interface CanvasProps<A extends CanvasAsset> {
   onAssetRemove: (assets: A["_id"][]) => void;
   renderAsset: (
     asset: A,
+    selectedAssets: A[],
     selectedBy: TeamMember["_id"][],
     latestSelected: boolean
   ) => { asset: React.ReactNode; menu: React.ReactNode | null };
@@ -462,6 +463,9 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
         {sortedAssets.map((asset) => {
           const render = renderAsset(
             asset,
+            userSelectedAssets
+              .map((id) => assets.find((asset) => id === asset._id)!)
+              .filter(Boolean),
             selectedAssets
               .filter((s) => s.assetID === asset._id)
               .map((s) => s.userID),

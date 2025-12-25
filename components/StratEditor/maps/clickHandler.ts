@@ -40,7 +40,7 @@ const FloorClickablerClickHandler =
       const centerX = (xNum + x2Num) / 2;
       const centerY = (yNum + y2Num) / 2;
       onClick?.(
-        "reinforcement",
+        "reinforcement-hatch",
         centerX / viewboxWidth,
         centerY / viewboxWidth,
         rel_width,
@@ -67,7 +67,7 @@ const FloorClickablerClickHandler =
       const centerY = (y + y2) / 2;
 
       onClick?.(
-        type,
+        type === "barricade" ? "barricade" : "reinforcement-wall",
         centerX / viewboxWidth,
         centerY / viewboxWidth,
         rel_width / viewboxWidth,

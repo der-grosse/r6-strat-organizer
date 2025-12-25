@@ -457,6 +457,8 @@ export const updateIndex = mutation({
   },
 });
 
+// --------- Strat Positions ---------
+
 export const updateStratPosition = mutation({
   args: {
     _id: v.id("stratPositions"),
@@ -506,6 +508,8 @@ export const updateStratPosition = mutation({
     return { success: true };
   },
 });
+
+// --------- Picked Operators ---------
 
 export const updatePickedOperator = mutation({
   args: {
@@ -673,6 +677,8 @@ export const createPickedOperator = mutation({
   },
 });
 
+// --------- Placed Assets ---------
+
 export const getAssets = query({
   args: {
     stratID: v.id("strats"),
@@ -694,6 +700,7 @@ export const getAssets = query({
           operator: asset.operator,
           iconType: asset.iconType,
           gadget: asset.gadget,
+          placedOn: asset.placedOn,
 
           position: { x: asset.posX, y: asset.posY },
           size: { width: asset.width, height: asset.height },
@@ -720,6 +727,7 @@ export const addAsset = mutation({
     operator: v.optional(v.string()),
     iconType: v.optional(v.string()),
     gadget: v.optional(v.string()),
+    placedOn: v.optional(v.nullable(v.string())),
   },
   async handler(ctx, args) {
     const { activeTeamID } = await requireUser(ctx);
@@ -745,6 +753,7 @@ export const addAsset = mutation({
       operator: args.operator,
       iconType: args.iconType,
       gadget: args.gadget,
+      placedOn: args.placedOn ?? undefined,
     });
     return { success: true, placedAssetID };
   },
@@ -769,6 +778,7 @@ export const updateAssets = mutation({
         operator: v.optional(v.string()),
         iconType: v.optional(v.string()),
         gadget: v.optional(v.string()),
+        placedOn: v.optional(v.nullable(v.string())),
       })
     ),
   },
@@ -800,6 +810,9 @@ export const updateAssets = mutation({
         ...(asset.operator !== undefined ? { operator: asset.operator } : {}),
         ...(asset.iconType !== undefined ? { iconType: asset.iconType } : {}),
         ...(asset.gadget !== undefined ? { gadget: asset.gadget } : {}),
+        ...(asset.placedOn !== undefined
+          ? { placedOn: asset.placedOn ?? undefined }
+          : {}),
       });
     }
     return { success: true };
@@ -822,6 +835,8 @@ export const deleteAssets = mutation({
     return { success: true };
   },
 });
+
+// --------- Selected Assets ---------
 
 export const getSelectedAssets = query({
   args: {

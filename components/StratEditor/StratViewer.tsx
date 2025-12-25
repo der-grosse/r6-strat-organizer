@@ -24,8 +24,8 @@ export default function StratViewer({
   const { renderAsset, UI } = useMountAssets(
     { team, stratPositions: strat.stratPositions },
     {
-      deleteAsset(asset) {},
-      updateAsset(asset) {},
+      deleteAssets(assets) {},
+      updateAssets(assets) {},
     }
   );
 

@@ -213,28 +213,36 @@ export function StratEditor({
   const { renderAsset, UI } = useMountAssets(
     { team, stratPositions: strat.stratPositions },
     {
-      deleteAsset(asset) {
-        setAssets((assets) => assets.filter((a) => a._id !== asset._id));
-        deleteAssets({ placedAssetIDs: [asset._id] }).catch((err) =>
+      deleteAssets(delAssets) {
+        setAssets((assets) =>
+          assets.filter((a) => !delAssets.some((asset) => asset._id === a._id))
+        );
+        deleteAssets({
+          placedAssetIDs: delAssets.map((asset) => asset._id),
+        }).catch((err) =>
           toast.error(
             `Your changes could not be saved! Failed to delete asset: ${err.message}`
           )
         );
         pushEvent({
           type: "asset-deleted",
-          assets: [asset],
+          assets,
         });
       },
-      updateAsset(asset) {
+      updateAssets(updatedAssets) {
         setAssets((assets) => {
           pushEvent({
             type: "asset-updated",
-            old_assets: assets.filter((a) => a._id === asset._id),
-            new_assets: [asset],
+            old_assets: assets.filter((a) =>
+              updatedAssets.some((asset) => asset._id === a._id)
+            ),
+            new_assets: updatedAssets,
           });
-          return assets.map((a) => (a._id === asset._id ? asset : a));
+          return assets.map(
+            (a) => updatedAssets.find((asset) => asset._id === a._id) ?? a
+          );
         });
-        updateAssets([asset]).catch((err) =>
+        updateAssets(updatedAssets).catch((err) =>
           toast.error(
             `Your changes could not be saved! Failed to update assets: ${err.message}`
           )
@@ -333,6 +341,12 @@ export function StratEditor({
               return existing.map((a) => {
                 const newAsset = assets.find((asset) => asset._id === a._id);
                 if (!newAsset) return a;
+                if (!deepEqual(a.position, newAsset?.position)) {
+                  // if position changed, reset placedOn property for layout assets
+                  if (newAsset.type === "layout") {
+                    newAsset.placedOn = undefined;
+                  }
+                }
                 return deepCopy(newAsset);
               });
             });
@@ -581,6 +595,10 @@ function convertPlacedAssetToAPI<
     variant:
       asset.type === "layout"
         ? (asset as Omit<LayoutAsset, "_id">).variant
+        : undefined,
+    placedOn:
+      asset.type === "layout"
+        ? (asset as Omit<LayoutAsset, "_id">).placedOn ?? null
         : undefined,
   };
 }

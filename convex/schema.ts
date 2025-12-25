@@ -90,6 +90,7 @@ const schema = defineSchema({
     iconType: v.optional(v.string()),
     gadget: v.optional(v.string()),
     variant: v.optional(v.string()),
+    placedOn: v.optional(v.string()),
   }).index("byStrat", ["stratID"]),
 
   stratPositions: defineTable({

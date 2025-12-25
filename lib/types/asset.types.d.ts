@@ -18,6 +18,7 @@ export interface LayoutAsset extends BaseAsset {
     | "floorholes"
     | "ceilingholes"
     | "explosion";
+  placedOn?: "hatch" | "wall" | "door";
 }
 
 export interface OperatorAsset extends BaseAsset {

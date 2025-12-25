@@ -83,18 +83,26 @@ export default function MapBackground(props: MapBackgroundProps) {
                       const abs_y = rel_y * width + y - abs_height / 2;
                       const baseAsset = ((): Pick<
                         LayoutAsset,
-                        "type" | "variant"
+                        "type" | "variant" | "placedOn"
                       > => {
                         switch (type) {
                           case "barricade":
                             return {
                               type: "layout",
                               variant: "barricade",
+                              placedOn: "door",
                             };
-                          case "reinforcement":
+                          case "reinforcement-wall":
                             return {
                               type: "layout",
                               variant: "reinforcement",
+                              placedOn: "wall",
+                            };
+                          case "reinforcement-hatch":
+                            return {
+                              type: "layout",
+                              variant: "reinforcement",
+                              placedOn: "hatch",
                             };
                           default:
                             return null!;
