@@ -30,7 +30,7 @@ interface CanvasProps<A extends CanvasAsset> {
   renderAsset: (
     asset: A,
     selectedBy: TeamMember["_id"][],
-    lastestSelected: boolean
+    latestSelected: boolean
   ) => { asset: React.ReactNode; menu: React.ReactNode | null };
   selectedAssets: { assetID: A["_id"]; userID: TeamMember["_id"] }[];
   onSelect: (selected: A["_id"][]) => void;
@@ -197,7 +197,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
           })),
       });
     },
-    [selectedAssets, readonly]
+    [userSelectedAssets, readonly]
   );
 
   // mouse move when dragging/resizing/rotating assets

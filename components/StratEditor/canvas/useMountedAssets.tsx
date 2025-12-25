@@ -189,7 +189,7 @@ export default function useMountAssets(
     function renderAsset(
       asset: PlacedAsset,
       selectedBy: TeamMember["_id"][],
-      lastestSelected: boolean
+      latestSelected: boolean
     ) {
       const assetElement = (() => {
         switch (asset.type) {
@@ -260,6 +260,7 @@ export default function useMountAssets(
           return assetElement;
         } else {
           const shadowColors = selectedBy
+            .filter((id) => id !== user?._id)
             .map((id) => team.members.find((m) => m._id === id)?.defaultColor!)
             .filter(Boolean);
           return (
@@ -281,9 +282,7 @@ export default function useMountAssets(
       })();
       return {
         menu:
-          user &&
-          lastestSelected &&
-          selectedBy.includes(user._id as Id<"users">)
+          user && latestSelected && selectedBy.includes(user._id as Id<"users">)
             ? menu(asset)
             : undefined,
         asset: fullAsset,
