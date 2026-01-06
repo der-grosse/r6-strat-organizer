@@ -36,6 +36,7 @@ import { usePlayableStrats } from "@/lib/strats";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
+import { Input } from "@/components/ui/input";
 
 const TABLE_SIZES = {
   handle: "5%",
@@ -245,6 +246,13 @@ function StratItem({
 
   const [duplicateLoading, setDuplicateLoading] = useState(false);
 
+  // edit strat name when double clicking
+  const [editNameOfStrat, setEditNameOfStrat] = useState<Id<"strats"> | null>(
+    null
+  );
+  const [editNameValue, setEditNameValue] = useState("");
+  const updateStrat = useMutation(api.strats.update);
+
   return (
     <div
       key={strat._id}
@@ -271,7 +279,37 @@ function StratItem({
         {strat.map}
       </div>
       <div style={{ width: TABLE_SIZES.site }}>{strat.site}</div>
-      <div style={{ width: TABLE_SIZES.name }}>{strat.name}</div>
+      <div
+        style={{ width: TABLE_SIZES.name }}
+        className="h-full"
+        onDoubleClick={(e) => {
+          // edit strat name when double clicking
+          setEditNameOfStrat(strat._id);
+          setEditNameValue(strat.name);
+          e.stopPropagation();
+        }}
+      >
+        {editNameOfStrat === strat._id ? (
+          <Input
+            value={editNameValue}
+            onChange={(e) => setEditNameValue(e.target.value)}
+            onBlur={() => {
+              setEditNameOfStrat(null);
+              updateStrat({ _id: strat._id, name: editNameValue });
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setEditNameOfStrat(null);
+                updateStrat({ _id: strat._id, name: editNameValue });
+              }
+            }}
+            autoFocus
+            className="-m-2 outline-none border-none"
+          />
+        ) : (
+          strat.name
+        )}
+      </div>
       <div
         style={{ width: TABLE_SIZES.ops }}
         className="flex gap-1 -my-2 overflow-hidden"
