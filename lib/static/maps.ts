@@ -44,7 +44,7 @@ const MAPS: R6Map[] = [
   },
   {
     name: "Chalet",
-    sites: ["1F Bar", "2F Master", "B Snow", "1F Kitchen"],
+    sites: ["2F Master", "1F Bar", "1F Kitchen", "B Snow"],
     floors: [
       {
         floor: "B",
