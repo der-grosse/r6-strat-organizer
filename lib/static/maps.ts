@@ -36,7 +36,7 @@ const MAPS: R6Map[] = [
   },
   {
     name: "Border",
-    sites: ["2F Armory", "1F Bathroom", "1F Workshop"],
+    sites: ["2F Armory", "1F Bathroom", "1F Workshop", "1F Customs"],
     floors: [
       { floor: "1F", src: "/map_blueprints/border/1f.jpg" },
       { floor: "2F", src: "/map_blueprints/border/2f.jpg" },
