@@ -20,6 +20,7 @@ const schema = defineSchema({
     email: v.optional(v.string()),
     password: v.string(),
     ubisoftID: v.optional(v.string()),
+    lastLoginAt: v.optional(v.string()),
   })
     .index("byName", ["name"])
     .index("byEmail", ["email"]),

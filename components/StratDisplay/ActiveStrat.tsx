@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import StratDisplay from "./StratDisplay";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Strat } from "@/lib/types/strat.types";
 
 export interface ActiveStratProps {
   initialViewModifier?: "none" | "hideForeign" | "grayscaleForeign";

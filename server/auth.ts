@@ -25,7 +25,7 @@ export async function resetJWT(payload?: Omit<JWTPayload, "v">) {
       { userID: userid as Id<"users"> },
       {
         token: process.env.SERVER_JWT!,
-      }
+      },
     );
 
     if (!user) throw new Error("User not found");
@@ -49,7 +49,7 @@ export async function login(name: string, password: string) {
     { name },
     {
       token: process.env.SERVER_JWT!,
-    }
+    },
   );
   if (!user) {
     console.debug("User not found during login for name:", name);
@@ -58,6 +58,14 @@ export async function login(name: string, password: string) {
   // hash password and compare with db password
   const isValid = await bcrypt.compare(password, user.hashedPassword);
   if (!isValid) return null;
+  // Update last login time
+  await fetchMutation(
+    api.auth.updateLastLogin,
+    { userID: user._id },
+    {
+      token: process.env.SERVER_JWT!,
+    },
+  );
   // TODO: add selector for active team -> reload JWT with activeTeamID
   // TODO: handle what happens when user has no teams left
   await resetJWT({ ...user, activeTeamID: user.teams[0]?.teamID });
@@ -80,7 +88,7 @@ export async function createTeam(input: {
       { teamName, name: username, email, password: hashedPassword },
       {
         token: process.env.SERVER_JWT!,
-      }
+      },
     );
     return status;
   } catch (error) {
@@ -107,7 +115,7 @@ export async function register(input: {
     },
     {
       token: process.env.SERVER_JWT!,
-    }
+    },
   );
 }
 
@@ -122,7 +130,7 @@ export async function requestResetPassword(email: string) {
     { name: email },
     {
       token: process.env.SERVER_JWT!,
-    }
+    },
   );
   if (!user) return true;
   const token = generate({ exactly: 5, join: "-" });
@@ -132,7 +140,7 @@ export async function requestResetPassword(email: string) {
     { userID: user._id, token, expiresAt },
     {
       token: process.env.SERVER_JWT!,
-    }
+    },
   );
   // Send email with reset link
   await sendResetEmail(email, token);
@@ -142,14 +150,14 @@ export async function requestResetPassword(email: string) {
 export async function resetPassword(
   email: string,
   token: string,
-  newPassword: string
+  newPassword: string,
 ) {
   const user = await fetchQuery(
     api.auth.getUserFromName,
     { name: email },
     {
       token: process.env.SERVER_JWT!,
-    }
+    },
   );
   if (!user) return true;
   const hashedPassword = await hashPassword(newPassword);
@@ -158,7 +166,7 @@ export async function resetPassword(
     { userID: user._id, token, newPassword: hashedPassword },
     {
       token: process.env.SERVER_JWT!,
-    }
+    },
   );
 
   return result;
@@ -171,7 +179,7 @@ export async function changePassword(oldPassword: string, newPassword: string) {
     { userID: payload?._id as Id<"users"> },
     {
       token: process.env.SERVER_JWT!,
-    }
+    },
   );
   if (!user) {
     return "User not found";
@@ -190,6 +198,6 @@ export async function changePassword(oldPassword: string, newPassword: string) {
     { userID: payload?._id as Id<"users">, newPassword: hashedNewPassword },
     {
       token: process.env.SERVER_JWT!,
-    }
+    },
   );
 }

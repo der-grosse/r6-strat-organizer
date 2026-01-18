@@ -29,13 +29,13 @@ type User = Omit<JWTPayload, "v" | "_id" | "activeTeamID" | "teams"> & {
 };
 
 export async function requireUser(
-  ctx: QueryCtx | ActionCtx | MutationCtx
+  ctx: QueryCtx | ActionCtx | MutationCtx,
 ): Promise<User>;
 export async function requireUser(
   ctx: QueryCtx | ActionCtx | MutationCtx,
   filter: Partial<{ teamID: Id<"teams"> | string; admin: boolean }> & {
     allowNull: true;
-  }
+  },
 ): Promise<User | null>;
 export async function requireUser(
   ctx: QueryCtx | ActionCtx | MutationCtx,
@@ -43,7 +43,7 @@ export async function requireUser(
     teamID: Id<"teams"> | string;
     admin: boolean;
     allowNull: false;
-  }>
+  }>,
 ): Promise<User>;
 export async function requireUser(
   ctx: QueryCtx | ActionCtx | MutationCtx,
@@ -51,7 +51,7 @@ export async function requireUser(
     teamID: Id<"teams"> | string;
     admin: boolean;
     allowNull: boolean;
-  }>
+  }>,
 ): Promise<User | null> {
   const payload = await ctx.auth.getUserIdentity();
   if (filter?.allowNull && !payload) {
@@ -92,7 +92,7 @@ export async function requireUser(
 
   if (filter?.teamID) {
     const memberData = (payload as unknown as JWTPayload).teams.find(
-      (team) => team.teamID === filter.teamID
+      (team) => team.teamID === filter.teamID,
     );
     if (!memberData) {
       throw new Error("User is not a member of the specified team");
@@ -111,7 +111,7 @@ export async function requireUser(
 }
 
 export async function requireServerJWT(
-  ctx: QueryCtx | ActionCtx | MutationCtx
+  ctx: QueryCtx | ActionCtx | MutationCtx,
 ) {
   const user = await requireUser(ctx);
   if (!user || user._id !== "NEXTJS_SERVER_JWT") {
@@ -131,6 +131,7 @@ export async function getFullUser(ctx: QueryCtx, userDoc: Doc<"users">) {
       name: userDoc.name,
       email: userDoc.email ?? null,
       ubisoftID: userDoc.ubisoftID ?? null,
+      lastLoginAt: userDoc.lastLoginAt ?? null,
       teams: [],
     };
   }
@@ -145,7 +146,7 @@ export async function getFullUser(ctx: QueryCtx, userDoc: Doc<"users">) {
           isAdmin: membership.isAdmin,
           defaultColor: membership.defaultColor ?? null,
         };
-      })
+      }),
     )
   ).filter(Boolean);
 
@@ -154,6 +155,7 @@ export async function getFullUser(ctx: QueryCtx, userDoc: Doc<"users">) {
     name: userDoc.name,
     email: userDoc.email ?? null,
     ubisoftID: userDoc.ubisoftID ?? null,
+    lastLoginAt: userDoc.lastLoginAt ?? null,
     teams,
   };
 }
@@ -353,6 +355,20 @@ export const setPasswordOfUser = mutation({
     await requireServerJWT(ctx);
 
     await ctx.db.patch(args.userID, { password: args.newPassword });
+    return true;
+  },
+});
+
+export const updateLastLogin = mutation({
+  args: {
+    userID: v.id("users"),
+  },
+  async handler(ctx, args) {
+    await requireServerJWT(ctx);
+
+    await ctx.db.patch(args.userID, {
+      lastLoginAt: new Date().toISOString(),
+    });
     return true;
   },
 });
