@@ -1,5 +1,5 @@
 import { api } from "@/convex/_generated/api";
-import { getJWT, verifyJWT } from "@/server/jwt";
+import { verifyJWT } from "@/server/jwt";
 import { fetchQuery } from "convex/nextjs";
 
 export async function GET(request: Request) {

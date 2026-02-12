@@ -12,7 +12,7 @@ import {
   CommandList,
   CommandShortcut,
 } from "../ui/command";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 export interface OperatorPickerProps<
   Multiple extends boolean,
@@ -49,6 +49,14 @@ export default function OperatorPicker<
 
   const [open, setOpen] = useState(false);
 
+  const afterSelect = useCallback(() => {
+    if (closeOnSelect) setOpen(false);
+    else
+      setTimeout(() => {
+        bannedOPInput.current?.focus();
+      }, 200);
+  }, [closeOnSelect]);
+
   return (
     <Popover modal={modal} open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild disabled={disabled}>
@@ -77,8 +85,11 @@ export default function OperatorPicker<
       >
         <Command key={Array.isArray(selected) ? selected.join(",") : selected}>
           <CommandInput
-            placeholder="Type a command or search..."
+            placeholder="Search for Operators..."
             ref={bannedOPInput}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setOpen(false);
+            }}
           />
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
@@ -87,7 +98,7 @@ export default function OperatorPicker<
                 key="clear"
                 onSelect={() => {
                   onChange((multiple ? [] : null) as Value);
-                  if (closeOnSelect) setOpen(false);
+                  afterSelect();
                 }}
               >
                 <em>Clear</em>
@@ -100,7 +111,7 @@ export default function OperatorPicker<
                       : 1
                     : selected === a.name
                       ? -1
-                      : 1
+                      : 1,
                 )
                 .map((op) => (
                   <CommandItem
@@ -110,16 +121,12 @@ export default function OperatorPicker<
                         (multiple
                           ? selected?.includes(op.name)
                             ? (selected as string[]).filter(
-                                (o) => o !== op.name
+                                (o) => o !== op.name,
                               )
                             : [...(selected as string[]), op.name]
-                          : op.name) as Value
+                          : op.name) as Value,
                       );
-                      if (closeOnSelect) setOpen(false);
-                      else
-                        requestAnimationFrame(() => {
-                          bannedOPInput.current?.focus();
-                        });
+                      afterSelect();
                     }}
                   >
                     <OperatorIcon op={op} />

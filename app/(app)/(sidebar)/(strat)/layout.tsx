@@ -122,6 +122,7 @@ export default function StratsLayout({
                               setBannedOps({ operators: bannedOps })
                             }
                             trigger={SidebarMenuButton}
+                            modal={true}
                           />
                         </span>
                       </TooltipTrigger>
@@ -203,7 +204,7 @@ export default function StratsLayout({
                   <SidebarMenuAction
                     className={cn(
                       "cursor-pointer p-2 -my-1.5 w-7",
-                      !isLeading && "pointer-events-none"
+                      !isLeading && "pointer-events-none",
                     )}
                     onClick={() => {
                       if (!isLeading) return;
