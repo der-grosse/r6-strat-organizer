@@ -10,24 +10,16 @@ import { Button } from "../ui/button";
 import { useUser } from "../context/UserContext";
 import StratViewer from "../StratEditor/StratViewer";
 import OperatorIcon from "../general/OperatorIcon";
-import { Fragment, useEffect, useState } from "react";
-import Cookie from "js-cookie";
+import { Fragment, useState } from "react";
 import Shotgun from "../StratEditor/assets/Shotgun";
 import GadgetIcon from "../general/GadgetIcon";
-import { useFilter } from "../context/FilterContext";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { cn } from "@/lib/utils";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
 import { FullTeam } from "@/lib/types/team.types";
 import { Strat } from "@/lib/types/strat.types";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import StratGadgetVisibiltyPicker from "./StratGadgetVisibiltyPicker";
 
 export interface StratDisplayProps {
   strat: Strat | null | undefined;
@@ -84,39 +76,7 @@ export default function StratDisplay(props: StratDisplayProps) {
 
   const [viewModifier, setViewModifier] = useState<
     "none" | "hideForeign" | "grayscaleForeign"
-  >(() => {
-    // Prefer server-provided initial value when available to avoid
-    // hydration mismatches. Fallback to client cookie if not provided.
-    try {
-      if (
-        props.initialViewModifier === "none" ||
-        props.initialViewModifier === "hideForeign" ||
-        props.initialViewModifier === "grayscaleForeign"
-      ) {
-        return props.initialViewModifier;
-      }
-    } catch (e) {
-      // ignore
-    }
-
-    try {
-      const cookie = Cookie.get("strat_view_modifier");
-      if (
-        cookie === "none" ||
-        cookie === "hideForeign" ||
-        cookie === "grayscaleForeign"
-      ) {
-        return cookie as "none" | "hideForeign" | "grayscaleForeign";
-      }
-    } catch (e) {
-      // ignore cookie read errors and fallback to default
-    }
-    return "none";
-  });
-
-  useEffect(() => {
-    Cookie.set("strat_view_modifier", viewModifier, { expires: 365 });
-  }, [viewModifier]);
+  >(props.initialViewModifier ?? "none");
 
   const Details = !props.hideDetails && props.strat && (
     <div
@@ -125,28 +85,14 @@ export default function StratDisplay(props: StratDisplayProps) {
         settings?.activeStratLayout === "top" ? "items-start" : "items-end ",
       )}
     >
-      <div className="p-2">
+      <div
+        className={cn(settings?.activeStratLayout === "top" && "pl-8 -mt-1")}
+      >
         {!props.strat.drawingID && (
-          <Select
-            value={viewModifier}
-            onValueChange={(value) => {
-              const v = value as "none" | "hideForeign" | "grayscaleForeign";
-              setViewModifier(v);
-            }}
-          >
-            <SelectTrigger className="min-w-[180px]">
-              <SelectValue placeholder="Strat view modifier" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">
-                <em>No view modifier</em>
-              </SelectItem>
-              <SelectItem value="hideForeign">Hide setup of others</SelectItem>
-              <SelectItem value="grayscaleForeign">
-                Grayscale setup of others
-              </SelectItem>
-            </SelectContent>
-          </Select>
+          <StratGadgetVisibiltyPicker
+            initialViewModifier={props.initialViewModifier}
+            onChange={setViewModifier}
+          />
         )}
       </div>
       <div
@@ -160,29 +106,31 @@ export default function StratDisplay(props: StratDisplayProps) {
             {availableOperators.slice(0, 3).map((op, i) => (
               <Fragment key={i}>
                 <div className={cn("relative", i !== 0 && "opacity-50")}>
-                  <OperatorIcon op={op.operator} />
+                  <OperatorIcon op={op.operator} className="scale-150" />
                   {op.secondaryGadget && (
                     <GadgetIcon
                       id={op.secondaryGadget}
-                      className="absolute size-6 -right-2 -bottom-2"
+                      className="absolute size-6 -right-2 -bottom-3"
                     />
                   )}
                   {op.tertiaryGadget && (
                     <GadgetIcon
                       id={op.tertiaryGadget}
-                      className="absolute size-6 -left-2 -bottom-2"
+                      className="absolute size-6 -left-2 -bottom-3"
                     />
                   )}
                 </div>
                 {i === 0 ? (
-                  <p className="text-lg font-bold text-center">{op.operator}</p>
+                  <p className="text-2xl font-bold text-center mr-1">
+                    {op.operator}
+                  </p>
                 ) : i !== Math.min(availableOperators.length, 2) ? (
                   <div className="w-1" />
                 ) : null}
               </Fragment>
             ))}
             {stratPosition?.shouldBringShotgun && (
-              <Shotgun className="size-8" />
+              <Shotgun className="size-8 ml-1" />
             )}
           </div>
         )}
