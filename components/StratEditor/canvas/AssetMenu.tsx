@@ -271,6 +271,11 @@ export default function AssetMenu({
                             ...asset.position,
                             y: asset.position.y + heightChange / 2,
                           },
+                          rotation:
+                            oldVariant === "reinforcement" &&
+                            id !== "reinforcement"
+                              ? 0
+                              : asset.rotation, // reset rotation for non-reinforcement variants, since they look weird when rotated and don't have a specific rotation variant
                         }
                       : undefined;
 
