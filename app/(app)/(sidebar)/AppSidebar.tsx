@@ -19,6 +19,7 @@ import {
   FolderOpen,
   Link2,
   LogOut,
+  Settings,
   Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -93,6 +94,14 @@ export function AppSidebar(props: { teamName: string }) {
                       <SidebarMenuButton>
                         <Users className="mr-2" />
                         Team Management
+                      </SidebarMenuButton>
+                    </Link>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <Link href="/settings">
+                      <SidebarMenuButton>
+                        <Settings className="mr-2" />
+                        Settings
                       </SidebarMenuButton>
                     </Link>
                   </SidebarMenuItem>

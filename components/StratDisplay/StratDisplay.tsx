@@ -38,18 +38,19 @@ export interface StratDisplayProps {
 }
 
 export default function StratDisplay(props: StratDisplayProps) {
+  const settings = useQuery(api.settings.get);
   const bannedOps = useQuery(api.bannedOps.get) ?? [];
   const user = useUser();
   const teamMember = props.team.members.find(
-    (member) => member._id === user?.user?._id
+    (member) => member._id === user?.user?._id,
   );
   const stratPosition = props.strat?.stratPositions.find(
-    (op) => op.teamPositionID === teamMember?.teamPositionID
+    (op) => op.teamPositionID === teamMember?.teamPositionID,
   );
 
   const availableOperators = (() => {
     const ops = stratPosition?.pickedOperators.filter(
-      (op) => !bannedOps.includes(op.operator)
+      (op) => !bannedOps.includes(op.operator),
     );
     if (!ops?.length) return stratPosition?.pickedOperators ?? [];
     return ops;
@@ -58,15 +59,15 @@ export default function StratDisplay(props: StratDisplayProps) {
   const teamLineUp = (
     props.strat?.stratPositions.filter(
       (stratPositions) =>
-        stratPositions.teamPositionID !== teamMember?.teamPositionID
+        stratPositions.teamPositionID !== teamMember?.teamPositionID,
     ) ?? []
   )
     .map((pos) => {
       const teamPosition = props.team.teamPositions.find(
-        (teamPos) => teamPos._id === pos.teamPositionID
+        (teamPos) => teamPos._id === pos.teamPositionID,
       );
       const player = props.team.members.find(
-        (member) => member.teamPositionID === pos.teamPositionID
+        (member) => member.teamPositionID === pos.teamPositionID,
       );
       const color = player?.defaultColor ?? undefined;
 
@@ -118,7 +119,12 @@ export default function StratDisplay(props: StratDisplayProps) {
   }, [viewModifier]);
 
   const Details = !props.hideDetails && props.strat && (
-    <div className="grid grid-cols-[1fr_auto_1fr] w-full gap-4 items-end">
+    <div
+      className={cn(
+        "grid grid-cols-[1fr_auto_1fr] w-full gap-4",
+        settings?.activeStratLayout === "top" ? "items-start" : "items-end ",
+      )}
+    >
       <div className="p-2">
         {!props.strat.drawingID && (
           <Select
@@ -143,7 +149,12 @@ export default function StratDisplay(props: StratDisplayProps) {
           </Select>
         )}
       </div>
-      <div className="flex flex-col gap-1 px-2 rounded bg-background">
+      <div
+        className={cn(
+          "flex flex-col gap-1 px-2 rounded bg-background",
+          // settings?.activeStratLayout === "top" && "flex-col-reverse",
+        )}
+      >
         {availableOperators.length > 0 && (
           <div className="flex gap-2 justify-center items-center">
             {availableOperators.slice(0, 3).map((op, i) => (
@@ -176,13 +187,7 @@ export default function StratDisplay(props: StratDisplayProps) {
           </div>
         )}
         <div className="flex justify-center gap-1 text-sm">
-          <span className="ml-2">
-            {props.strat.map}
-            {" | "}
-            {props.strat.site}
-            {" | "}
-            {props.strat.name}
-          </span>
+          <span className="ml-2">{props.strat.site}</span>
           <Link
             href={`/editor/${props.strat._id}`}
             className="text-muted-foreground hover:text-primary"
@@ -197,7 +202,7 @@ export default function StratDisplay(props: StratDisplayProps) {
           </Link>
         </div>
       </div>
-      <div className="flex justify-end items-end gap-2.5">
+      <div className="flex justify-end items-end gap-2.5 py-1">
         {teamLineUp.map(({ op, color, playerName, positionName }, index) => (
           <Tooltip key={index}>
             <TooltipTrigger>
@@ -232,7 +237,14 @@ export default function StratDisplay(props: StratDisplayProps) {
   );
 
   return (
-    <div className="relative h-full w-full flex justify-center items-center flex-col z-0">
+    <div
+      className={cn(
+        "relative h-full w-full flex justify-center items-center flex-col z-0",
+        props.strat &&
+          settings?.activeStratLayout === "top" &&
+          "flex-col-reverse",
+      )}
+    >
       {props.strat?.drawingID ? (
         <>
           <iframe
@@ -257,7 +269,7 @@ export default function StratDisplay(props: StratDisplayProps) {
                     ? (assets) =>
                         assets.filter(
                           (asset) =>
-                            asset.stratPositionID === stratPosition?._id
+                            asset.stratPositionID === stratPosition?._id,
                         )
                     : viewModifier === "grayscaleForeign"
                       ? (assets) =>

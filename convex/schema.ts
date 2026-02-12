@@ -120,6 +120,11 @@ const schema = defineSchema({
   })
     .index("byStratAndUser", ["stratID", "userID"])
     .index("byStrat", ["stratID"]),
+
+  settings: defineTable({
+    userId: v.id("users"),
+    activeStratLayout: v.union(v.literal("bottom"), v.literal("top")),
+  }).index("byUser", ["userId"]),
 });
 
 export default schema;
