@@ -4,6 +4,7 @@ import { requireUser } from "./auth";
 
 const DEFAULT_SETTINGS = {
   activeStratLayout: "bottom" as const,
+  stratGadgetViewModifier: "none" as const,
 };
 
 export const get = query({
@@ -28,6 +29,13 @@ export const update = mutation({
   args: {
     activeStratLayout: v.optional(
       v.union(v.literal("bottom"), v.literal("top")),
+    ),
+    stratGadgetViewModifier: v.optional(
+      v.union(
+        v.literal("none"),
+        v.literal("hideForeign"),
+        v.literal("grayscaleForeign"),
+      ),
     ),
   },
   async handler(ctx, args) {

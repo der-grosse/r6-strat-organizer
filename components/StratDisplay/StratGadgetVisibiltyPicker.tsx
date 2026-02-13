@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
-import Cookie from "js-cookie";
+import { useEffect, useRef } from "react";
 import { Eye, EyeOff, View } from "lucide-react";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 const ICONS = [
   {
@@ -20,7 +21,6 @@ const ICONS = [
 ] as const;
 
 export interface StratGadgetVisibiltyPickerProps {
-  initialViewModifier?: "none" | "hideForeign" | "grayscaleForeign";
   onChange?: (
     viewModifier: "none" | "hideForeign" | "grayscaleForeign",
   ) => void;
@@ -29,42 +29,27 @@ export interface StratGadgetVisibiltyPickerProps {
 export default function StratGadgetVisibiltyPicker(
   props: StratGadgetVisibiltyPickerProps,
 ) {
-  const [viewModifier, setViewModifier] = useState<
-    "none" | "hideForeign" | "grayscaleForeign"
-  >(() => {
-    // Prefer server-provided initial value when available to avoid
-    // hydration mismatches. Fallback to client cookie if not provided.
-    try {
-      if (
-        props.initialViewModifier === "none" ||
-        props.initialViewModifier === "hideForeign" ||
-        props.initialViewModifier === "grayscaleForeign"
-      ) {
-        return props.initialViewModifier;
-      }
-    } catch (e) {
-      // ignore
-    }
-
-    try {
-      const cookie = Cookie.get("strat_view_modifier");
-      if (
-        cookie === "none" ||
-        cookie === "hideForeign" ||
-        cookie === "grayscaleForeign"
-      ) {
-        return cookie as "none" | "hideForeign" | "grayscaleForeign";
-      }
-    } catch (e) {
-      // ignore cookie read errors and fallback to default
-    }
-    return "none";
-  });
-
+  const settings = useQuery(api.settings.get);
+  const updateSettings = useMutation(api.settings.update);
+  const initialViewModifierChangeSent = useRef(false);
   useEffect(() => {
-    Cookie.set("strat_view_modifier", viewModifier, { expires: 365 });
+    if (
+      settings?.stratGadgetViewModifier &&
+      !initialViewModifierChangeSent.current
+    ) {
+      props.onChange?.(settings.stratGadgetViewModifier);
+      initialViewModifierChangeSent.current = true;
+    }
+  }, [settings?.stratGadgetViewModifier, props]);
+
+  const onChange = (
+    viewModifier: "none" | "hideForeign" | "grayscaleForeign",
+  ) => {
+    updateSettings({ stratGadgetViewModifier: viewModifier });
     props.onChange?.(viewModifier);
-  }, [viewModifier]);
+  };
+
+  const viewModifier = settings?.stratGadgetViewModifier ?? "none";
 
   const ActiveIcon =
     ICONS.find((icon) => icon.name === viewModifier)?.icon ?? Eye;
@@ -82,7 +67,7 @@ export default function StratGadgetVisibiltyPicker(
               key={icon.name}
               size="icon"
               variant="ghost"
-              onClick={() => setViewModifier(icon.name)}
+              onClick={() => onChange(icon.name)}
             >
               <IconComponent
                 className={

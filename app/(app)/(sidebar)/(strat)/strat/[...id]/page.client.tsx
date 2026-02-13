@@ -1,7 +1,7 @@
 "use client";
 
 import StratDisplay from "@/components/StratDisplay/StratDisplay";
-import { StratViewModifier } from "@/components/StratDisplay/stratDisplay.functions";
+import { StratViewModifier } from "@/components/StratDisplay/stratDisplay.types";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
@@ -9,7 +9,6 @@ import { useQuery } from "convex/react";
 export interface StratViewClientProps {
   id: string;
   editView: boolean;
-  initialViewModifier: StratViewModifier;
 }
 
 export default function StratViewClient(props: StratViewClientProps) {
@@ -28,12 +27,5 @@ export default function StratViewClient(props: StratViewClientProps) {
     );
   }
 
-  return (
-    <StratDisplay
-      strat={strat}
-      team={team}
-      editView={props.editView}
-      initialViewModifier={props.initialViewModifier}
-    />
-  );
+  return <StratDisplay strat={strat} team={team} editView={props.editView} />;
 }

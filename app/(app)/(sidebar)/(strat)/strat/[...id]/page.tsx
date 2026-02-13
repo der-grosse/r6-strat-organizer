@@ -1,6 +1,5 @@
 "use server";
 
-import { getStratViewModifierFromCookies } from "@/components/StratDisplay/stratDisplay.functions";
 import { cookies } from "next/headers";
 import { Metadata } from "next";
 import { fetchQuery } from "convex/nextjs";
@@ -18,7 +17,7 @@ export async function generateMetadata({
   const strat = await fetchQuery(
     api.strats.get,
     { id: id[0] as Id<"strats"> },
-    { token: await getJWT() }
+    { token: await getJWT() },
   ).catch(() => null);
 
   if (!strat) {
@@ -41,16 +40,8 @@ export default async function StratView({
 }>) {
   const params = (await paramsRaw).id;
   const id = params[0];
-  const cookieStore = await cookies();
-  const initialViewModifier = getStratViewModifierFromCookies(cookieStore);
 
   const editView = params[1] === "edit";
 
-  return (
-    <StratViewClient
-      id={id}
-      editView={editView}
-      initialViewModifier={initialViewModifier}
-    />
-  );
+  return <StratViewClient id={id} editView={editView} />;
 }

@@ -26,7 +26,6 @@ export interface StratDisplayProps {
   team: FullTeam;
   editView?: boolean;
   hideDetails?: boolean;
-  initialViewModifier?: "none" | "hideForeign" | "grayscaleForeign";
 }
 
 export default function StratDisplay(props: StratDisplayProps) {
@@ -76,7 +75,7 @@ export default function StratDisplay(props: StratDisplayProps) {
 
   const [viewModifier, setViewModifier] = useState<
     "none" | "hideForeign" | "grayscaleForeign"
-  >(props.initialViewModifier ?? "none");
+  >("none");
 
   const Details = !props.hideDetails && props.strat && (
     <div
@@ -89,10 +88,7 @@ export default function StratDisplay(props: StratDisplayProps) {
         className={cn(settings?.activeStratLayout === "top" && "pl-8 -mt-1")}
       >
         {!props.strat.drawingID && (
-          <StratGadgetVisibiltyPicker
-            initialViewModifier={props.initialViewModifier}
-            onChange={setViewModifier}
-          />
+          <StratGadgetVisibiltyPicker onChange={setViewModifier} />
         )}
       </div>
       <div

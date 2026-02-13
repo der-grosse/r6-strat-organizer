@@ -1,10 +1,8 @@
 import ActiveStrat from "@/components/StratDisplay/ActiveStrat";
-import { getStratViewModifierFromCookies } from "@/components/StratDisplay/stratDisplay.functions";
 import { api } from "@/convex/_generated/api";
 import { getJWT } from "@/server/jwt";
 import { fetchQuery } from "convex/nextjs";
 import { Metadata } from "next";
-import { cookies } from "next/headers";
 
 export async function generateMetadata(): Promise<Metadata> {
   const active = await fetchQuery(
@@ -12,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
     {},
     {
       token: await getJWT(),
-    }
+    },
   );
 
   return {
@@ -24,8 +22,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const cookieStore = await cookies();
-  const initialViewModifier = getStratViewModifierFromCookies(cookieStore);
-
-  return <ActiveStrat initialViewModifier={initialViewModifier} />;
+  return <ActiveStrat />;
 }

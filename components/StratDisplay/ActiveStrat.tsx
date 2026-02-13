@@ -4,11 +4,7 @@ import StratDisplay from "./StratDisplay";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
-export interface ActiveStratProps {
-  initialViewModifier?: "none" | "hideForeign" | "grayscaleForeign";
-}
-
-export default function ActiveStrat(props: ActiveStratProps) {
+export default function ActiveStrat() {
   const team = useQuery(api.team.get);
   const activeStrat = useQuery(api.activeStrat.get);
 
@@ -24,11 +20,5 @@ export default function ActiveStrat(props: ActiveStratProps) {
     return null;
   }
 
-  return (
-    <StratDisplay
-      strat={activeStrat}
-      team={team}
-      initialViewModifier={props.initialViewModifier}
-    />
-  );
+  return <StratDisplay strat={activeStrat} team={team} />;
 }
