@@ -85,7 +85,7 @@ export default function StratDisplay(props: StratDisplayProps) {
       )}
     >
       <div
-        className={cn(settings?.activeStratLayout === "top" && "pl-8 -mt-1")}
+        className={cn(settings?.activeStratLayout === "top" && "pl-6 -mt-1")}
       >
         {!props.strat.drawingID && (
           <StratGadgetVisibiltyPicker onChange={setViewModifier} />

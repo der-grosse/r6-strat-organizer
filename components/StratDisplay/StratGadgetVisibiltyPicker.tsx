@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { cn } from "@/lib/utils";
 
 const ICONS = [
   {
@@ -59,7 +60,14 @@ export default function StratGadgetVisibiltyPicker(
       <Button size="icon" variant="ghost" disabled className="!opacity-100">
         <ActiveIcon className="!text-muted-foreground" />
       </Button>
-      <div className="absolute bottom-[100%] left-0 flex flex-col hidden group-hover:flex">
+      <div
+        className={cn(
+          "absolute left-0 flex hidden group-hover:flex",
+          settings?.activeStratLayout === "top"
+            ? "top-[100%] flex-col-reverse"
+            : "bottom-[100%] flex-col ",
+        )}
+      >
         {ICONS.map((icon) => {
           const IconComponent = icon.icon;
           return (
