@@ -10,6 +10,10 @@ interface SVGAssetProps {
     e: React.MouseEvent,
     handle: "resize" | "rotate" | "none"
   ) => void;
+  onTouchStart: (
+    e: React.TouchEvent,
+    handle: "resize" | "rotate" | "none"
+  ) => void;
   selected: boolean;
   children: React.ReactNode;
   ctrlKeyDown?: boolean;
@@ -23,6 +27,7 @@ export default function SVGAsset({
   size,
   rotation,
   onMouseDown,
+  onTouchStart,
   selected,
   children,
   ctrlKeyDown = false,
@@ -37,6 +42,10 @@ export default function SVGAsset({
       ref={assetRef}
       transform={`translate(${position.x}, ${position.y})`}
       onMouseDown={(e) => onMouseDown(e, "none")}
+      onTouchStart={(e) => {
+        e.stopPropagation();
+        onTouchStart(e, "none");
+      }}
       onClick={(e) => {
         e.stopPropagation();
       }}
@@ -81,6 +90,10 @@ export default function SVGAsset({
             e.stopPropagation();
             onMouseDown(e, "rotate");
           }}
+          onTouchStart={(e) => {
+            e.stopPropagation();
+            onTouchStart(e, "rotate");
+          }}
         />
         <circle
           cx={size.width}
@@ -99,6 +112,10 @@ export default function SVGAsset({
           onMouseDown={(e) => {
             e.stopPropagation();
             onMouseDown(e, "resize");
+          }}
+          onTouchStart={(e) => {
+            e.stopPropagation();
+            onTouchStart(e, "resize");
           }}
         />
       </g>
