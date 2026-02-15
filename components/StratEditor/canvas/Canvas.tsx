@@ -226,12 +226,15 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       );
 
       if (handle === "none") {
-        // For touch, we don't have shift key, so just select the asset
+        // For touch, we don't have shift key, so behavior is similar to click without shift
         if (userSelectedAssets.includes(assetId)) {
+          // Keep current selection when clicking on already selected asset (consistent with mouse)
           if (userSelectedAssets.length > 1) {
+            // If multiple assets are selected, focus on just this one
             onDeselect(userSelectedAssets.filter((id) => id !== assetId));
           }
         } else {
+          // Deselect others and select this asset
           if (userSelectedAssets.length > 0) {
             onDeselect(userSelectedAssets);
           }
