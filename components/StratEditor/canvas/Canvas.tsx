@@ -201,6 +201,75 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
     [userSelectedAssets, readonly]
   );
 
+  // touch start on asset
+  const handleTouchStart = useCallback(
+    (
+      e: React.TouchEvent,
+      assetId: string,
+      handle: "resize" | "rotate" | "none"
+    ) => {
+      if (readonly) return;
+      const svg = svgRef.current;
+      if (!svg) return;
+
+      // Prevent default to stop viewport panning
+      e.preventDefault();
+
+      const touch = e.touches[0];
+      if (!touch) return;
+
+      const pt = svg.createSVGPoint();
+      pt.x = touch.clientX;
+      pt.y = touch.clientY;
+      const svgP = pt.matrixTransform(
+        svg.getScreenCTM()?.inverse() || new DOMMatrix()
+      );
+
+      if (handle === "none") {
+        // For touch, we don't have shift key, so behavior is similar to click without shift
+        if (userSelectedAssets.includes(assetId)) {
+          // Keep current selection when clicking on already selected asset (consistent with mouse)
+          if (userSelectedAssets.length > 1) {
+            // If multiple assets are selected, focus on just this one
+            onDeselect(userSelectedAssets.filter((id) => id !== assetId));
+          }
+        } else {
+          // Deselect others and select this asset
+          if (userSelectedAssets.length > 0) {
+            onDeselect(userSelectedAssets);
+          }
+          onSelect([assetId]);
+        }
+      }
+
+      if (handle === "resize") {
+        setActiveAction("resizing");
+      } else if (handle === "rotate") {
+        setActiveAction("rotating");
+      } else {
+        setActiveAction("dragging");
+      }
+      setActionStart({
+        x: svgP.x,
+        y: svgP.y,
+        asset: deepCopy(
+          assetsRef.current.find((a) => a._id === assetId) || null
+        ),
+        startPositions: assetsRef.current
+          .filter(
+            (a) => userSelectedAssets.includes(a._id) || a._id === assetId
+          )
+          .map((a) => ({
+            ...a.position,
+            ...a.size,
+            rotation: a.rotation || 0,
+            _id: a._id,
+          })),
+      });
+    },
+    [userSelectedAssets, readonly]
+  );
+
   // mouse move when dragging/resizing/rotating assets
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
@@ -348,17 +417,171 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
     [activeAction, userSelectedAssets]
   );
 
+  // touch move when dragging/resizing/rotating assets
+  const handleTouchMove = useCallback(
+    (e: TouchEvent) => {
+      if (userSelectedAssets.length === 0 || activeAction === "none") return;
+
+      const svg = svgRef.current;
+      if (!svg) return;
+
+      // Prevent default for better browser compatibility (CSS touch-action is also set on SVG)
+      e.preventDefault();
+
+      const touch = e.touches[0];
+      if (!touch) return;
+
+      // deliberately use assets from first render when dragging started
+      const assets = assetsRef.current;
+
+      const pt = svg.createSVGPoint();
+      pt.x = touch.clientX;
+      pt.y = touch.clientY;
+      const svgP = pt.matrixTransform(
+        svg.getScreenCTM()?.inverse() || new DOMMatrix()
+      );
+
+      if (activeAction === "dragging") {
+        const dx = svgP.x - actionStart.x;
+        const dy = svgP.y - actionStart.y;
+        const distance = Math.sqrt(dx ** 2 + dy ** 2);
+        if (distance < DRAG_DEADZONE) return;
+
+        setAssets((assets) =>
+          assets.map((asset) => {
+            if (!userSelectedAssets.includes(asset._id)) return asset;
+            const startPos = actionStart.startPositions.find(
+              (pos) => pos._id === asset._id
+            );
+            if (!startPos) return asset;
+
+            // clamp to not go out of bounds of the canvas
+            let newX = startPos.x + dx;
+            let newY = startPos.y + dy;
+            newX = clamp(newX, 0, viewBox.width - asset.size.width);
+            newY = clamp(newY, 0, viewBox.height - asset.size.height);
+
+            return {
+              ...asset,
+              position: {
+                x: newX,
+                y: newY,
+              },
+            };
+          })
+        );
+      } else if (activeAction === "resizing" || activeAction === "rotating") {
+        const selected = assets.filter((a) =>
+          userSelectedAssets.includes(a._id)
+        );
+        if (selected.length === 0) return;
+
+        if (activeAction === "rotating") {
+          // rotating asset
+          const startX = actionStart.asset
+            ? actionStart.asset.position.x + actionStart.asset.size.width / 2
+            : actionStart.x;
+          const startY = actionStart.asset
+            ? actionStart.asset.position.y + actionStart.asset.size.height / 2
+            : actionStart.y;
+
+          const deltaX = svgP.x - startX;
+          const deltaY = svgP.y - startY;
+
+          // 45° is to eliminate the offset from starting the drag at the bottom right corner
+          const baseAngle = 45 + (actionStart.asset?.rotation || 0);
+
+          setAssets((assets) =>
+            assets.map((a) => {
+              if (!userSelectedAssets.includes(a._id)) return a;
+              const startPos = actionStart.startPositions.find(
+                (pos) => pos._id === a._id
+              );
+              if (!startPos) return a;
+              const angle = Math.atan2(deltaY, deltaX);
+              let rotation =
+                (startPos.rotation +
+                  angle * (180 / Math.PI) +
+                  720 -
+                  baseAngle) %
+                360;
+              return {
+                ...a,
+                rotation,
+              };
+            })
+          );
+        } else {
+          // Calculate delta in screen coordinates
+          const rawX = svgP.x - actionStart.x;
+          const rawY = svgP.y - actionStart.y;
+          const delta = rotateVector(
+            { x: rawX, y: rawY },
+            -(actionStart.asset?.rotation || 0)
+          );
+
+          // resizing asset
+          const makeSquare = false; // no shift key on touch
+
+          setAssets((assets) =>
+            assets.map((a) => {
+              if (!userSelectedAssets.includes(a._id)) return a;
+              const startPos = actionStart.startPositions.find(
+                (pos) => pos._id === a._id
+              );
+              if (!startPos) return a;
+              const newProperties = resizeAsset(
+                {
+                  position: startPos,
+                  size: startPos,
+                  rotation: startPos.rotation,
+                },
+                delta,
+                makeSquare
+              );
+              return {
+                ...a,
+                ...newProperties,
+              };
+            })
+          );
+        }
+      }
+    },
+    [activeAction, userSelectedAssets, actionStart]
+  );
+
+  // touch end when dragging/resizing/rotating assets
+  const handleTouchEnd = useCallback(
+    (e: TouchEvent) => {
+      if (activeAction !== "none") {
+        onAssetChange(
+          userSelectedAssets
+            .map((id) => assetsRef.current.find((a) => a._id === id)!)
+            .filter(Boolean)
+        );
+        actionEndTime.current = Date.now();
+      }
+      setActiveAction("none");
+    },
+    [activeAction, userSelectedAssets]
+  );
+
   // global mousemove and mouseup listeners when dragging/resizing/rotating
   useEffect(() => {
     if (activeAction !== "none") {
       window.addEventListener("mousemove", handleMouseMove, { passive: false });
       window.addEventListener("mouseup", handleMouseUp);
+      window.addEventListener("touchmove", handleTouchMove, { passive: false });
+      window.addEventListener("touchend", handleTouchEnd);
     }
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [activeAction, handleMouseUp, handleMouseMove]);
+  }, [activeAction, handleMouseUp, handleMouseMove, handleTouchMove, handleTouchEnd]);
 
   // add non-passive handleWheel event listener to svg
   useEffect(() => {
@@ -420,6 +643,9 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
           canDragViewport &&
             (isDraggingViewport ? "cursor-grabbing" : "cursor-grab")
         )}
+        style={{
+          touchAction: activeAction !== "none" ? "none" : "auto",
+        }}
         preserveAspectRatio="xMidYMid meet"
         onClick={(e) => {
           e.stopPropagation();
@@ -478,6 +704,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
               size={asset.size}
               rotation={asset.rotation || 0}
               onMouseDown={(e, handle) => handleMouseDown(e, asset._id, handle)}
+              onTouchStart={(e, handle) => handleTouchStart(e, asset._id, handle)}
               selected={userSelectedAssets.includes(asset._id)}
               ctrlKeyDown={ctrlKeyDown}
               menu={render.menu}
