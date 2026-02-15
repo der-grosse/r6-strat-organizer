@@ -422,7 +422,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       const svg = svgRef.current;
       if (!svg) return;
 
-      // Prevent default to stop viewport panning
+      // Prevent default for better browser compatibility (CSS touch-action is also set on SVG)
       e.preventDefault();
 
       const touch = e.touches[0];
@@ -640,6 +640,9 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
           canDragViewport &&
             (isDraggingViewport ? "cursor-grabbing" : "cursor-grab")
         )}
+        style={{
+          touchAction: activeAction !== "none" ? "none" : "auto",
+        }}
         preserveAspectRatio="xMidYMid meet"
         onClick={(e) => {
           e.stopPropagation();

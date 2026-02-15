@@ -50,6 +50,7 @@ export default function SVGAsset({
         e.stopPropagation();
       }}
       className={cn(!readonly && "select-none")}
+      style={{ touchAction: "none" }}
     >
       <g
         transform={`rotate(${rotation} ${size.width / 2} ${size.height / 2})`}
