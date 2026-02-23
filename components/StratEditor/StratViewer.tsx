@@ -123,6 +123,10 @@ function removeUnusedFloors(
 
   const usedFloors = floors.filter((f) => f.assets.length > 0);
 
+  if (usedFloors.length === 0) {
+    return { assets, map };
+  }
+
   // Compute the new viewBox dimensions for the reduced floor count
   const newViewBox = getViewBoxDimensions(usedFloors.length, baseWidth);
 
