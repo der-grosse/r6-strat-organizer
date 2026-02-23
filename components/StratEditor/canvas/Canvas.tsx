@@ -12,6 +12,7 @@ import { useUser } from "../../context/UserContext";
 import { cn } from "@/lib/utils";
 import { useViewport } from "./useViewport";
 import { clamp, resizeAsset, rotateVector } from "./Canvas.functions";
+import { DRAG_ASSET_DATA_TYPE } from "../sidebar/DraggableAssetButton";
 
 export interface CanvasAsset {
   _id: string;
@@ -31,7 +32,7 @@ interface CanvasProps<A extends CanvasAsset> {
     asset: A,
     selectedAssets: A[],
     selectedBy: TeamMember["_id"][],
-    latestSelected: boolean
+    latestSelected: boolean,
   ) => { asset: React.ReactNode; menu: React.ReactNode | null };
   selectedAssets: { assetID: A["_id"]; userID: TeamMember["_id"] }[];
   onSelect: (selected: A["_id"][]) => void;
@@ -65,7 +66,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       selectedAssets
         .filter((s) => s.userID === user?._id)
         .map((s) => s.assetID),
-    [selectedAssets, user?._id]
+    [selectedAssets, user?._id],
   );
 
   const [assets, setAssets] = useState<A[]>(propAssets);
@@ -73,7 +74,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
   useEffect(() => {
     setAssets((assets) => {
       const newAssets = propAssets.filter(
-        (a) => !assets.some((b) => b._id === a._id)
+        (a) => !assets.some((b) => b._id === a._id),
       );
       // prevent update for assets that are actively being edited by the user
       const filteredAssets = assets
@@ -139,7 +140,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
     (
       e: React.MouseEvent,
       assetId: string,
-      handle: "resize" | "rotate" | "none"
+      handle: "resize" | "rotate" | "none",
     ) => {
       if (readonly) return;
       const svg = svgRef.current;
@@ -149,7 +150,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       pt.x = e.clientX;
       pt.y = e.clientY;
       const svgP = pt.matrixTransform(
-        svg.getScreenCTM()?.inverse() || new DOMMatrix()
+        svg.getScreenCTM()?.inverse() || new DOMMatrix(),
       );
 
       if (handle === "none") {
@@ -184,11 +185,11 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
         x: svgP.x,
         y: svgP.y,
         asset: deepCopy(
-          assetsRef.current.find((a) => a._id === assetId) || null
+          assetsRef.current.find((a) => a._id === assetId) || null,
         ),
         startPositions: assetsRef.current
           .filter(
-            (a) => userSelectedAssets.includes(a._id) || a._id === assetId
+            (a) => userSelectedAssets.includes(a._id) || a._id === assetId,
           )
           .map((a) => ({
             ...a.position,
@@ -198,7 +199,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
           })),
       });
     },
-    [userSelectedAssets, readonly]
+    [userSelectedAssets, readonly],
   );
 
   // touch start on asset
@@ -206,7 +207,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
     (
       e: React.TouchEvent,
       assetId: string,
-      handle: "resize" | "rotate" | "none"
+      handle: "resize" | "rotate" | "none",
     ) => {
       if (readonly) return;
       const svg = svgRef.current;
@@ -222,7 +223,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       pt.x = touch.clientX;
       pt.y = touch.clientY;
       const svgP = pt.matrixTransform(
-        svg.getScreenCTM()?.inverse() || new DOMMatrix()
+        svg.getScreenCTM()?.inverse() || new DOMMatrix(),
       );
 
       if (handle === "none") {
@@ -253,11 +254,11 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
         x: svgP.x,
         y: svgP.y,
         asset: deepCopy(
-          assetsRef.current.find((a) => a._id === assetId) || null
+          assetsRef.current.find((a) => a._id === assetId) || null,
         ),
         startPositions: assetsRef.current
           .filter(
-            (a) => userSelectedAssets.includes(a._id) || a._id === assetId
+            (a) => userSelectedAssets.includes(a._id) || a._id === assetId,
           )
           .map((a) => ({
             ...a.position,
@@ -267,7 +268,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
           })),
       });
     },
-    [userSelectedAssets, readonly]
+    [userSelectedAssets, readonly],
   );
 
   // mouse move when dragging/resizing/rotating assets
@@ -284,7 +285,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       pt.x = e.clientX;
       pt.y = e.clientY;
       const svgP = pt.matrixTransform(
-        svg.getScreenCTM()?.inverse() || new DOMMatrix()
+        svg.getScreenCTM()?.inverse() || new DOMMatrix(),
       );
 
       if (activeAction === "dragging") {
@@ -297,7 +298,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
           assets.map((asset) => {
             if (!userSelectedAssets.includes(asset._id)) return asset;
             const startPos = actionStart.startPositions.find(
-              (pos) => pos._id === asset._id
+              (pos) => pos._id === asset._id,
             );
             if (!startPos) return asset;
 
@@ -314,11 +315,11 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
                 y: newY,
               },
             };
-          })
+          }),
         );
       } else if (activeAction === "resizing" || activeAction === "rotating") {
         const selected = assets.filter((a) =>
-          userSelectedAssets.includes(a._id)
+          userSelectedAssets.includes(a._id),
         );
         if (selected.length === 0) return;
 
@@ -341,7 +342,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
             assets.map((a) => {
               if (!userSelectedAssets.includes(a._id)) return a;
               const startPos = actionStart.startPositions.find(
-                (pos) => pos._id === a._id
+                (pos) => pos._id === a._id,
               );
               if (!startPos) return a;
               const angle = Math.atan2(deltaY, deltaX);
@@ -359,7 +360,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
                 ...a,
                 rotation,
               };
-            })
+            }),
           );
         } else {
           // Calculate delta in screen coordinates
@@ -367,7 +368,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
           const rawY = svgP.y - actionStart.y;
           const delta = rotateVector(
             { x: rawX, y: rawY },
-            -(actionStart.asset?.rotation || 0)
+            -(actionStart.asset?.rotation || 0),
           );
 
           // resizing asset
@@ -377,7 +378,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
             assets.map((a) => {
               if (!userSelectedAssets.includes(a._id)) return a;
               const startPos = actionStart.startPositions.find(
-                (pos) => pos._id === a._id
+                (pos) => pos._id === a._id,
               );
               if (!startPos) return a;
               const newProperties = resizeAsset(
@@ -387,18 +388,18 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
                   rotation: startPos.rotation,
                 },
                 delta,
-                makeSquare
+                makeSquare,
               );
               return {
                 ...a,
                 ...newProperties,
               };
-            })
+            }),
           );
         }
       }
     },
-    [activeAction, userSelectedAssets, actionStart]
+    [activeAction, userSelectedAssets, actionStart],
   );
 
   // mouse up when dragging/resizing/rotating assets
@@ -408,13 +409,13 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
         onAssetChange(
           userSelectedAssets
             .map((id) => assetsRef.current.find((a) => a._id === id)!)
-            .filter(Boolean)
+            .filter(Boolean),
         );
         actionEndTime.current = Date.now();
       }
       setActiveAction("none");
     },
-    [activeAction, userSelectedAssets]
+    [activeAction, userSelectedAssets],
   );
 
   // touch move when dragging/resizing/rotating assets
@@ -438,7 +439,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       pt.x = touch.clientX;
       pt.y = touch.clientY;
       const svgP = pt.matrixTransform(
-        svg.getScreenCTM()?.inverse() || new DOMMatrix()
+        svg.getScreenCTM()?.inverse() || new DOMMatrix(),
       );
 
       if (activeAction === "dragging") {
@@ -451,7 +452,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
           assets.map((asset) => {
             if (!userSelectedAssets.includes(asset._id)) return asset;
             const startPos = actionStart.startPositions.find(
-              (pos) => pos._id === asset._id
+              (pos) => pos._id === asset._id,
             );
             if (!startPos) return asset;
 
@@ -468,11 +469,11 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
                 y: newY,
               },
             };
-          })
+          }),
         );
       } else if (activeAction === "resizing" || activeAction === "rotating") {
         const selected = assets.filter((a) =>
-          userSelectedAssets.includes(a._id)
+          userSelectedAssets.includes(a._id),
         );
         if (selected.length === 0) return;
 
@@ -495,7 +496,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
             assets.map((a) => {
               if (!userSelectedAssets.includes(a._id)) return a;
               const startPos = actionStart.startPositions.find(
-                (pos) => pos._id === a._id
+                (pos) => pos._id === a._id,
               );
               if (!startPos) return a;
               const angle = Math.atan2(deltaY, deltaX);
@@ -509,7 +510,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
                 ...a,
                 rotation,
               };
-            })
+            }),
           );
         } else {
           // Calculate delta in screen coordinates
@@ -517,7 +518,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
           const rawY = svgP.y - actionStart.y;
           const delta = rotateVector(
             { x: rawX, y: rawY },
-            -(actionStart.asset?.rotation || 0)
+            -(actionStart.asset?.rotation || 0),
           );
 
           // resizing asset
@@ -527,7 +528,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
             assets.map((a) => {
               if (!userSelectedAssets.includes(a._id)) return a;
               const startPos = actionStart.startPositions.find(
-                (pos) => pos._id === a._id
+                (pos) => pos._id === a._id,
               );
               if (!startPos) return a;
               const newProperties = resizeAsset(
@@ -537,18 +538,18 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
                   rotation: startPos.rotation,
                 },
                 delta,
-                makeSquare
+                makeSquare,
               );
               return {
                 ...a,
                 ...newProperties,
               };
-            })
+            }),
           );
         }
       }
     },
-    [activeAction, userSelectedAssets, actionStart]
+    [activeAction, userSelectedAssets, actionStart],
   );
 
   // touch end when dragging/resizing/rotating assets
@@ -558,13 +559,13 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
         onAssetChange(
           userSelectedAssets
             .map((id) => assetsRef.current.find((a) => a._id === id)!)
-            .filter(Boolean)
+            .filter(Boolean),
         );
         actionEndTime.current = Date.now();
       }
       setActiveAction("none");
     },
-    [activeAction, userSelectedAssets]
+    [activeAction, userSelectedAssets],
   );
 
   // global mousemove and mouseup listeners when dragging/resizing/rotating
@@ -581,7 +582,13 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [activeAction, handleMouseUp, handleMouseMove, handleTouchMove, handleTouchEnd]);
+  }, [
+    activeAction,
+    handleMouseUp,
+    handleMouseMove,
+    handleTouchMove,
+    handleTouchEnd,
+  ]);
 
   // add non-passive handleWheel event listener to svg
   useEffect(() => {
@@ -623,7 +630,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
         onSelect(
           assets
             .map((a) => a._id)
-            .filter((id) => !userSelectedAssets.includes(id))
+            .filter((id) => !userSelectedAssets.includes(id)),
         );
         e.preventDefault();
       },
@@ -641,12 +648,46 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
         className={cn(
           "w-full h-full",
           canDragViewport &&
-            (isDraggingViewport ? "cursor-grabbing" : "cursor-grab")
+            (isDraggingViewport ? "cursor-grabbing" : "cursor-grab"),
         )}
         style={{
           touchAction: activeAction !== "none" ? "none" : "auto",
         }}
         preserveAspectRatio="xMidYMid meet"
+        onDragOver={(e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = "copy";
+        }}
+        onDrop={(e) => {
+          e.preventDefault();
+          const data = e.dataTransfer.getData(DRAG_ASSET_DATA_TYPE);
+          if (!data) return;
+
+          const asset = JSON.parse(data);
+          const svg = svgRef.current;
+          if (!svg) return;
+
+          const pt = svg.createSVGPoint();
+          pt.x = e.clientX;
+          pt.y = e.clientY;
+          const svgP = pt.matrixTransform(
+            svg.getScreenCTM()?.inverse() || new DOMMatrix(),
+          );
+
+          const width = asset.size?.width || ASSET_BASE_SIZE;
+          const height = asset.size?.height || ASSET_BASE_SIZE;
+
+          onAssetAdd({
+            ...asset,
+            position: {
+              x: clamp(svgP.x - width / 2, 0, viewBox.width - width),
+              y: clamp(svgP.y - height / 2, 0, viewBox.height - height),
+            },
+          });
+
+          // Focus the SVG so keyboard shortcuts (delete, etc.) work immediately
+          svg.focus();
+        }}
         onClick={(e) => {
           e.stopPropagation();
           // prevent deselecting assets after rotating
@@ -695,7 +736,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
             selectedAssets
               .filter((s) => s.assetID === asset._id)
               .map((s) => s.userID),
-            userSelectedAssets.at(-1) === asset._id
+            userSelectedAssets.at(-1) === asset._id,
           );
           return (
             <SVGAsset
@@ -704,7 +745,9 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
               size={asset.size}
               rotation={asset.rotation || 0}
               onMouseDown={(e, handle) => handleMouseDown(e, asset._id, handle)}
-              onTouchStart={(e, handle) => handleTouchStart(e, asset._id, handle)}
+              onTouchStart={(e, handle) =>
+                handleTouchStart(e, asset._id, handle)
+              }
               selected={userSelectedAssets.includes(asset._id)}
               ctrlKeyDown={ctrlKeyDown}
               menu={render.menu}

@@ -7,6 +7,7 @@ import OperatorIcon from "../../general/OperatorIcon";
 import { DEFAULT_COLORS } from "@/lib/static/colors";
 import { Asset, OperatorAsset } from "@/lib/types/asset.types";
 import { StratPositions } from "@/lib/types/strat.types";
+import DraggableAssetButton from "./DraggableAssetButton";
 
 export interface StratEditorOperatorsSidebarProps {
   onAssetAdd: (asset: Omit<Asset, "_id">) => void;
@@ -14,12 +15,12 @@ export interface StratEditorOperatorsSidebarProps {
 }
 
 export default function StratEditorOperatorsSidebar(
-  props: Readonly<StratEditorOperatorsSidebarProps>
+  props: Readonly<StratEditorOperatorsSidebarProps>,
 ) {
   const selectedOperators = props.stratPositions
     .flatMap((stratPos) => {
       const operators = DEFENDERS.filter((def) =>
-        stratPos.pickedOperators.some((op) => op.operator === def.name)
+        stratPos.pickedOperators.some((op) => op.operator === def.name),
       );
       return operators.map((operator) => ({
         ...operator,
@@ -44,43 +45,45 @@ export default function StratEditorOperatorsSidebar(
                 Selected OPs
               </Badge>
               {selectedOperators.map((op) => (
-                <Button
+                <DraggableAssetButton
                   variant="outline"
                   key={op.name}
                   className="p-1 h-auto"
-                  onClick={() => {
-                    props.onAssetAdd({
+                  onAssetAdd={props.onAssetAdd}
+                  asset={
+                    {
                       operator: op.name,
                       type: "operator",
                       side: "def",
                       iconType: "bw",
                       stratPositionID: op.stratPositionID,
-                    } as Omit<OperatorAsset, "_id">);
-                  }}
+                    } as Omit<OperatorAsset, "_id">
+                  }
                 >
                   <OperatorIcon op={op} />
-                </Button>
+                </DraggableAssetButton>
               ))}
             </>
           )}
           <Badge className="sticky top-0 w-full col-span-full">Defenders</Badge>
           {DEFENDERS.map((op) => (
-            <Button
+            <DraggableAssetButton
               variant="outline"
               key={op.name}
               className="p-1 h-auto"
-              onClick={() => {
-                props.onAssetAdd({
+              onAssetAdd={props.onAssetAdd}
+              asset={
+                {
                   operator: op.name,
                   type: "operator",
                   side: "def",
                   iconType: "bw",
                   customColor: DEFAULT_COLORS.at(-1),
-                } as Omit<OperatorAsset, "_id">);
-              }}
+                } as Omit<OperatorAsset, "_id">
+              }
             >
               <OperatorIcon op={op} />
-            </Button>
+            </DraggableAssetButton>
           ))}
           {/* <Badge className="sticky top-0 w-full col-span-full">
                 Attackers

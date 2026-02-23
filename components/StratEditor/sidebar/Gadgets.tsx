@@ -12,6 +12,7 @@ import SecondaryGadgetIcon from "@/components/general/SecondaryGadgetIcon";
 import { ASSET_BASE_SIZE } from "../canvas/Canvas";
 import { Asset, GadgetAsset, PlacedAsset } from "@/lib/types/asset.types";
 import { StratPositions } from "@/lib/types/strat.types";
+import DraggableAssetButton from "./DraggableAssetButton";
 
 export interface StratEditorGadgetsSidebarProps {
   onAssetAdd: (asset: Omit<Asset & Partial<PlacedAsset>, "_id">) => void;
@@ -19,12 +20,12 @@ export interface StratEditorGadgetsSidebarProps {
 }
 
 export default function StratEditorGadgetsSidebar(
-  props: Readonly<StratEditorGadgetsSidebarProps>
+  props: Readonly<StratEditorGadgetsSidebarProps>,
 ) {
   const selectedOperators = props.stratPositions
     .flatMap((position) => {
       const operators = DEFENDERS.filter((def) =>
-        position.pickedOperators.some((op) => op.operator === def.name)
+        position.pickedOperators.some((op) => op.operator === def.name),
       );
       return operators.map((op) => ({ ...op, stratPositionID: position._id }));
     })
@@ -37,7 +38,7 @@ export default function StratEditorGadgetsSidebar(
             stratPositionID: op.stratPositionID,
             gadget: DEFENDER_PRIMARY_GADGETS.find((g) => g.id === op.gadget),
           }
-        : undefined!
+        : undefined!,
     )
     .filter(Boolean);
   const selectedSecondaryGadgets = props.stratPositions
@@ -48,7 +49,7 @@ export default function StratEditorGadgetsSidebar(
       ]);
       return {
         gadgets: DEFENDER_SECONDARY_GADGETS.filter((g) =>
-          gadgetIDs.includes(g.id)
+          gadgetIDs.includes(g.id),
         )!,
         position,
       };
@@ -57,12 +58,12 @@ export default function StratEditorGadgetsSidebar(
       gadgets.map((gadget) => ({
         gadget,
         position,
-      }))
+      })),
     )
     // prevent duplicates
     .filter(
       (g1, i, gadgets) =>
-        !gadgets.some((g2, j) => g1.gadget.id === g2.gadget.id && i > j)
+        !gadgets.some((g2, j) => g1.gadget.id === g2.gadget.id && i > j),
     );
 
   return (
@@ -80,12 +81,13 @@ export default function StratEditorGadgetsSidebar(
                 Selected primary gadgets
               </Badge>
               {selectedPrimaryGadetIDs.map((gadget) => (
-                <Button
+                <DraggableAssetButton
                   variant="outline"
                   key={gadget.id}
                   className="p-1 h-auto"
-                  onClick={() => {
-                    props.onAssetAdd({
+                  onAssetAdd={props.onAssetAdd}
+                  asset={
+                    {
                       type: "gadget",
                       gadget: gadget.id,
                       stratPositionID: gadget.stratPositionID,
@@ -94,11 +96,11 @@ export default function StratEditorGadgetsSidebar(
                         height:
                           ASSET_BASE_SIZE * (gadget.gadget?.aspectRatio ?? 1),
                       },
-                    } as Omit<GadgetAsset, "_id">);
-                  }}
+                    } as Omit<GadgetAsset, "_id">
+                  }
                 >
                   <PrimaryGadgetIcon id={gadget.id} />
-                </Button>
+                </DraggableAssetButton>
               ))}
             </>
           )}
@@ -108,12 +110,13 @@ export default function StratEditorGadgetsSidebar(
                 Selected secondary gadgets
               </Badge>
               {selectedSecondaryGadgets.map(({ gadget, position }) => (
-                <Button
+                <DraggableAssetButton
                   variant="outline"
                   key={gadget.id}
                   className="p-1 h-auto"
-                  onClick={() => {
-                    props.onAssetAdd({
+                  onAssetAdd={props.onAssetAdd}
+                  asset={
+                    {
                       type: "gadget",
                       gadget: gadget.id,
                       stratPositionID: position._id,
@@ -121,11 +124,11 @@ export default function StratEditorGadgetsSidebar(
                         width: ASSET_BASE_SIZE,
                         height: ASSET_BASE_SIZE * (gadget.aspectRatio ?? 1),
                       },
-                    } as Omit<GadgetAsset, "_id">);
-                  }}
+                    } as Omit<GadgetAsset, "_id">
+                  }
                 >
                   <SecondaryGadgetIcon id={gadget.id} />
-                </Button>
+                </DraggableAssetButton>
               ))}
             </>
           )}
@@ -133,45 +136,47 @@ export default function StratEditorGadgetsSidebar(
             Primary Gadgets
           </Badge>
           {DEFENDER_PRIMARY_GADGETS.map((gadget) => (
-            <Button
+            <DraggableAssetButton
               variant="outline"
               key={gadget.id}
               className="p-1 h-auto"
-              onClick={() => {
-                props.onAssetAdd({
+              onAssetAdd={props.onAssetAdd}
+              asset={
+                {
                   type: "gadget",
                   gadget: gadget.id,
                   size: {
                     width: ASSET_BASE_SIZE,
                     height: ASSET_BASE_SIZE * (gadget.aspectRatio ?? 1),
                   },
-                } as Omit<GadgetAsset, "_id">);
-              }}
+                } as Omit<GadgetAsset, "_id">
+              }
             >
               <PrimaryGadgetIcon id={gadget.id} />
-            </Button>
+            </DraggableAssetButton>
           ))}
           <Badge className="sticky top-0 w-full col-span-full">
             Secondary Gadgets
           </Badge>
           {DEFENDER_SECONDARY_GADGETS.map((gadget) => (
-            <Button
+            <DraggableAssetButton
               variant="outline"
               key={gadget.id}
               className="p-1 h-auto"
-              onClick={() => {
-                props.onAssetAdd({
+              onAssetAdd={props.onAssetAdd}
+              asset={
+                {
                   type: "gadget",
                   gadget: gadget.id,
                   size: {
                     width: ASSET_BASE_SIZE,
                     height: ASSET_BASE_SIZE * (gadget.aspectRatio ?? 1),
                   },
-                } as Omit<GadgetAsset, "_id">);
-              }}
+                } as Omit<GadgetAsset, "_id">
+              }
             >
               <SecondaryGadgetIcon id={gadget.id} />
-            </Button>
+            </DraggableAssetButton>
           ))}
         </div>
       </ScrollArea>

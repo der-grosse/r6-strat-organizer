@@ -6,13 +6,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import Explosion from "../assets/Explosion";
 import WoodenBarricade from "@/components/icons/woodenBarricade";
 import { Asset, PlacedAsset, LayoutAsset } from "@/lib/types/asset.types";
+import DraggableAssetButton from "./DraggableAssetButton";
 
 export interface StratEditorLayoutSidebarProps {
   onAssetAdd: (asset: Omit<Asset & Partial<PlacedAsset>, "_id">) => void;
 }
 
 export default function StratEditorLayoutSidebar(
-  props: Readonly<StratEditorLayoutSidebarProps>
+  props: Readonly<StratEditorLayoutSidebarProps>,
 ) {
   return (
     <div className="h-full absolute inset-0">
@@ -26,34 +27,36 @@ export default function StratEditorLayoutSidebar(
           <Badge className="sticky top-0 w-full col-span-full">
             Reinforcements
           </Badge>
-          <Button
+          <DraggableAssetButton
             variant="outline"
             size="unset"
             key="reinforcement"
             className="p-1 h-auto aspect-square"
-            onClick={() => {
-              props.onAssetAdd({
+            onAssetAdd={props.onAssetAdd}
+            asset={
+              {
                 type: "layout",
                 variant: "reinforcement",
-              } as Omit<LayoutAsset, "_id">);
-            }}
+              } as Omit<LayoutAsset, "_id">
+            }
           >
             <Reinforcement className="size-full" />
-          </Button>
-          <Button
+          </DraggableAssetButton>
+          <DraggableAssetButton
             variant="outline"
             size="unset"
             key="barricade"
             className="p-1 h-auto aspect-square"
-            onClick={() => {
-              props.onAssetAdd({
+            onAssetAdd={props.onAssetAdd}
+            asset={
+              {
                 type: "layout",
                 variant: "barricade",
-              } as Omit<LayoutAsset, "_id">);
-            }}
+              } as Omit<LayoutAsset, "_id">
+            }
           >
             <WoodenBarricade />
-          </Button>
+          </DraggableAssetButton>
           <Badge className="sticky top-0 w-full col-span-full">
             Rotate and Headholes
           </Badge>
@@ -67,35 +70,37 @@ export default function StratEditorLayoutSidebar(
               "ceilingholes",
             ] as const
           ).map((variant) => (
-            <Button
+            <DraggableAssetButton
               variant="outline"
               size="unset"
               key={`rotate-${variant}`}
               className="p-1 h-auto aspect-square"
-              onClick={() => {
-                props.onAssetAdd({
+              onAssetAdd={props.onAssetAdd}
+              asset={
+                {
                   type: "layout",
                   variant,
-                } as Omit<LayoutAsset, "_id">);
-              }}
+                } as Omit<LayoutAsset, "_id">
+              }
             >
               <Rotation variant={variant} className="size-full" />
-            </Button>
+            </DraggableAssetButton>
           ))}
-          <Button
+          <DraggableAssetButton
             variant="outline"
             size="unset"
             key="rotate-explosion"
             className="p-1 h-auto aspect-square"
-            onClick={() => {
-              props.onAssetAdd({
+            onAssetAdd={props.onAssetAdd}
+            asset={
+              {
                 type: "layout",
                 variant: "explosion",
-              } as Omit<LayoutAsset, "_id">);
-            }}
+              } as Omit<LayoutAsset, "_id">
+            }
           >
             <Explosion />
-          </Button>
+          </DraggableAssetButton>
         </div>
       </ScrollArea>
     </div>
