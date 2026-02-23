@@ -30,7 +30,7 @@ export interface UseViewportOptions {
 export function calculateZoomedViewBox(
   viewBox: Pick<ViewBox, "width" | "height">,
   zoomFactor: number,
-  zoomOrigin: ZoomOrigin
+  zoomOrigin: ZoomOrigin,
 ): ViewBox {
   const size = {
     width: viewBox.width * zoomFactor,
@@ -68,7 +68,7 @@ export function setSvgViewBox(svg: SVGSVGElement | null, viewBox: ViewBox) {
   if (!svg) return;
   svg.setAttribute(
     "viewBox",
-    `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`
+    `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`,
   );
 }
 
@@ -125,12 +125,12 @@ export function useViewport({
   }, [zoomOrigin]);
 
   const debouncedZoomCommit = useRef<ReturnType<typeof setTimeout> | null>(
-    null
+    null,
   );
 
   const zoomedViewBox = useMemo(
     () => calculateZoomedViewBox(viewBox, zoomFactor, zoomOrigin),
-    [viewBox, zoomFactor, zoomOrigin]
+    [viewBox, zoomFactor, zoomOrigin],
   );
   const lastZoomedViewBox = useRef(zoomedViewBox);
   useEffect(() => {
@@ -153,11 +153,11 @@ export function useViewport({
       const nextViewBox = calculateZoomedViewBox(
         viewBoxRef.current,
         zoomFactorRef.current,
-        nextOrigin
+        nextOrigin,
       );
       setSvgViewBox(svgRef.current, nextViewBox);
     },
-    [svgRef]
+    [svgRef],
   );
 
   const commitPanOrigin = useCallback(() => {
@@ -183,7 +183,7 @@ export function useViewport({
         pt.x = e.clientX;
         pt.y = e.clientY;
         const svgP = pt.matrixTransform(
-          svg.getScreenCTM()?.inverse() || new DOMMatrix()
+          svg.getScreenCTM()?.inverse() || new DOMMatrix(),
         );
 
         const nextOrigin = {
@@ -199,7 +199,7 @@ export function useViewport({
         const nextZoom = clamp(
           zoomFactorRef.current + e.deltaY * ZOOM_MODIFIER,
           MIN_ZOOM_FACTOR,
-          1
+          1,
         );
 
         // update refs immediately to avoid per-event React rerenders
@@ -209,7 +209,7 @@ export function useViewport({
         const nextViewBox = calculateZoomedViewBox(
           viewBoxRef.current,
           zoomFactorRef.current,
-          zoomOriginRef.current
+          zoomOriginRef.current,
         );
         lastZoomedViewBox.current = nextViewBox;
         setSvgViewBox(svgRef.current, nextViewBox);
@@ -237,7 +237,7 @@ export function useViewport({
         }));
       }
     },
-    [svgRef]
+    [svgRef],
   );
 
   // drag viewport with spacebar
@@ -259,7 +259,7 @@ export function useViewport({
       pt.x = e.clientX;
       pt.y = e.clientY;
       const svgP = pt.matrixTransform(
-        svg.getScreenCTM()?.inverse() || new DOMMatrix()
+        svg.getScreenCTM()?.inverse() || new DOMMatrix(),
       );
       const dx = svgP.x - dragViewportStart.x;
       const dy = svgP.y - dragViewportStart.y;
@@ -286,7 +286,7 @@ export function useViewport({
       pt.x = e.clientX;
       pt.y = e.clientY;
       const svgP = pt.matrixTransform(
-        svg.getScreenCTM()?.inverse() || new DOMMatrix()
+        svg.getScreenCTM()?.inverse() || new DOMMatrix(),
       );
       setDragViewportStart({
         x: svgP.x,
