@@ -15,8 +15,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
+import { Eye, EyeOff } from "lucide-react";
 import { useId } from "react";
 
 export default function AppSettings() {
@@ -48,6 +50,50 @@ export default function AppSettings() {
               <SelectItem value="top">Top</SelectItem>
             </SelectContent>
           </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Active Strat Info</Label>
+          <p className="text-sm text-muted-foreground">
+            Choose which details appear below the active strat.
+          </p>
+          {[
+            { key: "mapName" as const, label: "Map Name" },
+            { key: "siteName" as const, label: "Site Name" },
+            { key: "stratName" as const, label: "Strat Name" },
+          ].map(({ key, label }) => {
+            const isVisible =
+              settings?.activeStratNameTemplate?.[key] ?? key !== "mapName";
+            return (
+              <Button
+                key={key}
+                variant="outline"
+                className="w-full justify-start gap-2"
+                onClick={() =>
+                  updateSettings({
+                    activeStratNameTemplate: {
+                      stratName:
+                        settings?.activeStratNameTemplate?.stratName ?? true,
+                      mapName:
+                        settings?.activeStratNameTemplate?.mapName ?? false,
+                      siteName:
+                        settings?.activeStratNameTemplate?.siteName ?? true,
+                      [key]: !isVisible,
+                    },
+                  })
+                }
+              >
+                {isVisible ? (
+                  <Eye className="size-4" />
+                ) : (
+                  <EyeOff className="size-4 text-muted-foreground" />
+                )}
+                <span className={!isVisible ? "text-muted-foreground" : ""}>
+                  {label}
+                </span>
+              </Button>
+            );
+          })}
         </div>
       </CardContent>
     </Card>

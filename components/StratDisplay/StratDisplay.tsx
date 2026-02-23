@@ -131,7 +131,17 @@ export default function StratDisplay(props: StratDisplayProps) {
           </div>
         )}
         <div className="flex justify-center gap-1 text-sm">
-          <span className="ml-2">{props.strat.site}</span>
+          <span className="ml-2">
+            {[
+              settings?.activeStratNameTemplate?.mapName && props.strat.map,
+              settings?.activeStratNameTemplate?.siteName !== false &&
+                props.strat.site,
+              settings?.activeStratNameTemplate?.stratName !== false &&
+                props.strat.name,
+            ]
+              .filter(Boolean)
+              .join(" | ")}
+          </span>
           <Link
             href={`/editor/${props.strat._id}`}
             className="text-muted-foreground hover:text-primary"

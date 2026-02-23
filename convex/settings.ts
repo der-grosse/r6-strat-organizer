@@ -5,6 +5,11 @@ import { requireUser } from "./auth";
 const DEFAULT_SETTINGS = {
   activeStratLayout: "bottom" as const,
   stratGadgetViewModifier: "none" as const,
+  activeStratNameTemplate: {
+    stratName: true,
+    mapName: false,
+    siteName: true,
+  },
 };
 
 export const get = query({
@@ -21,7 +26,8 @@ export const get = query({
     }
 
     const { _id, _creationTime, userId, ...rest } = settings;
-    return rest;
+    // optional values in DB will be filled in with defaults here
+    return { ...DEFAULT_SETTINGS, ...rest };
   },
 });
 
@@ -36,6 +42,13 @@ export const update = mutation({
         v.literal("hideForeign"),
         v.literal("grayscaleForeign"),
       ),
+    ),
+    activeStratNameTemplate: v.optional(
+      v.object({
+        stratName: v.boolean(),
+        mapName: v.boolean(),
+        siteName: v.boolean(),
+      }),
     ),
   },
   async handler(ctx, args) {

@@ -124,6 +124,13 @@ const schema = defineSchema({
   settings: defineTable({
     userId: v.id("users"),
     activeStratLayout: v.union(v.literal("bottom"), v.literal("top")),
+    activeStratNameTemplate: v.optional(
+      v.object({
+        stratName: v.boolean(),
+        mapName: v.boolean(),
+        siteName: v.boolean(),
+      }),
+    ),
     stratGadgetViewModifier: v.union(
       v.literal("none"),
       v.literal("hideForeign"),
