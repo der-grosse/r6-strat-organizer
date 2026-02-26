@@ -28,7 +28,8 @@ import { getAssetColor } from "../canvas/useMountedAssets";
 import { ColorButton } from "@/components/general/ColorPickerDialog";
 import { Asset, PlacedAsset } from "@/lib/types/asset.types";
 import { Strat } from "@/lib/types/strat.types";
-import { FullTeam } from "@/lib/types/team.types";
+import { FullTeam, TeamMember, TeamPosition } from "@/lib/types/team.types";
+import { Id } from "@/convex/_generated/dataModel";
 
 export interface StratEditorSidebarProps {
   onAssetAdd: (asset: Omit<Asset & Partial<PlacedAsset>, "_id">) => void;
@@ -39,7 +40,7 @@ export interface StratEditorSidebarProps {
 }
 
 export default function StratEditorSidebar(
-  props: Readonly<StratEditorSidebarProps>
+  props: Readonly<StratEditorSidebarProps>,
 ) {
   const [openTab, setOpenTab] = useState<
     | "meta"
@@ -56,7 +57,7 @@ export default function StratEditorSidebar(
       props.onAssetAdd(asset);
       setSidebarOpen(false);
     },
-    [props.onAssetAdd]
+    [props.onAssetAdd],
   );
 
   const placedReeinforcements = useMemo(
@@ -74,18 +75,33 @@ export default function StratEditorSidebar(
                   ...cur,
                   count: cur.count + 1,
                 });
+              } else {
+                acc.set("unassigned", {
+                  position: null,
+                  player: null,
+                  color: null,
+                  count: (acc.get("unassigned")?.count ?? 0) + 1,
+                });
               }
               return acc;
             },
-            new Map([
+            new Map<
+              Id<"stratPositions"> | "unassigned",
+              {
+                position: TeamPosition | null;
+                player: TeamMember | null;
+                color: string | null;
+                count: number;
+              }
+            >([
               ...props.strat.stratPositions.map((stratPos) => {
                 const position =
                   props.team.teamPositions.find(
-                    (teamPos) => teamPos._id === stratPos.teamPositionID
+                    (teamPos) => teamPos._id === stratPos.teamPositionID,
                   ) ?? null;
                 const player =
                   props.team.members.find(
-                    (m) => m._id === position?.playerID
+                    (m) => m._id === position?.playerID,
                   ) ?? null;
                 return [
                   stratPos._id,
@@ -96,17 +112,17 @@ export default function StratEditorSidebar(
                       getAssetColor(
                         { stratPositionID: stratPos._id },
                         props.strat.stratPositions,
-                        props.team
+                        props.team,
                       ) ?? null,
                     count: 0 as number,
                   },
                 ] as const;
               }),
-            ])
+            ]),
           )
-          .values()
+          .values(),
       ),
-    [props.strat, props.assets]
+    [props.strat, props.assets],
   );
 
   const sidebarContent = useMemo(() => {
@@ -182,7 +198,7 @@ export default function StratEditorSidebar(
             onClick={() => {
               setOpenTab("operator-gadgets");
               setSidebarOpen((open) =>
-                openTab === "operator-gadgets" ? !open : true
+                openTab === "operator-gadgets" ? !open : true,
               );
             }}
             tooltip={{
@@ -199,7 +215,7 @@ export default function StratEditorSidebar(
             onClick={() => {
               setOpenTab("layout-assets");
               setSidebarOpen((open) =>
-                openTab === "layout-assets" ? !open : true
+                openTab === "layout-assets" ? !open : true,
               );
             }}
             tooltip={{
@@ -217,7 +233,7 @@ export default function StratEditorSidebar(
             onClick={() => {
               setOpenTab("operator-assets");
               setSidebarOpen((open) =>
-                openTab === "operator-assets" ? !open : true
+                openTab === "operator-assets" ? !open : true,
               );
             }}
             tooltip={{
@@ -293,14 +309,14 @@ export default function StratEditorSidebar(
         style={{ "--sidebar-width": "min(90vw, 20rem)" } as React.CSSProperties}
         className={cn(
           "bg-background flex-1 h-full absolute xl:relative transition-[left] duration-300 max-xl:w-(--sidebar-width) border-r border-border",
-          sidebarOpen ? "max-xl:left-[100%]" : "max-xl:-left-(--sidebar-width)"
+          sidebarOpen ? "max-xl:left-[100%]" : "max-xl:-left-(--sidebar-width)",
         )}
       >
         {sidebarContent}
         <div
           className={cn(
             "xl:hidden w-screen h-full absolute top-0 left-[100%]",
-            !sidebarOpen && "hidden"
+            !sidebarOpen && "hidden",
           )}
           onClick={() => setSidebarOpen(false)}
         />
