@@ -14,6 +14,8 @@ import MultiOptionSelector from "./MultiOptionSelector";
 import Reinforcement from "@/components/icons/reinforcement";
 import Explosion from "../assets/Explosion";
 import Rotation from "@/components/icons/rotation";
+import WoodenBarricade from "@/components/icons/woodenBarricade";
+import GadgetIcon from "@/components/general/GadgetIcon";
 
 export interface AssetMenuProps {
   selectedAssets: PlacedAsset[];
@@ -203,6 +205,75 @@ export default function AssetMenu({
         );
         break;
       }
+      case "door-type": {
+        const types = selectedAssets
+          .map((asset) => getDoorType(asset)!)
+          .filter(Boolean);
+        const mainVariant = types.reduce(
+          (acc, type) => (acc === type ? acc : null),
+          types[0] as (typeof types)[0] | null,
+        );
+        sections.push(
+          <MultiOptionSelector
+            key="door-type"
+            options={[
+              {
+                id: "barricade",
+                label: "Barricade",
+                icon: <WoodenBarricade className="w-[16px] h-[16px]" />,
+              },
+              {
+                id: "armor_panel",
+                label: "Castle Barricade",
+                icon: (
+                  <GadgetIcon id="armor_panel" className="w-[16px] h-[16px]" />
+                ),
+              },
+              {
+                id: "surya_gate",
+                label: "Aruni Gate",
+                icon: (
+                  <GadgetIcon id="surya_gate" className="w-[16px] h-[16px]" />
+                ),
+              },
+            ]}
+            selected={mainVariant}
+            onSelect={(id) => {
+              updateAssets(
+                selectedAssets.map((asset) => {
+                  if (getDoorType(asset) === null) return asset; // don't change other selected assets that are not doors
+
+                  const baseAsset = {
+                    position: asset.position,
+                    size: asset.size,
+                    rotation: asset.rotation,
+                    _id: asset._id,
+                    stratPositionID: asset.stratPositionID,
+                    customColor: asset.customColor,
+                  };
+
+                  if (id === "barricade") {
+                    return {
+                      ...baseAsset,
+                      type: "layout",
+                      variant: "barricade",
+                      placedOn:
+                        asset.type === "layout" ? asset.placedOn : undefined,
+                    };
+                  } else {
+                    return {
+                      ...baseAsset,
+                      type: "gadget",
+                      gadget: id,
+                    };
+                  }
+                }),
+              );
+            }}
+          />,
+        );
+        break;
+      }
       case "rotation-type": {
         const variants = selectedAssets
           .map((asset) => (asset.type === "layout" ? asset.variant : null!))
@@ -366,11 +437,12 @@ function getMenuItemsIDs(assets: PlacedAsset[]): MenuItemID[] {
     if (asset.type === "layout") {
       if (asset.placedOn === "hatch") {
         ids.add("hatch-type");
-      } else if (asset.placedOn === "door" || asset.variant === "barricade") {
-        ids.add("door-type");
-      } else {
+      } else if (asset.placedOn !== "door" && asset.variant !== "barricade") {
         ids.add("rotation-type");
       }
+    }
+    if (getDoorType(asset)) {
+      ids.add("door-type");
     }
   }
   return MENU_ITEM_IDS_ORDER.filter((id) => ids.has(id)).filter(
@@ -383,6 +455,20 @@ function getMenuItemsIDs(assets: PlacedAsset[]): MenuItemID[] {
       return true;
     },
   );
+}
+
+function getDoorType(asset: PlacedAsset) {
+  if (asset.type === "layout") {
+    if (asset.variant === "barricade") return "barricade";
+    return null;
+  }
+  if (asset.type === "gadget") {
+    if (asset.gadget === "armor_panel" || asset.gadget === "surya_gate") {
+      return asset.gadget;
+    }
+    return null;
+  }
+  return null;
 }
 
 function getNextOperatorIconType(

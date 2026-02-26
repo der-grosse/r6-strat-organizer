@@ -8,7 +8,7 @@ import PrimaryGadgetIcon from "./PrimaryGadgetIcon";
 import SecondaryGadgetIcon from "./SecondaryGadgetIcon";
 
 export interface GadgetIconProps {
-  id: PrimaryGadget["id"] | DefenderSecondaryGadget | string;
+  id: PrimaryGadget["id"] | DefenderSecondaryGadget;
   showName?: boolean;
   variant?: number;
   className?: string;
@@ -16,10 +16,10 @@ export interface GadgetIconProps {
 
 export default function GadgetIcon(props: GadgetIconProps) {
   const isPrimaryGadget = DEFENDER_PRIMARY_GADGETS.find(
-    (g) => g.id === props.id
+    (g) => g.id === props.id,
   );
   const isSecondaryGadget = DEFENDER_SECONDARY_GADGETS.find(
-    (g) => g.id === props.id
+    (g) => g.id === props.id,
   );
   if (!isPrimaryGadget && !isSecondaryGadget) {
     console.warn(`GadgetIcon: No gadget found for id ${props.id}`);
