@@ -1,15 +1,20 @@
-import { cn } from "@/lib/utils";
+import VariableWidthIcon from "./variableWidthIcon";
 
-export interface WoodenBarricadeProps {
-  className?: string;
-}
+const WoodenBarricade = VariableWidthIcon({
+  parts: {
+    end: {
+      src: "/gadgets/barricade_end_left.png",
+      alt: "Wooden Barricade End Left",
+    },
+    between: {
+      src: "/gadgets/barricade_middle.png",
+      alt: "Wooden Barricade",
+    },
+    middle: {
+      src: "/gadgets/barricade_x.png",
+      alt: "Wooden Barricade Middle",
+    },
+  },
+});
 
-export default function WoodenBarricade(props: WoodenBarricadeProps) {
-  return (
-    <img
-      src="/gadgets/barricade.png"
-      alt="Wooden Barricade"
-      className={cn("object-contain size-full", props.className)}
-    />
-  );
-}
+export default WoodenBarricade;

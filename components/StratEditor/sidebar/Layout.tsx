@@ -55,7 +55,7 @@ export default function StratEditorLayoutSidebar(
               } as Omit<LayoutAsset, "_id">
             }
           >
-            <WoodenBarricade />
+            <WoodenBarricade className="size-4" />
           </DraggableAssetButton>
           <Badge className="sticky top-0 w-full col-span-full">
             Rotate and Headholes
