@@ -209,9 +209,9 @@ export default function AssetMenu({
         const types = selectedAssets
           .map((asset) => getDoorType(asset)!)
           .filter(Boolean);
-        const mainVariant = types.reduce(
+        const mainVariant = types.reduce<(typeof types)[0] | null>(
           (acc, type) => (acc === type ? acc : null),
-          types[0] as (typeof types)[0] | null,
+          types[0],
         );
         sections.push(
           <MultiOptionSelector
