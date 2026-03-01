@@ -10,6 +10,7 @@ import { requireUser } from "./auth";
 import { Doc, Id } from "./_generated/dataModel";
 import { Strat } from "../lib/types/strat.types";
 import { PlacedAsset } from "../lib/types/asset.types";
+import { DefenderSecondaryGadget } from "../lib/static/operator";
 
 export const get = query({
   args: {
@@ -37,14 +38,14 @@ export const list = query({
       strats = await ctx.db
         .query("strats")
         .withIndex("byTeamMapAndSite", (q) =>
-          q.eq("teamID", activeTeamID).eq("map", map).eq("site", site)
+          q.eq("teamID", activeTeamID).eq("map", map).eq("site", site),
         )
         .collect();
     } else if (map) {
       strats = await ctx.db
         .query("strats")
         .withIndex("byTeamAndMap", (q) =>
-          q.eq("teamID", activeTeamID).eq("map", map)
+          q.eq("teamID", activeTeamID).eq("map", map),
         )
         .collect();
     } else {
@@ -94,8 +95,12 @@ export const list = query({
                 _id: op._id,
                 stratPositionID: op.stratPositionID,
                 operator: op.operator,
-                secondaryGadget: op.secondaryGadget,
-                tertiaryGadget: op.tertiaryGadget,
+                secondaryGadget: op.secondaryGadget as
+                  | DefenderSecondaryGadget
+                  | undefined,
+                tertiaryGadget: op.tertiaryGadget as
+                  | DefenderSecondaryGadget
+                  | undefined,
                 index: op.index,
               }))
               .sort((a, b) => a.index - b.index),
@@ -105,14 +110,14 @@ export const list = query({
     }
 
     return fullStrats.sort(
-      (a, b) => a.map.localeCompare(b.map) || a.mapIndex - b.mapIndex
+      (a, b) => a.map.localeCompare(b.map) || a.mapIndex - b.mapIndex,
     );
   },
 });
 
 export async function getStrat(
   ctx: QueryCtx | MutationCtx,
-  id: Id<"strats">
+  id: Id<"strats">,
 ): Promise<Strat | null> {
   const stratDoc = await ctx.db.get(id);
   if (!stratDoc) return null;
@@ -151,8 +156,12 @@ export async function getStrat(
             _id: op._id,
             stratPositionID: op.stratPositionID,
             operator: op.operator,
-            secondaryGadget: op.secondaryGadget,
-            tertiaryGadget: op.tertiaryGadget,
+            secondaryGadget: op.secondaryGadget as
+              | DefenderSecondaryGadget
+              | undefined,
+            tertiaryGadget: op.tertiaryGadget as
+              | DefenderSecondaryGadget
+              | undefined,
             index: op.index,
           }))
           .sort((a, b) => a.index - b.index),
@@ -180,7 +189,7 @@ export const archive = mutation({
     const stratsOnMap = await ctx.db
       .query("strats")
       .withIndex("byTeamAndMap", (q) =>
-        q.eq("teamID", activeTeamID).eq("map", stratDoc.map)
+        q.eq("teamID", activeTeamID).eq("map", stratDoc.map),
       )
       .collect();
 
@@ -255,13 +264,13 @@ export const create = mutation({
     const mapStrats = await ctx.db
       .query("strats")
       .withIndex("byTeamAndMap", (q) =>
-        q.eq("teamID", activeTeamID).eq("map", args.map)
+        q.eq("teamID", activeTeamID).eq("map", args.map),
       )
       .collect();
 
     const maxIndex = mapStrats.reduce(
       (max, strat) => (strat.mapIndex > max ? strat.mapIndex : max),
-      -1
+      -1,
     );
 
     const stratID = await ctx.db.insert("strats", {
@@ -327,13 +336,13 @@ export const createCopy = mutation({
     const stratsOnMap = await ctx.db
       .query("strats")
       .withIndex("byTeamAndMap", (q) =>
-        q.eq("teamID", activeTeamID).eq("map", stratDoc.map)
+        q.eq("teamID", activeTeamID).eq("map", stratDoc.map),
       )
       .collect();
     const mapIndex =
       stratsOnMap.reduce(
         (max, strat) => (strat.mapIndex > max ? strat.mapIndex : max),
-        -1
+        -1,
       ) + 1;
 
     const stratPositions = await ctx.db
@@ -426,7 +435,7 @@ export const updateIndex = mutation({
       await ctx.db
         .query("strats")
         .withIndex("byTeamAndMap", (q) =>
-          q.eq("teamID", activeTeamID).eq("map", stratDoc.map)
+          q.eq("teamID", activeTeamID).eq("map", stratDoc.map),
         )
         .collect()
     ).filter((s) => !s.archived);
@@ -486,7 +495,7 @@ export const updateStratPosition = mutation({
         .collect();
       const positionAlreadyUsed = currentStratPositions.find(
         (pos) =>
-          pos.teamPositionID === args.teamPositionID && pos._id !== args._id
+          pos.teamPositionID === args.teamPositionID && pos._id !== args._id,
       );
       if (positionAlreadyUsed) {
         await ctx.db.patch(positionAlreadyUsed._id, {
@@ -578,14 +587,14 @@ export const updatePickedOperatorIndex = mutation({
       await ctx.db
         .query("pickedOperators")
         .withIndex("byStratPosition", (q) =>
-          q.eq("stratPositionID", args.stratPositionID)
+          q.eq("stratPositionID", args.stratPositionID),
         )
         .collect()
     ).sort((a, b) => a.index - b.index); // enforce deterministic ordering
 
     // Find the current index of the picked operator
     const currentIndex = pickedOperators.findIndex(
-      (op) => op._id === args.pickedOperatorID
+      (op) => op._id === args.pickedOperatorID,
     );
     if (currentIndex === -1) {
       return {
@@ -659,13 +668,13 @@ export const createPickedOperator = mutation({
     const existingOperators = await ctx.db
       .query("pickedOperators")
       .withIndex("byStratPosition", (q) =>
-        q.eq("stratPositionID", stratPositionID)
+        q.eq("stratPositionID", stratPositionID),
       )
       .collect();
     const newIndex =
       existingOperators.reduce(
         (max, op) => (op.index > max ? op.index : max),
-        -1
+        -1,
       ) + 1;
     const pickedOperatorID = await ctx.db.insert("pickedOperators", {
       stratID: stratDoc._id,
@@ -705,7 +714,7 @@ export const getAssets = query({
           position: { x: asset.posX, y: asset.posY },
           size: { width: asset.width, height: asset.height },
           rotation: asset.rotation,
-        } as PlacedAsset)
+        }) as PlacedAsset,
     );
   },
 });
@@ -779,7 +788,7 @@ export const updateAssets = mutation({
         iconType: v.optional(v.string()),
         gadget: v.optional(v.string()),
         placedOn: v.optional(v.nullable(v.string())),
-      })
+      }),
     ),
   },
   async handler(ctx, args) {
@@ -853,7 +862,7 @@ export const getSelectedAssets = query({
       .collect();
 
     const otherUsersSelectedAssets = selectedAssetsDoc.filter(
-      (doc) => doc.userID !== userID
+      (doc) => doc.userID !== userID,
     );
 
     return otherUsersSelectedAssets.map((doc) => ({
@@ -878,7 +887,7 @@ export const setSelectedAssets = mutation({
       await ctx.db
         .query("selectedAssets")
         .withIndex("byStratAndUser", (q) =>
-          q.eq("stratID", stratID).eq("userID", userID)
+          q.eq("stratID", stratID).eq("userID", userID),
         )
         .first()
     )?._id;
