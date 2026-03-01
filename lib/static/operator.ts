@@ -540,7 +540,7 @@ export const DEFENDER_PRIMARY_GADGETS = [
   {
     id: "shumikha_launcher",
     name: "Shumikha Launcher",
-    icon: ["/MISSING"],
+    icon: ["/gadgets/shumikha.png"],
     count: 20,
   },
   {
