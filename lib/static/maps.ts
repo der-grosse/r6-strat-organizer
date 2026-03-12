@@ -10,6 +10,9 @@ import ClubhouseB from "@/components/StratEditor/maps/clubhouse/B";
 import Consulate1F from "@/components/StratEditor/maps/consulate/1F";
 import Consulate2F from "@/components/StratEditor/maps/consulate/2F";
 import ConsulateB from "@/components/StratEditor/maps/consulate/B";
+import LairB from "@/components/StratEditor/maps/lair/b";
+import Lair1F from "@/components/StratEditor/maps/lair/1f";
+import Lair2F from "@/components/StratEditor/maps/lair/2f";
 import { R6Map } from "../types/strat.types";
 
 const MAPS: R6Map[] = [
@@ -132,9 +135,9 @@ const MAPS: R6Map[] = [
     name: "Lair",
     sites: ["2F R6 Room", "1F Bunks", "1F Armory", "B Lab"],
     floors: [
-      { floor: "B", src: "/map_blueprints/lair/b.png" },
-      { floor: "1F", src: "/map_blueprints/lair/1f.png" },
-      { floor: "2F", src: "/map_blueprints/lair/2f.png" },
+      { floor: "B", src: "/map_blueprints/lair/b.png", clickables: LairB },
+      { floor: "1F", src: "/map_blueprints/lair/1f.png", clickables: Lair1F },
+      { floor: "2F", src: "/map_blueprints/lair/2f.png", clickables: Lair2F },
     ],
   },
   {
