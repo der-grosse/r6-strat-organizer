@@ -57,3 +57,7 @@ export function deepEqual(a: any, b: any): boolean {
 
   return true;
 }
+
+export function filterNull<T>(arr: (T | null | undefined)[]): T[] {
+  return arr.filter((item): item is T => Boolean(item));
+}

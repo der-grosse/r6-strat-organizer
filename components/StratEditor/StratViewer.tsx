@@ -9,7 +9,8 @@ import { FullTeam } from "@/lib/types/team.types";
 import { PlacedAsset } from "@/lib/types/asset.types";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { deepCopy } from "../Objects";
+import { deepCopy, filterNull } from "../Objects";
+import { DEFENDERS } from "@/lib/static/operator";
 
 export interface StratViewerProps {
   strat: Strat;
@@ -22,6 +23,8 @@ export default function StratViewer({
   strat,
   assetModifier,
 }: StratViewerProps) {
+  const bannedOperators = useQuery(api.bannedOps.get);
+
   const { renderAsset } = useMountAssets(
     { team, stratPositions: strat.stratPositions },
     {
@@ -47,8 +50,13 @@ export default function StratViewer({
 
   const { assets: clampedAssets, map: clampedMap } = useMemo(() => {
     if (!map) return { assets, map };
-    return removeUnusedFloors(assets, map);
-  }, [assets, map]);
+    const modifiedAssets = applyOperatorBans(
+      assets,
+      bannedOperators ?? [],
+      strat,
+    );
+    return removeUnusedFloors(modifiedAssets, map);
+  }, [assets, map, bannedOperators, strat]);
 
   return (
     <StratEditorCanvas
@@ -181,4 +189,47 @@ function getBoundingBox(
   const width = baseViewbox.width / (floorCount > 1 ? 2 : 1);
   const height = baseViewbox.height / (floorCount > 2 ? 2 : 1);
   return { x, y, width, height };
+}
+
+function applyOperatorBans(
+  assets: PlacedAsset[],
+  bannedOperators: string[],
+  strat: Strat,
+): PlacedAsset[] {
+  return filterNull(
+    assets.map((asset) => {
+      switch (asset.type) {
+        case "operator": {
+          if (!bannedOperators.includes(asset.operator)) return asset;
+          const stratPosition = strat.stratPositions.find(
+            (sp) => sp._id === asset.stratPositionID,
+          );
+          if (!stratPosition) return asset;
+          const op = stratPosition.pickedOperators.find(
+            (o) => !bannedOperators.includes(o.operator),
+          );
+          if (!op) return asset;
+          return { ...asset, operator: op.operator };
+        }
+        case "gadget": {
+          const operator = DEFENDERS.find(
+            (op) => "gadget" in op && op.gadget === asset.gadget,
+          )?.name;
+          if (!operator || !bannedOperators.includes(operator)) return asset;
+          const stratPosition = strat.stratPositions.find(
+            (sp) => sp._id === asset.stratPositionID,
+          );
+          if (!stratPosition) return asset;
+          const hasValidOperator = stratPosition.pickedOperators.some(
+            (o) => !bannedOperators.includes(o.operator),
+          );
+          // if no other valid operator is available, keep the gadget so that user can select alternative themself
+          if (!hasValidOperator) return asset;
+          return null;
+        }
+        default:
+          return asset;
+      }
+    }),
+  );
 }
