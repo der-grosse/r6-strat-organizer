@@ -1,4 +1,5 @@
 import Operator from "../assets/Operator";
+import Textbox from "../assets/Textbox";
 import { useCallback, useMemo, useState } from "react";
 import GadgetIcon from "../../general/GadgetIcon";
 import AssetOutline from "../assets/AssetOutline";
@@ -8,6 +9,15 @@ import Explosion from "../assets/Explosion";
 import WoodenBarricade from "../../icons/woodenBarricade";
 import { useUser } from "../../context/UserContext";
 import ColorPickerDialog from "../../general/ColorPickerDialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "../../ui/dialog";
+import { Button } from "../../ui/button";
+import { Textarea } from "../../ui/textarea";
 import { FullTeam, TeamMember } from "@/lib/types/team.types";
 import { StratPositions } from "@/lib/types/strat.types";
 import { PlacedAsset } from "@/lib/types/asset.types";
@@ -32,6 +42,11 @@ export default function useMountAssets(
   const [colorPickerAssets, setColorPickerAssets] = useState<
     PlacedAsset[] | null
   >(null);
+  const [textEditorOpen, setTextEditorOpen] = useState(false);
+  const [textEditorAsset, setTextEditorAsset] = useState<PlacedAsset | null>(
+    null,
+  );
+  const [textEditorValue, setTextEditorValue] = useState("");
 
   const colorPickerDialog = useMemo(
     () => (
@@ -57,6 +72,51 @@ export default function useMountAssets(
       />
     ),
     [colorPickerOpen, colorPickerAssets, updateAssets],
+  );
+
+  const textEditorDialog = useMemo(
+    () => (
+      <Dialog open={textEditorOpen} onOpenChange={setTextEditorOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Text</DialogTitle>
+          </DialogHeader>
+          <Textarea
+            value={textEditorValue}
+            onChange={(e) => setTextEditorValue(e.target.value)}
+            placeholder="Enter text..."
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey && textEditorAsset) {
+                e.preventDefault();
+                updateAssets([{ ...textEditorAsset, text: textEditorValue } as PlacedAsset]);
+                setTextEditorOpen(false);
+              }
+            }}
+            rows={3}
+            autoFocus
+          />
+          <DialogFooter>
+            <Button
+              variant="ghost"
+              onClick={() => setTextEditorOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                if (textEditorAsset) {
+                  updateAssets([{ ...textEditorAsset, text: textEditorValue } as PlacedAsset]);
+                  setTextEditorOpen(false);
+                }
+              }}
+            >
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    ),
+    [textEditorOpen, textEditorValue, textEditorAsset, updateAssets],
   );
 
   const renderAsset = useCallback(
@@ -85,6 +145,14 @@ export default function useMountAssets(
               >
                 <GadgetIcon id={asset.gadget} className="h-full w-full" />
               </AssetOutline>
+            );
+          case "textbox":
+            return (
+              <Textbox
+                asset={asset}
+                team={team}
+                stratPositions={stratPositions}
+              />
             );
           //@ts-expect-error -- for legacy types, should not occur after migration
           case "reinforcement":
@@ -170,6 +238,13 @@ export default function useMountAssets(
                 setColorPickerAssets(assets);
                 setColorPickerOpen(true);
               }}
+              openTextEditorForAsset={(asset) => {
+                setTextEditorAsset(asset);
+                setTextEditorValue(
+                  asset.type === "textbox" ? asset.text : "",
+                );
+                setTextEditorOpen(true);
+              }}
             />
           ) : undefined,
         asset: fullAsset,
@@ -178,7 +253,27 @@ export default function useMountAssets(
     [team, stratPositions],
   );
 
-  return { renderAsset, UI: colorPickerDialog };
+  const onAssetDoubleClick = useCallback(
+    (asset: PlacedAsset) => {
+      if (asset.type === "textbox") {
+        setTextEditorAsset(asset);
+        setTextEditorValue(asset.text);
+        setTextEditorOpen(true);
+      }
+    },
+    [],
+  );
+
+  return {
+    renderAsset,
+    onAssetDoubleClick,
+    UI: (
+      <>
+        {colorPickerDialog}
+        {textEditorDialog}
+      </>
+    ),
+  };
 }
 
 export function getAssetColor(

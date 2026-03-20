@@ -14,6 +14,7 @@ interface SVGAssetProps {
     e: React.TouchEvent,
     handle: "resize" | "rotate" | "none"
   ) => void;
+  onDoubleClick?: (e: React.MouseEvent) => void;
   selected: boolean;
   children: React.ReactNode;
   ctrlKeyDown?: boolean;
@@ -28,6 +29,7 @@ export default function SVGAsset({
   rotation,
   onMouseDown,
   onTouchStart,
+  onDoubleClick,
   selected,
   children,
   ctrlKeyDown = false,
@@ -48,6 +50,10 @@ export default function SVGAsset({
       }}
       onClick={(e) => {
         e.stopPropagation();
+      }}
+      onDoubleClick={(e) => {
+        e.stopPropagation();
+        onDoubleClick?.(e);
       }}
       className={cn(!readonly && "select-none")}
       style={{ touchAction: "none" }}

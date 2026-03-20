@@ -10,6 +10,7 @@ export interface MultiOptionSelectorProps<
   options: Item[];
   selected: ID | null;
   emptyIcon?: React.ReactNode;
+  fixedSelectedIcon?: React.ReactNode;
   onSelect: (id: ID) => void;
 }
 
@@ -20,6 +21,7 @@ export default function MultiOptionSelector<
   options,
   selected,
   emptyIcon,
+  fixedSelectedIcon,
   onSelect,
 }: MultiOptionSelectorProps<ID, Item>) {
   const [open, setOpen] = useState(false);
@@ -127,7 +129,11 @@ export default function MultiOptionSelector<
               setOpen(false);
             }}
           >
-            {option.icon}
+            {!open &&
+            fixedSelectedIcon &&
+            option.id === selectedOption?.id
+              ? fixedSelectedIcon
+              : option.icon}
           </ItemButton>
         ))}
       </div>

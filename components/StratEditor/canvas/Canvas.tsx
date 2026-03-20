@@ -37,6 +37,7 @@ interface CanvasProps<A extends CanvasAsset> {
   selectedAssets: { assetID: A["_id"]; userID: TeamMember["_id"] }[];
   onSelect: (selected: A["_id"][]) => void;
   onDeselect: (selected: A["_id"][]) => void;
+  onAssetDoubleClick?: (asset: A) => void;
   readonly?: boolean;
   showFloorNames: boolean;
 }
@@ -56,6 +57,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
   selectedAssets,
   onSelect,
   onDeselect,
+  onAssetDoubleClick,
   readonly,
   showFloorNames,
 }: Readonly<CanvasProps<A>>) {
@@ -748,6 +750,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
               onTouchStart={(e, handle) =>
                 handleTouchStart(e, asset._id, handle)
               }
+              onDoubleClick={() => onAssetDoubleClick?.(asset)}
               selected={userSelectedAssets.includes(asset._id)}
               ctrlKeyDown={ctrlKeyDown}
               menu={render.menu}

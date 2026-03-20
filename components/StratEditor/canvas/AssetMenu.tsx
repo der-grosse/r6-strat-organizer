@@ -8,7 +8,20 @@ import { PlacedAsset } from "@/lib/types/asset.types";
 import { StratPositions } from "@/lib/types/strat.types";
 import { FullTeam } from "@/lib/types/team.types";
 import { cn } from "@/lib/utils";
-import { Brush, EyeOff, Trash, UserRound, UserRoundPen } from "lucide-react";
+import {
+  ALargeSmall,
+  Ban,
+  Brush,
+  CircleSlash,
+  EyeOff,
+  Minus,
+  Pencil,
+  Plus,
+  TextCursorInput,
+  Trash,
+  UserRound,
+  UserRoundPen,
+} from "lucide-react";
 import { Fragment } from "react";
 import MultiOptionSelector from "./MultiOptionSelector";
 import Reinforcement from "@/components/icons/reinforcement";
@@ -24,6 +37,7 @@ export interface AssetMenuProps {
   updateAssets: (assets: PlacedAsset[]) => void;
   deleteAssets: (assets: PlacedAsset[]) => void;
   openColorPickerForAssets: (assets: PlacedAsset[]) => void;
+  openTextEditorForAsset?: (asset: PlacedAsset) => void;
 }
 
 export default function AssetMenu({
@@ -33,6 +47,7 @@ export default function AssetMenu({
   updateAssets,
   deleteAssets,
   openColorPickerForAssets,
+  openTextEditorForAsset,
 }: AssetMenuProps) {
   const assetStratPosition = stratPositions.find((op) =>
     selectedAssets.every((asset) => asset.stratPositionID === op._id),
@@ -78,7 +93,11 @@ export default function AssetMenu({
                           updateAssets(
                             selectedAssets.map((asset) => ({
                               ...asset,
-                              stratPositionID: stratPositionOfMember._id,
+                              stratPositionID:
+                                asset.stratPositionID ===
+                                stratPositionOfMember._id
+                                  ? undefined
+                                  : stratPositionOfMember._id,
                               customColor: undefined,
                             })),
                           );
@@ -367,6 +386,101 @@ export default function AssetMenu({
           <div key={`divider-${index}`} className="bg-border w-[1px] h-6" />,
         );
         break;
+      case "text-edit": {
+        const textboxAsset = selectedAssets.find((a) => a.type === "textbox");
+        if (textboxAsset && openTextEditorForAsset) {
+          sections.push(
+            <Button
+              key="text-edit"
+              size="icon"
+              variant="ghost"
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={() => openTextEditorForAsset(textboxAsset)}
+            >
+              <TextCursorInput />
+            </Button>,
+          );
+        }
+        break;
+      }
+      case "font-size": {
+        const textAssets = selectedAssets.filter((a) => a.type === "textbox");
+        if (textAssets.length > 0) {
+          sections.push(
+            <MultiOptionSelector
+              key="font-size"
+              options={[4, 8, 10, 12, 14, 16, 24, 32, 48, 72, 144].map((e) => ({
+                label: e.toString(),
+                id: e,
+                icon: e,
+              }))}
+              onSelect={(fontSize) =>
+                updateAssets(
+                  selectedAssets.map((asset) =>
+                    asset.type === "textbox"
+                      ? {
+                          ...asset,
+                          fontSize: Number(fontSize),
+                        }
+                      : asset,
+                  ),
+                )
+              }
+              selected={
+                textAssets[0].type === "textbox" ? textAssets[0].fontSize : null
+              }
+              fixedSelectedIcon={<ALargeSmall className="size-6" />}
+            />,
+          );
+        }
+        break;
+      }
+      case "text-background": {
+        const textAssets = selectedAssets.filter((a) => a.type === "textbox");
+        if (textAssets.length > 0) {
+          const currentBg =
+            textAssets[0].type === "textbox"
+              ? (textAssets[0].background ?? "none")
+              : "none";
+          sections.push(
+            <MultiOptionSelector
+              key="text-background"
+              options={[
+                {
+                  id: "none" as const,
+                  label: "No background",
+                  icon: <Ban className="size-4" />,
+                },
+                {
+                  id: "light" as const,
+                  label: "Light background",
+                  icon: (
+                    <div className="w-4 h-4 rounded-sm bg-white border border-neutral-300" />
+                  ),
+                },
+                {
+                  id: "dark" as const,
+                  label: "Dark background",
+                  icon: (
+                    <div className="w-4 h-4 rounded-sm bg-black border border-neutral-600" />
+                  ),
+                },
+              ]}
+              selected={currentBg}
+              onSelect={(id) => {
+                updateAssets(
+                  selectedAssets.map((asset) =>
+                    asset.type === "textbox"
+                      ? { ...asset, background: id }
+                      : asset,
+                  ),
+                );
+              }}
+            />,
+          );
+        }
+        break;
+      }
       case "delete":
         sections.push(
           <Button
@@ -385,7 +499,7 @@ export default function AssetMenu({
   return (
     <div
       className={cn(
-        "absolute bottom-[110%] left-[50%] -translate-x-1/2 bg-muted text-muted-foreground rounded flex items-center justify-center scale-200 origin-bottom z-100 h-9",
+        "absolute bottom-[110%] left-[50%] -translate-x-1/2 bg-muted text-muted-foreground rounded-lg flex items-center justify-center scale-200 origin-bottom z-100 h-9",
       )}
       onMouseDown={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}
@@ -402,6 +516,9 @@ type MenuItemID =
   | "rotation-type"
   | "door-type"
   | "hatch-type"
+  | "text-edit"
+  | "font-size"
+  | "text-background"
   | "delete"
   | "divider";
 const MENU_ITEM_IDS_ORDER: MenuItemID[] = [
@@ -412,6 +529,9 @@ const MENU_ITEM_IDS_ORDER: MenuItemID[] = [
   "hatch-type",
   "rotation-type",
   "door-type",
+  "text-edit",
+  "font-size",
+  "text-background",
   "divider",
   "delete",
 ];
@@ -443,6 +563,11 @@ function getMenuItemsIDs(assets: PlacedAsset[]): MenuItemID[] {
     }
     if (getDoorType(asset)) {
       ids.add("door-type");
+    }
+    if (asset.type === "textbox") {
+      ids.add("text-edit");
+      ids.add("font-size");
+      ids.add("text-background");
     }
   }
   return MENU_ITEM_IDS_ORDER.filter((id) => ids.has(id)).filter(

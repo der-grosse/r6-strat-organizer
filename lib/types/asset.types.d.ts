@@ -33,7 +33,14 @@ export interface GadgetAsset extends BaseAsset {
   gadget: DefenderSecondaryGadget | PrimaryGadget["id"];
 }
 
-export type Asset = LayoutAsset | OperatorAsset | GadgetAsset;
+export interface TextboxAsset extends BaseAsset {
+  type: "textbox";
+  text: string;
+  fontSize: number;
+  background: "none" | "light" | "dark";
+}
+
+export type Asset = LayoutAsset | OperatorAsset | GadgetAsset | TextboxAsset;
 
 export type PlacedAsset = Asset & {
   position: Position;

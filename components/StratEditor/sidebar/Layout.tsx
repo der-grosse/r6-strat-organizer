@@ -5,8 +5,14 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Explosion from "../assets/Explosion";
 import WoodenBarricade from "@/components/icons/woodenBarricade";
-import { Asset, PlacedAsset, LayoutAsset } from "@/lib/types/asset.types";
+import {
+  Asset,
+  PlacedAsset,
+  LayoutAsset,
+  TextboxAsset,
+} from "@/lib/types/asset.types";
 import DraggableAssetButton from "./DraggableAssetButton";
+import { Type } from "lucide-react";
 
 export interface StratEditorLayoutSidebarProps {
   onAssetAdd: (asset: Omit<Asset & Partial<PlacedAsset>, "_id">) => void;
@@ -100,6 +106,27 @@ export default function StratEditorLayoutSidebar(
             }
           >
             <Explosion />
+          </DraggableAssetButton>
+          <Badge className="sticky top-0 w-full col-span-full">
+            Annotations
+          </Badge>
+          <DraggableAssetButton
+            variant="outline"
+            size="unset"
+            key="textbox"
+            className="p-1 h-auto aspect-square"
+            onAssetAdd={props.onAssetAdd}
+            asset={
+              {
+                type: "textbox",
+                text: "Text",
+                fontSize: 16,
+                background: "none",
+                size: { width: 80, height: 40 },
+              } as Omit<TextboxAsset, "_id">
+            }
+          >
+            <Type className="size-full" />
           </DraggableAssetButton>
         </div>
       </ScrollArea>

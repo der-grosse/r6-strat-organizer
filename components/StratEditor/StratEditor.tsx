@@ -19,6 +19,7 @@ import {
   LayoutAsset,
   OperatorAsset,
   PlacedAsset,
+  TextboxAsset,
 } from "@/lib/types/asset.types";
 import { Id } from "@/convex/_generated/dataModel";
 import { ReactMutation, useMutation, useQuery } from "convex/react";
@@ -211,7 +212,7 @@ export function StratEditor({
     },
   ]);
 
-  const { renderAsset, UI } = useMountAssets(
+  const { renderAsset, onAssetDoubleClick, UI } = useMountAssets(
     { team, stratPositions: strat.stratPositions },
     {
       deleteAssets(delAssets) {
@@ -385,6 +386,7 @@ export function StratEditor({
             );
           }}
           renderAsset={renderAsset}
+          onAssetDoubleClick={onAssetDoubleClick}
           showFloorNames={strat.showFloorNames}
         />
       )}
@@ -590,7 +592,7 @@ function convertPlacedAssetToAPI<
     posX: asset.position.x,
     posY: asset.position.y,
     rotation: asset.rotation,
-    stratPositionID: asset.stratPositionID,
+    stratPositionID: asset.stratPositionID ?? null,
 
     type: asset.type,
     operator:
@@ -612,6 +614,18 @@ function convertPlacedAssetToAPI<
     placedOn:
       asset.type === "layout"
         ? ((asset as Omit<LayoutAsset, "_id">).placedOn ?? null)
+        : undefined,
+    text:
+      asset.type === "textbox"
+        ? (asset as Omit<TextboxAsset, "_id">).text
+        : undefined,
+    fontSize:
+      asset.type === "textbox"
+        ? (asset as Omit<TextboxAsset, "_id">).fontSize
+        : undefined,
+    background:
+      asset.type === "textbox"
+        ? (asset as Omit<TextboxAsset, "_id">).background
         : undefined,
   };
 }

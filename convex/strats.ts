@@ -710,6 +710,9 @@ export const getAssets = query({
           iconType: asset.iconType,
           gadget: asset.gadget,
           placedOn: asset.placedOn,
+          text: asset.text,
+          fontSize: asset.fontSize,
+          background: asset.background,
 
           position: { x: asset.posX, y: asset.posY },
           size: { width: asset.width, height: asset.height },
@@ -737,6 +740,9 @@ export const addAsset = mutation({
     iconType: v.optional(v.string()),
     gadget: v.optional(v.string()),
     placedOn: v.optional(v.nullable(v.string())),
+    text: v.optional(v.string()),
+    fontSize: v.optional(v.number()),
+    background: v.optional(v.string()),
   },
   async handler(ctx, args) {
     const { activeTeamID } = await requireUser(ctx);
@@ -763,6 +769,9 @@ export const addAsset = mutation({
       iconType: args.iconType,
       gadget: args.gadget,
       placedOn: args.placedOn ?? undefined,
+      text: args.text,
+      fontSize: args.fontSize,
+      background: args.background,
     });
     return { success: true, placedAssetID };
   },
@@ -788,6 +797,9 @@ export const updateAssets = mutation({
         iconType: v.optional(v.string()),
         gadget: v.optional(v.string()),
         placedOn: v.optional(v.nullable(v.string())),
+        text: v.optional(v.string()),
+        fontSize: v.optional(v.number()),
+        background: v.optional(v.string()),
       }),
     ),
   },
@@ -821,6 +833,11 @@ export const updateAssets = mutation({
         ...(asset.gadget !== undefined ? { gadget: asset.gadget } : {}),
         ...(asset.placedOn !== undefined
           ? { placedOn: asset.placedOn ?? undefined }
+          : {}),
+        ...(asset.text !== undefined ? { text: asset.text } : {}),
+        ...(asset.fontSize !== undefined ? { fontSize: asset.fontSize } : {}),
+        ...(asset.background !== undefined
+          ? { background: asset.background }
           : {}),
       });
     }
