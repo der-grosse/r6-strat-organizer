@@ -9,6 +9,7 @@ import {
   GripVertical,
   MoreHorizontal,
   Pencil,
+  Slash,
   Trash2,
 } from "lucide-react";
 import Link from "next/link";
@@ -54,9 +55,9 @@ const TABLE_SIZES = {
   handle: "5%",
   map: "10%",
   site: "15%",
-  name: "35%",
+  name: "30%",
   ops: "20%",
-  filters: "10%",
+  filters: "15%",
   actions: "5%",
 };
 
@@ -114,11 +115,12 @@ export default function AllStratsPage() {
           <div className="font-bold" style={{ width: TABLE_SIZES.name }}>
             Name
           </div>
+          <div
+            className="font-bold"
+            style={{ width: TABLE_SIZES.filters }}
+          ></div>
           <div className="font-bold pl-1" style={{ width: TABLE_SIZES.ops }}>
             Operators
-          </div>
-          <div className="font-bold" style={{ width: TABLE_SIZES.filters }}>
-            Filter
           </div>
           <div
             className="font-bold pl-2"
@@ -355,6 +357,22 @@ function StratItem({
         )}
       </div>
       <div
+        className="flex justify-end pr-4"
+        style={{ width: TABLE_SIZES.filters }}
+      >
+        {strat.filters?.attackers?.attackers.map((op) => (
+          <div className="relative" key={op}>
+            <OperatorIcon op={op} />
+            {((strat.filters?.attackers?.triggerOn === "banned" &&
+              strat.filters.attackers.action === "show") ||
+              (strat.filters?.attackers?.triggerOn === "available" &&
+                strat.filters.attackers.action === "hide")) && (
+              <Slash className="size-8 absolute top-0 left-0 opacity-70 text-destructive" />
+            )}
+          </div>
+        ))}
+      </div>
+      <div
         style={{ width: TABLE_SIZES.ops }}
         className="flex gap-1 -my-2 overflow-hidden"
       >
@@ -382,9 +400,6 @@ function StratItem({
               className={isPowerPosition ? undefined : "grayscale scale-75"}
             />
           ))}
-      </div>
-      <div className="flex" style={{ width: TABLE_SIZES.filters }}>
-        Filters
       </div>
       <div
         className="flex justify-end"
