@@ -16,15 +16,18 @@ import { toast } from "sonner";
 import { Id } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { ReactNode } from "react";
 
 interface DeleteStratDialogProps {
   stratID: Id<"strats">;
   stratName: string;
+  trigger?: ReactNode;
 }
 
 export function DeleteStratDialog({
   stratID,
   stratName,
+  trigger,
 }: Readonly<DeleteStratDialogProps>) {
   const archiveStrat = useMutation(api.strats.archive);
 
@@ -49,9 +52,11 @@ export function DeleteStratDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="cursor-pointer">
-          <Trash2 className="h-4 w-4" />
-        </Button>
+        {trigger ?? (
+          <Button variant="ghost" size="icon" className="cursor-pointer">
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

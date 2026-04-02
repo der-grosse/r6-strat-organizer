@@ -18,6 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import {
   FolderPen,
+  Funnel,
   Link,
   Map,
   MapPinned,
@@ -38,13 +39,15 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import AttackerFilter from "./AttackerFilter";
+import SidebarLabeledToggle from "@/components/ui/sidebarLabeledToggle";
 
 export interface StratEditorMetaSidebarProps {
   strat: Strat;
 }
 
 export default function StratEditorMetaSidebar(
-  props: StratEditorMetaSidebarProps
+  props: StratEditorMetaSidebarProps,
 ) {
   const updateStrat = useMutation(api.strats.update);
   const archiveStrat = useMutation(api.strats.archive);
@@ -55,10 +58,10 @@ export default function StratEditorMetaSidebar(
   const [name, setName] = useState(props.strat.name);
   const [description, setDescription] = useState(props.strat.description);
   const [showFloorNames, setShowFloorNames] = useState(
-    props.strat.showFloorNames ?? true
+    props.strat.showFloorNames ?? true,
   );
   const [hiddenFloors, setHiddenFloors] = useState(
-    props.strat.hiddenFloors || []
+    props.strat.hiddenFloors || [],
   );
 
   // update local state when strat prop changes
@@ -174,97 +177,38 @@ export default function StratEditorMetaSidebar(
             <Map className="text-muted-foreground" />
             <Label className="text-muted-foreground">
               Map Settings
-              <span className="-ml-1 text-xs font-normal text-muted-foreground opacity-75">
-                (disabled for external editor)
-              </span>
+              {props.strat.drawingID && (
+                <span className="-ml-1 text-xs font-normal text-muted-foreground opacity-75">
+                  (disabled for external editor)
+                </span>
+              )}
             </Label>
           </div>
 
           {/* show floor names */}
-          <div className="flex flex-row flex-wrap gap-2 rounded-md border bg-muted/50 p-1">
-            <Label className="text-muted-foreground p-1">
-              Show Floor Names
-            </Label>
-            <div className="flex-1" />
-            <ButtonGroup>
-              <Button
-                variant="outline"
-                size="sm"
-                className={cn(
-                  "rounded-md px-3",
-                  !showFloorNames &&
-                    "opacity-50 bg-secondary/10 hover:bg-secondary/20"
-                )}
-                aria-pressed={showFloorNames}
-                disabled={!usesInternalEditor}
-                onClick={() => toggleShowFloorNames(true)}
-              >
-                Yes
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className={cn(
-                  "rounded-md px-3",
-                  showFloorNames &&
-                    "opacity-50 bg-secondary/10 hover:bg-secondary/20"
-                )}
-                aria-pressed={!showFloorNames}
-                disabled={!usesInternalEditor}
-                onClick={() => toggleShowFloorNames(false)}
-              >
-                No
-              </Button>
-            </ButtonGroup>
+          <SidebarLabeledToggle
+            className="rounded-md border bg-muted/50 p-1"
+            label="Show Floor Names"
+            labels={["Yes", "No"]}
+            active={showFloorNames}
+            onChange={toggleShowFloorNames}
+            disabled={!usesInternalEditor}
+          />
+
+          <Separator />
+          <div className="flex items-center gap-2">
+            <Funnel className="text-muted-foreground" />
+            <Label className="text-muted-foreground">Filters</Label>
           </div>
-
-          {/* visible floors */}
-          {/* {selectedMapFloors.length > 0 && (
-            <div className="flex flex-wrap justify-start gap-2 rounded-md border bg-muted/50 p-1">
-              <Label className="text-muted-foreground p-1">
-                Visible Floors
-              </Label>
-              <div className="flex-1" />
-              <ButtonGroup>
-                {selectedMapFloors.map((floor, index) => {
-                  const isHidden = hiddenFloors.includes(index);
-                  const isVisible = !isHidden;
-                  const button = (
-                    <Button
-                      key={`${floor.floor}-${index}`}
-                      variant="outline"
-                      size="sm"
-                      className={cn(
-                        "rounded-md px-3",
-                        !isVisible &&
-                          "opacity-50 bg-secondary/10 hover:bg-secondary/20"
-                      )}
-                      aria-pressed={isVisible}
-                      onClick={() => toggleHiddenFloor(index, isVisible)}
-                    >
-                      {floor.floor}
-                    </Button>
-                  );
-
-                  if (
-                    selectedMapFloors.length === hiddenFloors.length + 1 &&
-                    isVisible
-                  ) {
-                    return (
-                      <Tooltip key={`${floor.floor}-${index}`}>
-                        <TooltipTrigger asChild>{button}</TooltipTrigger>
-                        <TooltipContent side="bottom">
-                          You must have at least one floor visible.
-                        </TooltipContent>
-                      </Tooltip>
-                    );
-                  }
-
-                  return button;
-                })}
-              </ButtonGroup>
-            </div>
-          )} */}
+          <AttackerFilter
+            filter={props.strat.filters?.attackers}
+            onChange={(attackers) => {
+              updateStrat({
+                _id: props.strat._id,
+                filters: { ...props.strat.filters, attackers },
+              });
+            }}
+          />
 
           <Separator />
           <div className="flex items-center gap-2">

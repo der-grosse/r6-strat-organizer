@@ -3,11 +3,18 @@ import { useFilter } from "@/components/context/FilterContext";
 import OperatorIcon from "@/components/general/OperatorIcon";
 import { Button } from "@/components/ui/button";
 import { DEFENDERS } from "@/lib/static/operator";
-import { Copy, Eye, GripVertical, Pencil } from "lucide-react";
+import {
+  Copy,
+  Eye,
+  GripVertical,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CreateStratDialog } from "./CreateStratDialog";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
 import {
@@ -37,6 +44,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const TABLE_SIZES = {
   handle: "5%",
@@ -44,7 +56,8 @@ const TABLE_SIZES = {
   site: "15%",
   name: "35%",
   ops: "20%",
-  actions: "15%",
+  filters: "10%",
+  actions: "5%",
 };
 
 export default function AllStratsPage() {
@@ -65,8 +78,8 @@ export default function AllStratsPage() {
           acc[strat.strat.map].push(strat);
           return acc;
         },
-        {} as Record<string, typeof strats>
-      )
+        {} as Record<string, typeof strats>,
+      ),
     );
   }, [strats]);
 
@@ -104,12 +117,13 @@ export default function AllStratsPage() {
           <div className="font-bold pl-1" style={{ width: TABLE_SIZES.ops }}>
             Operators
           </div>
+          <div className="font-bold" style={{ width: TABLE_SIZES.filters }}>
+            Filter
+          </div>
           <div
             className="font-bold pl-2"
             style={{ width: TABLE_SIZES.actions }}
-          >
-            Actions
-          </div>
+          ></div>
         </div>
         {!strats || !team ? (
           <Skeleton className="col-span-full h-8 mb-2" amount={12} />
@@ -151,7 +165,7 @@ function MapStrats({
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -161,10 +175,10 @@ function MapStrats({
 
     if (active.id !== over?.id) {
       const oldIndex = optimisticStrats.findIndex(
-        (item) => item.strat._id === active.id
+        (item) => item.strat._id === active.id,
       );
       const newIndex = optimisticStrats.findIndex(
-        (item) => item.strat._id === over?.id
+        (item) => item.strat._id === over?.id,
       );
 
       // Optimistically update the UI
@@ -173,7 +187,7 @@ function MapStrats({
         newStrats.map((strat, i) => ({
           ...strat,
           mapIndex: i,
-        }))
+        })),
       );
 
       try {
@@ -245,28 +259,53 @@ function StratItem({
   };
 
   const [duplicateLoading, setDuplicateLoading] = useState(false);
+  const [actionsOpen, setActionsOpen] = useState(false);
+  const rowClickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // edit strat name when double clicking
   const [editNameOfStrat, setEditNameOfStrat] = useState<Id<"strats"> | null>(
-    null
+    null,
   );
   const [editNameValue, setEditNameValue] = useState("");
   const updateStrat = useMutation(api.strats.update);
+
+  const openStrat = async () => {
+    if (disabled) return;
+    if (isLeading) {
+      await setActiveStrat({ stratID: strat._id });
+      router.push("/");
+      return;
+    }
+    router.push(`/strat/${strat._id}`);
+  };
+
+  const handleRowClick = () => {
+    if (disabled) return;
+    if (rowClickTimeoutRef.current) {
+      clearTimeout(rowClickTimeoutRef.current);
+    }
+    // Delay row open slightly so double-click name editing can cancel navigation.
+    rowClickTimeoutRef.current = setTimeout(() => {
+      void openStrat();
+    }, 180);
+  };
 
   return (
     <div
       key={strat._id}
       ref={setNodeRef}
       style={style}
+      onClick={handleRowClick}
       className={cn(
         { "opacity-25": disabled },
-        "flex items-center hover:bg-muted/50 py-2 border-y border-border border-collapse font-medium"
+        "flex items-center hover:bg-muted/50 py-2 border-y border-border border-collapse font-medium cursor-pointer",
       )}
     >
       <div style={{ width: TABLE_SIZES.handle }} className="pl-2">
         <div
           {...attributes}
           {...listeners}
+          onClick={(e) => e.stopPropagation()}
           className="cursor-grab hover:cursor-grabbing"
         >
           <GripVertical className="h-4 w-4 text-gray-400" />
@@ -281,9 +320,11 @@ function StratItem({
       <div style={{ width: TABLE_SIZES.site }}>{strat.site}</div>
       <div
         style={{ width: TABLE_SIZES.name }}
-        className="h-full"
         onDoubleClick={(e) => {
           // edit strat name when double clicking
+          if (rowClickTimeoutRef.current) {
+            clearTimeout(rowClickTimeoutRef.current);
+          }
           setEditNameOfStrat(strat._id);
           setEditNameValue(strat.name);
           e.stopPropagation();
@@ -293,6 +334,7 @@ function StratItem({
           <Input
             value={editNameValue}
             onChange={(e) => setEditNameValue(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
             onBlur={() => {
               setEditNameOfStrat(null);
               updateStrat({ _id: strat._id, name: editNameValue });
@@ -301,6 +343,8 @@ function StratItem({
               if (e.key === "Enter") {
                 setEditNameOfStrat(null);
                 updateStrat({ _id: strat._id, name: editNameValue });
+              } else if (e.key === "Escape") {
+                setEditNameOfStrat(null);
               }
             }}
             autoFocus
@@ -322,7 +366,7 @@ function StratItem({
             isPowerPosition: stratPosition.isPowerPosition,
             _id: stratPosition._id,
             position: team.teamPositions.find(
-              (p) => p._id === stratPosition.teamPositionID
+              (p) => p._id === stratPosition.teamPositionID,
             ),
           }))
           .filter(({ ops }) => ops.length)
@@ -339,61 +383,88 @@ function StratItem({
             />
           ))}
       </div>
-      <div className="flex gap-1 -my-2" style={{ width: TABLE_SIZES.actions }}>
-        {(() => {
-          const button = (
+      <div className="flex" style={{ width: TABLE_SIZES.filters }}>
+        Filters
+      </div>
+      <div
+        className="flex justify-end"
+        style={{ width: TABLE_SIZES.actions }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Popover open={actionsOpen} onOpenChange={setActionsOpen}>
+          <PopoverTrigger asChild>
             <Button
               variant="ghost"
               size="icon"
-              className="cursor-pointer"
+              className="cursor-pointer -my-1"
+            >
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent align="end" className="w-44 p-1">
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
               onClick={async () => {
-                if (isLeading) {
-                  await setActiveStrat({ stratID: strat._id });
-                  router.push("/");
+                setActionsOpen(false);
+                await openStrat();
+              }}
+            >
+              <Eye className="h-4 w-4" />
+              Open
+            </Button>
+            <Link
+              href={`/editor/${strat._id}`}
+              onClick={() => setActionsOpen(false)}
+              className="block"
+            >
+              <Button variant="ghost" className="w-full justify-start">
+                <Pencil className="h-4 w-4" />
+                Edit
+              </Button>
+            </Link>
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={async () => {
+                if (duplicateLoading) return;
+                setDuplicateLoading(true);
+                try {
+                  const res = await copyStrat({
+                    stratID: strat._id,
+                  });
+                  if (!res.success) {
+                    toast.error(`Error copying strat: ${res.error}`);
+                  } else {
+                    setActionsOpen(false);
+                    router.push(`/editor/${res.stratID}`);
+                  }
+                } catch (error) {
+                  console.error("Error copying strat:", error);
+                  toast.error("Error copying strat");
+                } finally {
+                  setDuplicateLoading(false);
                 }
               }}
             >
-              <Eye />
+              {duplicateLoading ? <Spinner /> : <Copy className="h-4 w-4" />}
+              Duplicate
             </Button>
-          );
-          if (isLeading) {
-            return button;
-          } else {
-            return <Link href={`/strat/${strat._id}`}>{button}</Link>;
-          }
-        })()}
-        <Link href={`/editor/${strat._id}`}>
-          <Button variant="ghost" size="icon" className="cursor-pointer">
-            <Pencil />
-          </Button>
-        </Link>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="cursor-pointer"
-          onClick={async () => {
-            if (duplicateLoading) return;
-            setDuplicateLoading(true);
-            try {
-              const res = await copyStrat({
-                stratID: strat._id,
-              });
-              if (!res.success) {
-                toast.error(`Error copying strat: ${res.error}`);
-              } else {
-                router.push(`/editor/${res.stratID}`);
+            <DeleteStratDialog
+              stratID={strat._id}
+              stratName={strat.name}
+              trigger={
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete
+                </Button>
               }
-            } catch (error) {
-              console.error("Error copying strat:", error);
-              toast.error("Error copying strat");
-            } finally {
-              setDuplicateLoading(false);
-            }
-          }}
-        >
-          {duplicateLoading ? <Spinner /> : <Copy />}
-        </Button>
-        <DeleteStratDialog stratID={strat._id} stratName={strat.name} />
+            />
+          </PopoverContent>
+        </Popover>
       </div>
     </div>
   );

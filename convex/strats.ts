@@ -82,6 +82,7 @@ export const list = query({
         mapIndex: strat.mapIndex,
         hiddenFloors: strat.hiddenFloors || [],
         showFloorNames: strat.showFloorNames ?? true,
+        filters: strat.filters,
         stratPositions: stratPositions
           .map((pos) => ({
             _id: pos._id,
@@ -143,6 +144,7 @@ export async function getStrat(
     mapIndex: stratDoc.mapIndex,
     showFloorNames: stratDoc.showFloorNames ?? true,
     hiddenFloors: stratDoc.hiddenFloors || [],
+    filters: stratDoc.filters,
     stratPositions: stratPositions
       .map((pos) => ({
         _id: pos._id,
@@ -215,6 +217,20 @@ export const update = mutation({
     drawingID: v.optional(v.nullable(v.string())),
     hiddenFloors: v.optional(v.array(v.number())),
     showFloorNames: v.optional(v.boolean()),
+    filters: v.optional(
+      v.nullable(
+        v.object({
+          attackers: v.optional(
+            v.object({
+              triggerOn: v.union(v.literal("banned"), v.literal("available")),
+              action: v.union(v.literal("hide"), v.literal("show")),
+              filterType: v.union(v.literal("any"), v.literal("all")),
+              attackers: v.array(v.string()),
+            }),
+          ),
+        }),
+      ),
+    ),
   },
   async handler(ctx, args) {
     const { activeTeamID } = await requireUser(ctx);
@@ -243,6 +259,9 @@ export const update = mutation({
       ...(args.showFloorNames !== undefined
         ? { showFloorNames: args.showFloorNames }
         : {}),
+      ...(args.filters !== undefined
+        ? { filters: args.filters ?? undefined }
+        : {}),
     });
     return { success: true };
   },
@@ -255,6 +274,18 @@ export const create = mutation({
     name: v.string(),
     description: v.string(),
     drawingID: v.optional(v.nullable(v.string())),
+    filters: v.optional(
+      v.object({
+        attackers: v.optional(
+          v.object({
+            triggerOn: v.union(v.literal("banned"), v.literal("available")),
+            action: v.union(v.literal("hide"), v.literal("show")),
+            filterType: v.union(v.literal("any"), v.literal("all")),
+            attackers: v.array(v.string()),
+          }),
+        ),
+      }),
+    ),
   },
   async handler(ctx, args) {
     const { activeTeamID } = await requireUser(ctx);
@@ -284,6 +315,7 @@ export const create = mutation({
       mapIndex: maxIndex + 1,
       hiddenFloors: [],
       showFloorNames: true,
+      filters: args.filters,
     });
 
     // create strat positions for each team position
@@ -370,6 +402,7 @@ export const createCopy = mutation({
       mapIndex,
       hiddenFloors: stratDoc.hiddenFloors,
       showFloorNames: stratDoc.showFloorNames,
+      filters: stratDoc.filters,
     });
 
     const stratPositionIDMap: Record<string, Id<"stratPositions">> = {};

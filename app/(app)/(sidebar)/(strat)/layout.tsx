@@ -38,6 +38,7 @@ import { cn } from "@/lib/utils";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { usePlayableStrats } from "@/lib/strats";
+import BannedOpsSelector from "./bannedOpsSelector";
 
 export default function StratsLayout({
   children,
@@ -47,7 +48,6 @@ export default function StratsLayout({
   const router = useRouter();
   const setActiveStrat = useMutation(api.activeStrat.set);
   const bannedOps = useQuery(api.bannedOps.get) || [];
-  const setBannedOps = useMutation(api.bannedOps.set);
   const { filter, setFilter, isLeading, setIsLeading } = useFilter();
   const playableStrats = usePlayableStrats(filter, bannedOps);
   const filteredStrats =
@@ -111,28 +111,7 @@ export default function StratsLayout({
                   </SidebarMenuItem>
                   {/* banned OPs selector */}
                   <SidebarMenuItem>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span>
-                          <OperatorPicker
-                            disabled={!isLeading}
-                            multiple
-                            selected={bannedOps}
-                            onChange={(bannedOps) =>
-                              setBannedOps({ operators: bannedOps })
-                            }
-                            trigger={SidebarMenuButton}
-                            modal={true}
-                          />
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent side="right">
-                        <p className="text-sm">Select operators to ban</p>
-                        <p className="text-xs text-muted-foreground">
-                          Can only be selected while leading active strat
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
+                    <BannedOpsSelector />
                   </SidebarMenuItem>
                 </SidebarMenu>
                 <div className="pr-2">

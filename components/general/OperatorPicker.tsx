@@ -1,5 +1,5 @@
 "use client";
-import { DEFENDERS } from "@/lib/static/operator";
+import { ATTACKERS, DEFENDERS } from "@/lib/static/operator";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import OperatorIcon from "./OperatorIcon";
 import { Check, ChevronRight } from "lucide-react";
@@ -13,6 +13,8 @@ import {
   CommandShortcut,
 } from "../ui/command";
 import { useCallback, useRef, useState } from "react";
+import { Separator } from "../ui/separator";
+import { filterNull } from "../Objects";
 
 export interface OperatorPickerProps<
   Multiple extends boolean,
@@ -27,14 +29,15 @@ export interface OperatorPickerProps<
   hideOps?: string[];
   popoverOffset?: number;
   disabled?: boolean;
+  side?: "defender" | "attacker" | "both";
 }
 
 export default function OperatorPicker<
   Multiple extends boolean = false,
-  Value extends Multiple extends true
-    ? string[]
-    : string | null = Multiple extends true ? string[] : string | null,
+  Value extends Multiple extends true ? string[] : string | null =
+    Multiple extends true ? string[] : string | null,
 >({
+  side,
   selected,
   trigger: Trigger,
   multiple,
@@ -57,21 +60,77 @@ export default function OperatorPicker<
       }, 200);
   }, [closeOnSelect]);
 
+  const operators = (() => {
+    const totalOps = [];
+    const selectedArray = multiple
+      ? (selected as string[])
+      : selected
+        ? [selected as string]
+        : [];
+    const selectedOps = selectedArray?.map(
+      (op) => [...DEFENDERS, ...ATTACKERS].find((o) => o.name === op)!,
+    );
+    totalOps.push(...selectedOps);
+    if (!side || side === "defender" || side === "both") {
+      totalOps.push(
+        ...DEFENDERS.filter(
+          (def) =>
+            !hideOps?.includes(def.name) && !selectedArray?.includes(def.name),
+        ),
+      );
+    }
+    if (!side || side === "attacker" || side === "both") {
+      totalOps.push(
+        ...ATTACKERS.filter(
+          (atk) =>
+            !hideOps?.includes(atk.name) && !selectedArray?.includes(atk.name),
+        ),
+      );
+    }
+    return totalOps;
+  })();
+
   return (
     <Popover modal={modal} open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild disabled={disabled}>
         <Trigger>
           {Array.isArray(selected) ? (
             selected.length ? (
-              selected
-                .map((op) => DEFENDERS.find((o) => o.name === op))
-                .filter(Boolean)
-                .map((op) => <OperatorIcon key={op!.name} op={op!} />)
+              (() => {
+                const selectedDefender = filterNull(
+                  selected.map((name) =>
+                    DEFENDERS.find((op) => op.name === name),
+                  ),
+                );
+                const selectedAttacker = filterNull(
+                  selected.map((name) =>
+                    ATTACKERS.find((op) => op.name === name),
+                  ),
+                );
+                return (
+                  <>
+                    {selectedDefender.map((op) => (
+                      <OperatorIcon key={op.name} op={op} className="-mx-1" />
+                    ))}
+                    {selectedDefender.length > 0 &&
+                      selectedAttacker.length > 0 && (
+                        <Separator orientation="vertical" />
+                      )}
+                    {selectedAttacker.map((op) => (
+                      <OperatorIcon key={op.name} op={op} className="-mx-1" />
+                    ))}
+                  </>
+                );
+              })()
             ) : (
               "Select banned OPs"
             )
           ) : selected ? (
-            <OperatorIcon op={DEFENDERS.find((o) => o.name === selected)!} />
+            <OperatorIcon
+              op={
+                [...DEFENDERS, ...ATTACKERS].find((o) => o.name === selected)!
+              }
+            />
           ) : (
             "Select banned OPs"
           )}
@@ -103,7 +162,8 @@ export default function OperatorPicker<
               >
                 <em>Clear</em>
               </CommandItem>
-              {DEFENDERS.filter((def) => !hideOps?.includes(def.name))
+              {operators
+                .filter((def) => !hideOps?.includes(def.name))
                 .toSorted((a) =>
                   Array.isArray(selected)
                     ? selected.includes(a.name)

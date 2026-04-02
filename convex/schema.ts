@@ -71,6 +71,18 @@ const schema = defineSchema({
     mapIndex: v.number(),
     showFloorNames: v.optional(v.boolean()),
     hiddenFloors: v.optional(v.array(v.number())),
+    filters: v.optional(
+      v.object({
+        attackers: v.optional(
+          v.object({
+            triggerOn: v.union(v.literal("banned"), v.literal("available")),
+            action: v.union(v.literal("hide"), v.literal("show")),
+            filterType: v.union(v.literal("any"), v.literal("all")),
+            attackers: v.array(v.string()),
+          }),
+        ),
+      }),
+    ),
   })
     .index("byTeam", ["teamID"])
     .index("byTeamAndMap", ["teamID", "map"])

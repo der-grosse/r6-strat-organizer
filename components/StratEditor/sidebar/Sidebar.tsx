@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import StratEditorOperatorsSidebar from "./Operator";
 import {
-  CircleUserRound,
+  ChessRook,
   DoorOpen,
   Fingerprint,
   Info,
@@ -229,7 +229,7 @@ export default function StratEditorSidebar(
         {/* operator assets - extra operators */}
         {!props.hideAssets && (
           <SidebarButton
-            icon={<CircleUserRound />}
+            icon={<ChessRook />}
             onClick={() => {
               setOpenTab("operator-assets");
               setSidebarOpen((open) =>

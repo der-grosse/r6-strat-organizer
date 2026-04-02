@@ -9,7 +9,7 @@ import { useMemo } from "react";
 export function filterPlayableStrats(
   strats: Strat[],
   filter: Filter,
-  bannedOps: string[]
+  bannedOps: string[],
 ) {
   return strats
     ?.filter((strat) => {
@@ -18,30 +18,51 @@ export function filterPlayableStrats(
       return true;
     })
     .map((strat) => {
-      const playable = (() => {
+      const powerPositionsPlayable = (() => {
         if (bannedOps.length > 0) {
           const positionUnplayable = strat.stratPositions.some(
             (position) =>
               position.isPowerPosition &&
               position.pickedOperators.length &&
               position.pickedOperators.every((op) =>
-                bannedOps.includes(op.operator)
-              )
+                bannedOps.includes(op.operator),
+              ),
           );
           if (positionUnplayable) return false;
         }
         return true;
       })();
+      const shouldHideDueToAttackerFilter = (() => {
+        if (
+          !strat.filters?.attackers ||
+          !strat.filters?.attackers?.attackers.length
+        )
+          return false;
+        const { attackers, action, filterType, triggerOn } =
+          strat.filters.attackers;
+        const isHit = (() => {
+          if (triggerOn === "banned") {
+            return attackers[filterType === "any" ? "some" : "every"]((op) =>
+              bannedOps.includes(op),
+            );
+          } else {
+            return attackers[filterType === "any" ? "some" : "every"](
+              (op) => !bannedOps.includes(op),
+            );
+          }
+        })();
+        return isHit ? action === "hide" : action === "show";
+      })();
       return {
         strat,
-        playable,
+        playable: powerPositionsPlayable && !shouldHideDueToAttackerFilter,
       };
     });
 }
 
 export function usePlayableStrats(
   filter: Filter,
-  bannedOps: string[] | undefined | null
+  bannedOps: string[] | undefined | null,
 ) {
   const strats = useQuery(api.strats.list, filter);
 
