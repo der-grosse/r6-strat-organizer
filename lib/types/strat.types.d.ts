@@ -41,6 +41,7 @@ export interface StratPositions {
   teamPositionID?: Id<"teamPositions"> | null;
   isPowerPosition: boolean;
   shouldBringShotgun: boolean;
+  fightsLongRange: boolean;
   index: number;
   pickedOperators: PickedOperator[];
 }

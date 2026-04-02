@@ -10,9 +10,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { GripVertical, Plus, X, Zap, ZapOff } from "lucide-react";
-import { CSS } from "@dnd-kit/utilities";
-import { useSortable } from "@dnd-kit/sortable";
+import { Crosshair, GripVertical, Plus, X, Zap, ZapOff } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -26,6 +24,7 @@ import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
+  useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { forwardRef, useState } from "react";
@@ -38,6 +37,7 @@ import { FullTeam } from "@/lib/types/team.types";
 import { Id } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { CSS } from "@dnd-kit/utilities";
 
 export interface StratPositionItemProps {
   stratID: Strat["_id"];
@@ -55,13 +55,13 @@ export default function StratPositionItem({
   const updateStratPosition = useMutation(api.strats.updateStratPosition);
   const updatePickedOperator = useMutation(api.strats.updatePickedOperator);
   const updatePickedOperatorIndex = useMutation(
-    api.strats.updatePickedOperatorIndex
+    api.strats.updatePickedOperatorIndex,
   );
   const deletePickedOperator = useMutation(api.strats.deletePickedOperator);
   const createPickedOperator = useMutation(api.strats.createPickedOperator);
 
   const [optimisticOps, setOptimisticOps] = useState(
-    stratPosition.pickedOperators
+    stratPosition.pickedOperators,
   );
   useEffect(() => {
     setOptimisticOps(stratPosition.pickedOperators);
@@ -71,7 +71,7 @@ export default function StratPositionItem({
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -86,7 +86,7 @@ export default function StratPositionItem({
         (item, index) => ({
           ...item,
           index,
-        })
+        }),
       );
       setOptimisticOps(newPositions);
 
@@ -110,11 +110,11 @@ export default function StratPositionItem({
         <div
           className={cn(
             "flex items-center w-full overflow-hidden",
-            hasError && "outline-2 outline-destructive rounded-md"
+            hasError && "outline-2 outline-destructive rounded-md",
           )}
         >
           <TeamPositionPicker
-            className="flex-1 px-2 overflow-hidden truncate w-[calc(100%_-_var(--spacing)_*_12)]"
+            className="flex-1 pl-2 pr-0 overflow-hidden truncate w-[calc(100%_-_var(--spacing)_*_12)]"
             popoverOffset={88}
             teamPositionID={stratPosition.teamPositionID}
             team={team}
@@ -125,12 +125,49 @@ export default function StratPositionItem({
               });
             }}
           />
+          <Separator
+            orientation="vertical"
+            className="h-full !h-6 bg-muted-foreground"
+          />
+          <Tooltip delayDuration={1000}>
+            <TooltipTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                className={cn(
+                  "px-2 -mr-1 !w-auto",
+                  stratPosition.fightsLongRange
+                    ? "text-primary"
+                    : "text-muted-foreground/50",
+                )}
+                onClick={() =>
+                  updateStratPosition({
+                    _id: stratPosition._id,
+                    fightsLongRange: !stratPosition.fightsLongRange,
+                  })
+                }
+              >
+                <Crosshair />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p className="text-sm">Fights long angles</p>
+              <p className="text-xs text-muted-foreground">
+                Indicate wether this role fights long angles and should probably
+                pick a DMR or at least not a primary shotgun.
+                <br />
+                This is just a hint to help with operator selection and does not
+                enforce any rules.
+              </p>
+            </TooltipContent>
+          </Tooltip>
           {/* rotation duties */}
           <Tooltip delayDuration={1000}>
             <TooltipTrigger className="size-9">
               <ShotgunToggle
                 shouldBringShotgun={stratPosition.shouldBringShotgun}
                 stratPositionID={stratPosition._id}
+                className="px-2 -mx-1 !w-auto"
               />
             </TooltipTrigger>
             <TooltipContent side="bottom">
@@ -148,9 +185,10 @@ export default function StratPositionItem({
                 size="icon"
                 variant="ghost"
                 className={cn(
+                  "pl-2 pr-1 -ml-1 !w-auto",
                   stratPosition.isPowerPosition
                     ? "text-primary"
-                    : "text-muted-foreground/50"
+                    : "text-muted-foreground/50",
                 )}
                 onClick={() =>
                   updateStratPosition({
@@ -405,8 +443,9 @@ const ShotgunToggle = forwardRef<
   {
     shouldBringShotgun: boolean;
     stratPositionID: Id<"stratPositions">;
+    className?: string;
   }
->(({ shouldBringShotgun, stratPositionID }, ref) => {
+>(({ shouldBringShotgun, stratPositionID, className }, ref) => {
   const updateStratPosition = useMutation(api.strats.updateStratPosition);
   return (
     <Button
@@ -420,12 +459,13 @@ const ShotgunToggle = forwardRef<
         });
       }}
       asChild
+      className={className}
     >
       <span>
         <Shotgun
           className={cn(
             "size-8 -mx-1 -my-2",
-            !shouldBringShotgun && "text-muted-foreground/50"
+            !shouldBringShotgun && "text-muted-foreground/50",
           )}
         />
       </span>

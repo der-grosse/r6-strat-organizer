@@ -89,6 +89,7 @@ export const list = query({
             teamPositionID: pos.teamPositionID,
             isPowerPosition: pos.isPowerPosition,
             shouldBringShotgun: pos.shouldBringShotgun,
+            fightsLongRange: pos.fightsLongRange ?? false,
             index: pos.index,
             pickedOperators: pickedOperators
               .filter((op) => op.stratPositionID === pos._id)
@@ -151,6 +152,7 @@ export async function getStrat(
         teamPositionID: pos.teamPositionID,
         isPowerPosition: pos.isPowerPosition,
         shouldBringShotgun: pos.shouldBringShotgun,
+        fightsLongRange: pos.fightsLongRange ?? false,
         index: pos.index,
         pickedOperators: pickedOperators
           .filter((op) => op.stratPositionID === pos._id)
@@ -331,6 +333,7 @@ export const create = mutation({
         index: teamPosition.index,
         isPowerPosition: false,
         shouldBringShotgun: false,
+        fightsLongRange: false,
       });
     }
 
@@ -343,6 +346,7 @@ export const create = mutation({
           index: i,
           isPowerPosition: false,
           shouldBringShotgun: false,
+          fightsLongRange: false,
         });
       }
     }
@@ -413,6 +417,7 @@ export const createCopy = mutation({
         teamPositionID: pos.teamPositionID,
         isPowerPosition: pos.isPowerPosition,
         shouldBringShotgun: pos.shouldBringShotgun,
+        fightsLongRange: pos.fightsLongRange,
         index: pos.index,
       });
       stratPositionIDMap[pos._id] = newPosID;
@@ -507,6 +512,7 @@ export const updateStratPosition = mutation({
     isPowerPosition: v.optional(v.boolean()),
     shouldBringShotgun: v.optional(v.boolean()),
     teamPositionID: v.optional(v.nullable(v.id("teamPositions"))),
+    fightsLongRange: v.optional(v.boolean()),
   },
   async handler(ctx, args) {
     const { activeTeamID } = await requireUser(ctx);
@@ -545,6 +551,9 @@ export const updateStratPosition = mutation({
         : {}),
       ...(args.teamPositionID !== undefined
         ? { teamPositionID: args.teamPositionID ?? undefined } // when null, remove it
+        : {}),
+      ...(args.fightsLongRange !== undefined
+        ? { fightsLongRange: args.fightsLongRange }
         : {}),
     });
     return { success: true };

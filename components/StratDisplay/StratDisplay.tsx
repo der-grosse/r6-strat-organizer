@@ -4,7 +4,7 @@ import {
   getGoogleDrawingsEditURL,
   getGoogleDrawingsPreviewURL,
 } from "@/lib/googleDrawings";
-import { Ban, Pencil } from "lucide-react";
+import { Ban, Crosshair, Pencil } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { useUser } from "../context/UserContext";
@@ -126,7 +126,30 @@ export default function StratDisplay(props: StratDisplayProps) {
               </Fragment>
             ))}
             {stratPosition?.shouldBringShotgun && (
-              <Shotgun className="size-8 ml-1" />
+              <Tooltip delayDuration={200}>
+                <TooltipTrigger>
+                  <Shotgun className="size-8 ml-1" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-center">
+                    You make rotates or other site setup, where you need soft
+                    destruction, bring a shotgun.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            )}
+            {stratPosition?.fightsLongRange && (
+              <Tooltip delayDuration={200}>
+                <TooltipTrigger>
+                  <Crosshair className="size-4" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-center">
+                    This position takes for long-range fights, pick an
+                    appropriate primary weapon
+                  </p>
+                </TooltipContent>
+              </Tooltip>
             )}
           </div>
         )}

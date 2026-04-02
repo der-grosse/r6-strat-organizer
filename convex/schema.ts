@@ -114,6 +114,7 @@ const schema = defineSchema({
     stratID: v.id("strats"),
     isPowerPosition: v.boolean(),
     shouldBringShotgun: v.boolean(),
+    fightsLongRange: v.optional(v.boolean()),
     index: v.number(),
   }).index("byStrat", ["stratID"]),
 
