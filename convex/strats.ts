@@ -456,8 +456,9 @@ export const updateIndex = mutation({
   args: {
     stratID: v.id("strats"),
     newIndex: v.number(),
+    orderedStratIDs: v.optional(v.array(v.id("strats"))),
   },
-  async handler(ctx, { stratID, newIndex }) {
+  async handler(ctx, { stratID, newIndex, orderedStratIDs }) {
     const { activeTeamID } = await requireUser(ctx);
     if (!activeTeamID) {
       return { success: false, error: "No active team selected" };
@@ -477,6 +478,62 @@ export const updateIndex = mutation({
         )
         .collect()
     ).filter((s) => !s.archived);
+
+    if (orderedStratIDs && orderedStratIDs.length > 0) {
+      const stratById = new Map(stratsOnMap.map((strat) => [strat._id, strat]));
+      const orderedSet = new Set(orderedStratIDs);
+
+      if (orderedSet.size !== orderedStratIDs.length) {
+        return {
+          success: false,
+          error: "Duplicate strat IDs in reorder payload",
+        };
+      }
+
+      const visibleCount = stratsOnMap.filter((strat) =>
+        orderedSet.has(strat._id),
+      ).length;
+      if (visibleCount !== orderedStratIDs.length) {
+        return {
+          success: false,
+          error: "Reorder payload does not match current strat list",
+        };
+      }
+
+      const reorderedStrats: Doc<"strats">[] = new Array(stratsOnMap.length);
+      let visibleIndex = 0;
+
+      for (let index = 0; index < stratsOnMap.length; index++) {
+        const strat = stratsOnMap[index];
+        if (!orderedSet.has(strat._id)) {
+          reorderedStrats[index] = strat;
+        }
+      }
+
+      for (let index = 0; index < reorderedStrats.length; index++) {
+        if (reorderedStrats[index]) continue;
+
+        const nextVisibleID = orderedStratIDs[visibleIndex++];
+        const nextVisibleStrat = stratById.get(nextVisibleID);
+        if (!nextVisibleStrat) {
+          return {
+            success: false,
+            error: "Reorder payload contains an unknown strat",
+          };
+        }
+
+        reorderedStrats[index] = nextVisibleStrat;
+      }
+
+      for (let index = 0; index < reorderedStrats.length; index++) {
+        const strat = reorderedStrats[index];
+        if (strat.mapIndex !== index) {
+          await ctx.db.patch(strat._id, { mapIndex: index });
+        }
+      }
+
+      return { success: true };
+    }
 
     const oldIndex = stratDoc.mapIndex;
 

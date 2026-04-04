@@ -196,6 +196,7 @@ function MapStrats({
         const res = await updateStratIndex({
           stratID: active.id as Id<"strats">,
           newIndex,
+          orderedStratIDs: newStrats.map((strat) => strat.strat._id),
         });
         if (!res.success) {
           throw new Error(res.error);

@@ -26,17 +26,26 @@ export default function SidebarStrats(props: SidebarStratsProps) {
         ...strat,
         id: strat._id,
       })),
-    [props.strats]
+    [props.strats],
   );
   return (
     <div className="overflow-hidden">
       <DndList
         items={mappedStrats}
-        onChange={(strats, movedStrat, _oldIndex, newIndex) => {
-          updateStratIndex({
+        onChange={async (strats, movedStrat, _oldIndex, newIndex) => {
+          const result = await updateStratIndex({
             stratID: movedStrat.id as Id<"strats">,
             newIndex,
+            orderedStratIDs: strats.map((strat) => strat.id as Id<"strats">),
           });
+          if (!result.success) {
+            throw new Error(result.error);
+          }
+        }}
+        slots={{
+          handle: {
+            className: "pl-2",
+          },
         }}
       >
         {(strat, rootProps, handle) => (
@@ -45,7 +54,9 @@ export default function SidebarStrats(props: SidebarStratsProps) {
               className="inline h-auto"
               onClick={() => props.onSelect(strat)}
             >
-              <span className="inline-block align-text-bottom">{handle}</span>
+              <span className="inline-block align-text-bottom -ml-2">
+                {handle}
+              </span>
               {!props.showSite ? (
                 strat.name
               ) : (

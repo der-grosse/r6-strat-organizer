@@ -18,6 +18,7 @@ import {
 } from "@dnd-kit/sortable";
 import { useEffect, useState } from "react";
 import { GripVertical } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type Render<Item> = (
   item: Item,
@@ -28,7 +29,7 @@ type Render<Item> = (
       transition: string | undefined;
     };
   },
-  handle: React.ReactNode
+  handle: React.ReactNode,
 ) => React.ReactNode;
 
 export interface DndListProps<Item extends { id: string | number }> {
@@ -37,14 +38,19 @@ export interface DndListProps<Item extends { id: string | number }> {
     items: Item[],
     movedItem: Item,
     oldIndex: number,
-    newIndex: number
+    newIndex: number,
   ) => void | Promise<void>;
   children: Render<Item>;
   disabled?: boolean;
+  slots?: {
+    handle?: {
+      className?: string;
+    };
+  };
 }
 
 export default function DndList<Item extends { id: string | number }>(
-  props: DndListProps<Item>
+  props: DndListProps<Item>,
 ) {
   const [optimisticItems, setOptimisticItems] = useState(props.items);
   useEffect(() => {
@@ -55,7 +61,7 @@ export default function DndList<Item extends { id: string | number }>(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -63,10 +69,10 @@ export default function DndList<Item extends { id: string | number }>(
 
     if (active.id !== over?.id) {
       const oldIndex = optimisticItems.findIndex(
-        (item) => item.id === active.id
+        (item) => item.id === active.id,
       );
       const newIndex = optimisticItems.findIndex(
-        (item) => item.id === over?.id
+        (item) => item.id === over?.id,
       );
 
       // Optimistically update the UI
@@ -96,6 +102,9 @@ export default function DndList<Item extends { id: string | number }>(
       >
         {optimisticItems.map((item) => (
           <DndListItem
+            slots={{
+              handle: props.slots?.handle,
+            }}
             key={item.id}
             item={item}
             disabled={props.disabled}
@@ -111,6 +120,11 @@ function DndListItem<Item extends { id: string | number }>(props: {
   item: Item;
   disabled?: boolean;
   render: Render<Item>;
+  slots?: {
+    handle?: {
+      className?: string;
+    };
+  };
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: props.item.id });
@@ -129,9 +143,12 @@ function DndListItem<Item extends { id: string | number }>(props: {
     <div
       {...attributes}
       {...listeners}
-      className="cursor-grab hover:cursor-grabbing"
+      className={cn(
+        "cursor-grab hover:cursor-grabbing",
+        props.slots?.handle?.className,
+      )}
     >
       <GripVertical className="h-4 w-4 text-gray-400" />
-    </div>
+    </div>,
   );
 }
