@@ -11,6 +11,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { deepCopy, filterNull } from "../Objects";
 import { DEFENDERS } from "@/lib/static/operator";
+import { Skeleton } from "../ui/skeleton";
 
 export interface StratViewerProps {
   strat: Strat;
@@ -38,10 +39,10 @@ export default function StratViewer({
     [strat.map],
   );
 
-  const allAssets =
-    useQuery(api.strats.getAssets, { stratID: strat._id }) ?? [];
+  const allAssets = useQuery(api.strats.getAssets, { stratID: strat._id });
 
   const assets = useMemo(() => {
+    if (!allAssets) return [];
     if (assetModifier) {
       return assetModifier(allAssets);
     }
@@ -57,6 +58,10 @@ export default function StratViewer({
     );
     return removeUnusedFloors(modifiedAssets, map);
   }, [assets, map, bannedOperators, strat]);
+
+  if (!allAssets || !map) {
+    return <Skeleton className="size-full" />;
+  }
 
   return (
     <StratEditorCanvas

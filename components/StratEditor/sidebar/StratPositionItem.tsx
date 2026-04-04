@@ -129,7 +129,7 @@ export default function StratPositionItem({
             orientation="vertical"
             className="h-full !h-6 bg-muted-foreground"
           />
-          <Tooltip delayDuration={1000}>
+          <Tooltip delayDuration={750}>
             <TooltipTrigger asChild>
               <Button
                 size="icon"
@@ -162,7 +162,7 @@ export default function StratPositionItem({
             </TooltipContent>
           </Tooltip>
           {/* rotation duties */}
-          <Tooltip delayDuration={1000}>
+          <Tooltip delayDuration={750}>
             <TooltipTrigger className="size-9">
               <ShotgunToggle
                 shouldBringShotgun={stratPosition.shouldBringShotgun}
@@ -179,7 +179,7 @@ export default function StratPositionItem({
             </TooltipContent>
           </Tooltip>
           {/* power position */}
-          <Tooltip delayDuration={1000}>
+          <Tooltip delayDuration={750}>
             <TooltipTrigger asChild>
               <Button
                 size="icon"

@@ -77,7 +77,7 @@ export default function AssetMenu({
                 );
                 if (!stratPositionOfMember) return null;
                 return (
-                  <Tooltip delayDuration={200} key={member._id}>
+                  <Tooltip key={member._id}>
                     <TooltipTrigger asChild>
                       <Button
                         disabled={!stratPositionOfMember}

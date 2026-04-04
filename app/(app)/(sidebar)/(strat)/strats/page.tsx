@@ -309,7 +309,7 @@ function StratItem({
           {...attributes}
           {...listeners}
           onClick={(e) => e.stopPropagation()}
-          className="cursor-grab hover:cursor-grabbing"
+          className="cursor-grab hover:cursor-grabbing -ml-2 pl-2"
         >
           <GripVertical className="h-4 w-4 text-gray-400" />
         </div>

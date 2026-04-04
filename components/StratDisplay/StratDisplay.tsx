@@ -126,7 +126,7 @@ export default function StratDisplay(props: StratDisplayProps) {
               </Fragment>
             ))}
             {stratPosition?.shouldBringShotgun && (
-              <Tooltip delayDuration={200}>
+              <Tooltip>
                 <TooltipTrigger>
                   <Shotgun className="size-8 ml-1" />
                 </TooltipTrigger>
@@ -139,7 +139,7 @@ export default function StratDisplay(props: StratDisplayProps) {
               </Tooltip>
             )}
             {stratPosition?.fightsLongRange && (
-              <Tooltip delayDuration={200}>
+              <Tooltip>
                 <TooltipTrigger>
                   <Crosshair className="size-4" />
                 </TooltipTrigger>

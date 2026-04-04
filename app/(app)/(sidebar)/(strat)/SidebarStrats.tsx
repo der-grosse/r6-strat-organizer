@@ -73,11 +73,11 @@ export default function SidebarStrats(props: SidebarStratsProps) {
                 </>
               )}
             </SidebarMenuButton>
-            <Link href={`/editor/${strat.id}`}>
+            {/* <Link href={`/editor/${strat.id}`}>
               <SidebarMenuAction className="cursor-pointer my-0.5">
                 <Pencil />
               </SidebarMenuAction>
-            </Link>
+            </Link> */}
           </SidebarMenuItem>
         )}
       </DndList>

@@ -244,7 +244,7 @@ export default function StratEditorSidebar(
           />
         )}
         <div className="flex-1" />
-        <Tooltip delayDuration={500}>
+        <Tooltip>
           <TooltipTrigger asChild>
             <div className="flex gap-1 p-1 items-center cursor-default">
               <span className="text-xs text-muted-foreground text-right">
@@ -291,7 +291,7 @@ export default function StratEditorSidebar(
               ))}
           </TooltipContent>
         </Tooltip>
-        <Tooltip delayDuration={500}>
+        <Tooltip>
           <TooltipTrigger asChild>
             <Link href="/">
               <Button size="icon" variant="ghost">
@@ -336,7 +336,7 @@ function SidebarButton(props: {
   disabled?: boolean;
 }) {
   return (
-    <Tooltip delayDuration={500}>
+    <Tooltip>
       <TooltipTrigger asChild>
         <Button
           size="icon"
