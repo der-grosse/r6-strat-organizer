@@ -8,11 +8,11 @@ interface SVGAssetProps {
   rotation: number;
   onMouseDown: (
     e: React.MouseEvent,
-    handle: "resize" | "rotate" | "none"
+    handle: "resize" | "rotate" | "none",
   ) => void;
   onTouchStart: (
     e: React.TouchEvent,
-    handle: "resize" | "rotate" | "none"
+    handle: "resize" | "rotate" | "none",
   ) => void;
   onDoubleClick?: (e: React.MouseEvent) => void;
   selected: boolean;
@@ -81,7 +81,10 @@ export default function SVGAsset({
           stroke="currentColor"
           strokeWidth="1"
           filter="url(#globalDropShadow)"
-          className={cn("pointer-events-none", !selected && "hidden")}
+          className={cn(
+            "svg-selected-rect pointer-events-none",
+            !selected && "hidden",
+          )}
         />
         <circle
           cx={size.width * 1.025}
@@ -91,7 +94,7 @@ export default function SVGAsset({
           className={cn(
             "rotate-handle",
             !selected && "hidden",
-            !readonly && "cursor-[url(/cursor/rotate.png),_grab]"
+            !readonly && "cursor-[url(/cursor/rotate.png),_grab]",
           )}
           onMouseDown={(e) => {
             e.stopPropagation();
@@ -114,7 +117,7 @@ export default function SVGAsset({
             !readonly &&
               (ctrlKeyDown
                 ? "cursor-[url(/cursor/rotate.png),_grab]"
-                : "cursor-se-resize")
+                : "cursor-se-resize"),
           )}
           onMouseDown={(e) => {
             e.stopPropagation();
@@ -140,7 +143,7 @@ export default function SVGAsset({
               ? 0
               : (() => {
                   const diagonalHalf = Math.sqrt(
-                    Math.pow(size.width / 2, 2) + Math.pow(size.height / 2, 2)
+                    Math.pow(size.width / 2, 2) + Math.pow(size.height / 2, 2),
                   );
                   const normalizedRotation = Math.abs(rotation % 90);
                   const radians = (normalizedRotation * Math.PI) / 180;

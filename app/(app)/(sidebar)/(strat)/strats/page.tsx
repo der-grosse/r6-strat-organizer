@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { DEFENDERS } from "@/lib/static/operator";
 import {
   Copy,
+  Download,
   Eye,
   GripVertical,
   MoreHorizontal,
@@ -50,6 +51,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useStratExport } from "@/components/StratEditor/ExportRenderer";
+import { PromiseButton } from "@/components/ui/promise-button";
 
 const TABLE_SIZES = {
   handle: "5%",
@@ -250,6 +253,7 @@ function StratItem({
   const { isLeading } = useFilter();
   const bannedOps = useQuery(api.bannedOps.get) ?? [];
   const router = useRouter();
+  const { exportStratAsPNG } = useStratExport();
 
   const setActiveStrat = useMutation(api.activeStrat.set);
 
@@ -466,6 +470,15 @@ function StratItem({
               {duplicateLoading ? <Spinner /> : <Copy className="h-4 w-4" />}
               Duplicate
             </Button>
+            <PromiseButton
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={() => exportStratAsPNG(strat, team)}
+              disabled={strat.drawingID !== undefined}
+            >
+              <Download className="h-4 w-4" />
+              Export as Image
+            </PromiseButton>
             <DeleteStratDialog
               stratID={strat._id}
               stratName={strat.name}

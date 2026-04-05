@@ -645,6 +645,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
   return (
     <div className="relative overflow-hidden w-full h-full">
       <svg
+        id="strat-editor-svg"
         ref={svgRef}
         viewBox={`${zoomedViewBox.x} ${zoomedViewBox.y} ${zoomedViewBox.width} ${zoomedViewBox.height}`}
         className={cn(

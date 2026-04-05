@@ -1,6 +1,7 @@
 "use client";
 
 import { StratEditor } from "@/components/StratEditor/StratEditor";
+import { StratExportProvider } from "@/components/StratEditor/ExportRenderer";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
@@ -38,8 +39,10 @@ export default function StratEditorClient(props: StratEditorClientProps) {
   }
 
   return (
-    <div className="h-screen w-screen overflow-hidden">
-      <StratEditor team={team} strat={strat} />
-    </div>
+    <StratExportProvider>
+      <div className="h-screen w-screen overflow-hidden">
+        <StratEditor team={team} strat={strat} />
+      </div>
+    </StratExportProvider>
   );
 }

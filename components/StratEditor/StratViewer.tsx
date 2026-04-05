@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import useMountAssets from "./canvas/useMountedAssets";
 import StratEditorCanvas, { CANVAS_BASE_SIZE } from "./canvas/Canvas";
 import MAPS from "@/lib/static/maps";
@@ -17,12 +17,14 @@ export interface StratViewerProps {
   strat: Strat;
   team: FullTeam;
   assetModifier?: (assets: PlacedAsset[]) => PlacedAsset[];
+  onLoaded?: () => void;
 }
 
 export default function StratViewer({
   team,
   strat,
   assetModifier,
+  onLoaded,
 }: StratViewerProps) {
   const bannedOperators = useQuery(api.bannedOps.get);
 
@@ -59,7 +61,12 @@ export default function StratViewer({
     return removeUnusedFloors(modifiedAssets, map);
   }, [assets, map, bannedOperators, strat]);
 
-  if (!allAssets || !map) {
+  const loaded = !!allAssets && !!map;
+  useEffect(() => {
+    if (loaded) onLoaded?.();
+  }, [loaded, onLoaded]);
+
+  if (!loaded) {
     return <Skeleton className="size-full" />;
   }
 

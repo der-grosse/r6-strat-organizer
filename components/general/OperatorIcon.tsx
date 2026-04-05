@@ -22,6 +22,16 @@ export default function OperatorIcon(props: OperatorIconProps) {
       : props.op;
   const img =
     props.variant === "bw" && op && "iconBW" in op ? op.iconBW : op?.icon;
+
+  if (!img) {
+    return (
+      <div
+        className={cn("w-8 h-8 bg-gray-500 rounded", props.className)}
+        style={props.style}
+      />
+    );
+  }
+
   return (
     <img
       src={img}

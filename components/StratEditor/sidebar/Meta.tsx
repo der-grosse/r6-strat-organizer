@@ -2,7 +2,6 @@ import useDebounced from "@/components/hooks/useDebounced";
 import MapSelector from "@/components/general/MapSelector";
 import SiteSelector from "@/components/general/SiteSelector";
 import { Button } from "@/components/ui/button";
-import { ButtonGroup } from "@/components/ui/button-group";
 import {
   Dialog,
   DialogContent,
@@ -17,6 +16,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  Download,
   FolderPen,
   Funnel,
   Link,
@@ -33,17 +33,14 @@ import { Strat } from "@/lib/types/strat.types";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import MAPS from "@/lib/static/maps";
-import { cn } from "@/lib/utils";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import AttackerFilter from "./AttackerFilter";
 import SidebarLabeledToggle from "@/components/ui/sidebarLabeledToggle";
+import { FullTeam } from "@/lib/types/team.types";
+import { useStratExport } from "../ExportRenderer";
 
 export interface StratEditorMetaSidebarProps {
   strat: Strat;
+  team: FullTeam;
 }
 
 export default function StratEditorMetaSidebar(
@@ -52,6 +49,7 @@ export default function StratEditorMetaSidebar(
   const updateStrat = useMutation(api.strats.update);
   const archiveStrat = useMutation(api.strats.archive);
   const router = useRouter();
+  const { exporting, exportStratAsPNG } = useStratExport();
 
   const usesInternalEditor = !props.strat.drawingID;
 
@@ -216,6 +214,15 @@ export default function StratEditorMetaSidebar(
             <Label className="text-muted-foreground">Actions</Label>
           </div>
 
+          <Button
+            variant="outline"
+            className="w-full"
+            disabled={exporting}
+            onClick={() => exportStratAsPNG(props.strat, props.team)}
+          >
+            <Download className="mr-2" />
+            {exporting ? "Exporting..." : "Export as Image"}
+          </Button>
           <Button
             variant="outline"
             className="w-full"

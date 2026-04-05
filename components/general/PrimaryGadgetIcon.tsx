@@ -31,12 +31,21 @@ export default function PrimaryGadgetIcon(props: PrimaryGadgetIconProps) {
 
   return (
     <>
-      <img
-        src={icon}
-        alt={gadget?.name ?? props.id}
-        className={cn("w-8 h-8 object-contain", props.className)}
-        draggable={false}
-      />
+      {icon ? (
+        <img
+          src={icon}
+          alt={gadget?.name ?? props.id}
+          className={cn("w-8 h-8 object-contain", props.className)}
+          draggable={false}
+        />
+      ) : (
+        <div
+          className={cn(
+            "w-8 h-8 bg-gray-500 rounded object-contain",
+            props.className,
+          )}
+        />
+      )}
       {props.showName && (
         <span className="text-sm">{gadget?.name ?? props.id}</span>
       )}
