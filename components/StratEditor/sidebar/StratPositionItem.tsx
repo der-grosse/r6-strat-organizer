@@ -237,8 +237,7 @@ export default function StratPositionItem({
                   const newOps = [...stratPosition.pickedOperators];
                   newOps.splice(op.index, 1);
                   deletePickedOperator({
-                    pickedOperatorID:
-                      stratPosition.pickedOperators[op.index]._id,
+                    pickedOperatorID: op._id,
                   });
                   setOptimisticOps(newOps);
                 }}
