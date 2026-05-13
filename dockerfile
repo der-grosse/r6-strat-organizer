@@ -18,6 +18,7 @@ COPY . .
 
 ARG NEXT_PUBLIC_CONVEX_URL
 ENV NEXT_PUBLIC_CONVEX_URL=$NEXT_PUBLIC_CONVEX_URL
+ENV CI=true
 
 # Build the Next.js application
 RUN pnpm run build
@@ -30,6 +31,8 @@ RUN npm install -g pnpm
 
 # Set the working directory
 WORKDIR /app
+
+ENV CI=true
 
 # Copy only the necessary files from the build stage
 COPY --from=base /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml ./
