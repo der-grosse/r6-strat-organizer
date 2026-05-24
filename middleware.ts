@@ -8,6 +8,16 @@ function isAuthRoute(pathname: string) {
   return AUTH_ROUTES.some((route) => pathname.startsWith(route));
 }
 
+// Routes that authenticated users are allowed to stay on instead of being
+// bounced to "/". The invite page doubles as an "accept invite" screen for
+// already-logged-in users so they can join additional teams.
+const AUTHENTICATED_ALLOWED_AUTH_ROUTES = ["/signup/join"];
+function isAuthenticatedAllowed(pathname: string) {
+  return AUTHENTICATED_ALLOWED_AUTH_ROUTES.some((route) =>
+    pathname.startsWith(route),
+  );
+}
+
 export async function middleware(request: NextRequest) {
   if (
     request.nextUrl.pathname.startsWith("/api") ||
@@ -33,7 +43,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (isAuth && payload) {
+  if (isAuth && payload && !isAuthenticatedAllowed(request.nextUrl.pathname)) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 

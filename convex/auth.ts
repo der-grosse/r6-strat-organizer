@@ -187,40 +187,63 @@ export const getUserFromName = query({
   },
 });
 
+// Creates a new team whose admin is either a brand-new account (signup: pass
+// `name`/`password`/`email`) or an already-registered user (logged-in: pass
+// `userID`). Either way the team is seeded with empty player positions.
 export const createTeam = mutation({
   args: {
     teamName: v.string(),
-    name: v.string(),
-    password: v.string(),
+    // Existing user becoming the admin (logged-in "create another team").
+    userID: v.optional(v.id("users")),
+    // New account to create as the admin (signup flow).
+    name: v.optional(v.string()),
+    password: v.optional(v.string()),
     email: v.optional(v.string()),
   },
-  async handler(ctx, args) {
+  async handler(
+    ctx,
+    args,
+  ): Promise<{ error?: string; success?: boolean; teamID?: Id<"teams"> }> {
     await requireServerJWT(ctx);
 
-    // search for existing user with same name or email
-    const existingUser =
-      (await ctx.db
-        .query("users")
-        .withIndex("byName", (q) => q.eq("name", args.name))
-        .first()) ??
-      (await ctx.db
-        .query("users")
-        .withIndex("byEmail", (q) => q.eq("email", args.email ?? ""))
-        .first());
+    let userID = args.userID;
 
-    if (existingUser) {
-      return {
-        error: "Username already exists",
-      };
+    if (userID) {
+      const userDoc = await ctx.db.get(userID);
+      if (!userDoc) {
+        throw new Error("User not found");
+      }
+    } else {
+      if (!args.name || !args.password) {
+        throw new Error("Missing account details for new team admin");
+      }
+
+      // search for existing user with same name or email
+      const existingUser =
+        (await ctx.db
+          .query("users")
+          .withIndex("byName", (q) => q.eq("name", args.name!))
+          .first()) ??
+        (await ctx.db
+          .query("users")
+          .withIndex("byEmail", (q) => q.eq("email", args.email ?? ""))
+          .first());
+
+      if (existingUser) {
+        return {
+          error: "Username already exists",
+        };
+      }
+
+      userID = await ctx.db.insert("users", {
+        name: args.name,
+        password: args.password,
+        email: args.email,
+      });
     }
 
     const teamID = await ctx.db.insert("teams", {
       name: args.teamName,
-    });
-    const userID = await ctx.db.insert("users", {
-      name: args.name,
-      password: args.password,
-      email: args.email,
     });
     await ctx.db.insert("userTeams", {
       userID,
@@ -240,7 +263,7 @@ export const createTeam = mutation({
       await ctx.db.insert("teamPositions", position);
     }
 
-    return { success: true };
+    return { success: true, teamID };
   },
 });
 
@@ -286,6 +309,51 @@ export const registerToTeam = mutation({
       usedBy: userID,
       usedAt: new Date().toISOString(),
     });
+  },
+});
+
+// Adds an already-registered user to another team via an invite key. Unlike
+// `registerToTeam` (which creates a brand-new account), this links an existing
+// user, letting people belong to multiple teams at once.
+export const joinTeamWithInvite = mutation({
+  args: {
+    userID: v.id("users"),
+    inviteKey: v.string(),
+  },
+  async handler(ctx, args) {
+    await requireServerJWT(ctx);
+
+    const invite = await ctx.db
+      .query("teamInvites")
+      .withIndex("byInviteKey", (q) => q.eq("inviteKey", args.inviteKey))
+      .first();
+
+    if (!invite || invite.usedAt) {
+      throw new Error("Invalid invite key");
+    }
+
+    const existingMembership = await ctx.db
+      .query("userTeams")
+      .withIndex("byUserAndTeam", (q) =>
+        q.eq("userID", args.userID).eq("teamID", invite.teamID),
+      )
+      .first();
+
+    if (existingMembership) {
+      throw new Error("You are already a member of this team");
+    }
+
+    await ctx.db.insert("userTeams", {
+      userID: args.userID,
+      teamID: invite.teamID,
+      isAdmin: false,
+    });
+    await ctx.db.patch(invite._id, {
+      usedBy: args.userID,
+      usedAt: new Date().toISOString(),
+    });
+
+    return { teamID: invite.teamID };
   },
 });
 

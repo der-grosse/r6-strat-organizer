@@ -32,22 +32,21 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Slot } from "@/components/layout/Slot";
 import { logout } from "@/server/auth";
+import { TeamSwitcher } from "./TeamSwitcher";
 
-export function AppSidebar(props: { teamName: string }) {
+export function AppSidebar() {
   const router = useRouter();
 
   return (
     <Sidebar variant="inset" className="pr-0">
       <SidebarHeader className="pl-0">
-        <div className="ml-1 -mr-1 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-foreground">
-            <img
-              src="/icon.svg"
-              className="w-6 h-6 mr-1 inline-block align-sub"
-              alt="R6 Strats Logo"
-            />
-            {props.teamName}
-          </h2>
+        <div className="ml-1 -mr-1 flex items-center justify-between gap-1">
+          <img
+            src="/icon.svg"
+            className="w-6 h-6 shrink-0"
+            alt="R6 Strats Logo"
+          />
+          <TeamSwitcher />
           <Button
             variant="ghost"
             size="icon"

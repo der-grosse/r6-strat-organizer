@@ -1,8 +1,62 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { requireUser } from "./auth";
+import { requireServerJWT, requireUser } from "./auth";
 import { Id } from "./_generated/dataModel";
 import { generate } from "random-words";
+
+// Returns every team the current user belongs to, with names, so the UI can
+// render a team switcher. `isActive` reflects the team selected in the JWT.
+export const listMine = query({
+  async handler(ctx) {
+    const { _id, activeTeamID } = await requireUser(ctx);
+
+    const memberships = await ctx.db
+      .query("userTeams")
+      .withIndex("byUser", (q) => q.eq("userID", _id))
+      .collect();
+
+    const teams = await Promise.all(
+      memberships.map(async (membership) => {
+        const teamDoc = await ctx.db.get(membership.teamID);
+        if (!teamDoc) return null!;
+        return {
+          teamID: teamDoc._id,
+          name: teamDoc.name,
+          isAdmin: membership.isAdmin,
+          isActive: teamDoc._id === activeTeamID,
+        };
+      }),
+    );
+
+    return teams.filter(Boolean).sort((a, b) => a.name.localeCompare(b.name));
+  },
+});
+
+// Looks up the team an invite key points to so the accept-invite page can show
+// its name. Guarded by the server JWT because the invitee is not (yet) a member.
+export const getInviteInfo = query({
+  args: {
+    inviteKey: v.string(),
+  },
+  async handler(ctx, args) {
+    await requireServerJWT(ctx);
+
+    const invite = await ctx.db
+      .query("teamInvites")
+      .withIndex("byInviteKey", (q) => q.eq("inviteKey", args.inviteKey))
+      .first();
+    if (!invite) return null;
+
+    const teamDoc = await ctx.db.get(invite.teamID);
+    if (!teamDoc) return null;
+
+    return {
+      teamID: invite.teamID,
+      teamName: teamDoc.name,
+      used: !!invite.usedAt,
+    };
+  },
+});
 
 export const get = query({
   async handler(ctx) {

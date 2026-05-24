@@ -17,7 +17,8 @@ export async function hashPassword(password: string) {
 
 export async function resetJWT(payload?: Omit<JWTPayload, "v">) {
   if (!payload) {
-    const userid = (await getPayload())?._id;
+    const current = await getPayload();
+    const userid = current?._id;
     if (!userid) throw new Error("User not found");
 
     const user = await fetchQuery(
@@ -29,10 +30,18 @@ export async function resetJWT(payload?: Omit<JWTPayload, "v">) {
     );
 
     if (!user) throw new Error("User not found");
+    // Keep the currently active team selected if the user is still a member,
+    // otherwise fall back to their first team.
+    const activeTeamID =
+      current?.activeTeamID &&
+      user.teams.some((t) => t.teamID === current.activeTeamID)
+        ? current.activeTeamID
+        : user.teams[0]?.teamID;
     payload = {
       _id: user._id,
       name: user.name,
       teams: user.teams,
+      activeTeamID,
     };
   }
   if (!payload) throw new Error("User not found");
@@ -66,10 +75,103 @@ export async function login(name: string, password: string) {
       token: process.env.SERVER_JWT!,
     },
   );
-  // TODO: add selector for active team -> reload JWT with activeTeamID
-  // TODO: handle what happens when user has no teams left
   await resetJWT({ ...user, activeTeamID: user.teams[0]?.teamID });
   return user;
+}
+
+// Switches which team is active by re-issuing the JWT with a new activeTeamID.
+// All team-scoped Convex queries read the team from the JWT, so this is all
+// that's needed server-side. The caller should reload the page afterwards so
+// the Convex client picks up the new token.
+export async function switchTeam(teamID: string) {
+  const current = await getPayload();
+  if (!current) throw new Error("Not authenticated");
+
+  const user = await fetchQuery(
+    api.self.get,
+    { userID: current._id as Id<"users"> },
+    { token: process.env.SERVER_JWT! },
+  );
+  if (!user) throw new Error("User not found");
+  if (!user.teams.some((t) => t.teamID === teamID)) {
+    throw new Error("You are not a member of this team");
+  }
+
+  await resetJWT({
+    _id: user._id,
+    name: user.name,
+    teams: user.teams,
+    activeTeamID: teamID,
+  });
+  return true;
+}
+
+// Creates a new team owned by the currently logged-in user and makes it active.
+export async function createTeamForCurrentUser(teamName: string) {
+  const current = await getPayload();
+  if (!current) throw new Error("Not authenticated");
+
+  const result = await fetchMutation(
+    api.auth.createTeam,
+    { teamName, userID: current._id as Id<"users"> },
+    { token: process.env.SERVER_JWT! },
+  );
+  if (result.error || !result.teamID) {
+    throw new Error(result.error ?? "Failed to create team");
+  }
+  const teamID = result.teamID;
+
+  const user = await fetchQuery(
+    api.self.get,
+    { userID: current._id as Id<"users"> },
+    { token: process.env.SERVER_JWT! },
+  );
+  if (!user) throw new Error("User not found");
+
+  await resetJWT({
+    _id: user._id,
+    name: user.name,
+    teams: user.teams,
+    activeTeamID: teamID,
+  });
+  return { teamID };
+}
+
+// Looks up which team an invite key belongs to (for the accept-invite page).
+export async function getInviteInfo(inviteKey: string) {
+  return fetchQuery(
+    api.team.getInviteInfo,
+    { inviteKey },
+    { token: process.env.SERVER_JWT! },
+  );
+}
+
+// Adds the currently logged-in user to the team an invite key points to and
+// makes that team active.
+export async function acceptInvite(inviteKey: string) {
+  const current = await getPayload();
+  if (!current) throw new Error("Not authenticated");
+
+  const { teamID } = await fetchMutation(
+    api.auth.joinTeamWithInvite,
+    { userID: current._id as Id<"users">, inviteKey },
+    { token: process.env.SERVER_JWT! },
+  );
+
+  const user = await fetchQuery(
+    api.self.get,
+    { userID: current._id as Id<"users"> },
+    { token: process.env.SERVER_JWT! },
+  );
+  if (!user) throw new Error("User not found");
+
+  await resetJWT({
+    _id: user._id,
+    name: user.name,
+    teams: user.teams,
+    activeTeamID: teamID,
+  });
+  return { teamID };
 }
 
 export async function createTeam(input: {
