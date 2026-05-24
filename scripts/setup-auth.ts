@@ -63,15 +63,10 @@ async function setupAuth() {
     };
     const jwksString = JSON.stringify(jwks, null, 2);
 
-    // Write the JWKS to the public endpoint used by Convex.
-    const jwksPath = path.join(
-      process.cwd(),
-      "public",
-      ".well-known",
-      "jwks.json",
-    );
-    await fs.mkdir(path.dirname(jwksPath), { recursive: true });
-    await fs.writeFile(jwksPath, jwksString, { encoding: "utf8" });
+    // Create base64 encoded data URI for JWKS
+    // The format in the example was "data:application/json;base64,..."
+    const jwksBase64 = Buffer.from(jwksString).toString("base64");
+    const jwksDataUri = `data:application/json;base64,${jwksBase64}`;
 
     // 4. Update .env file
     console.log("Updating .env file...");
@@ -100,6 +95,7 @@ async function setupAuth() {
     const privateKeyEscaped =
       '"' + privateKeyPem.replace(/\r?\n/g, "\\n") + '"';
     const serverJwtValue = `"${serverToken}"`;
+    const jwksValue = `"${jwksDataUri}"`;
 
     envContents = setEnvValue(envContents, "JWT_PUBLIC_KEY", publicKeyEscaped);
     envContents = setEnvValue(
@@ -107,6 +103,7 @@ async function setupAuth() {
       "JWT_PRIVATE_KEY",
       privateKeyEscaped,
     );
+    envContents = setEnvValue(envContents, "JWT_PUBLIC_JWKS", jwksValue);
     envContents = setEnvValue(envContents, "SERVER_JWT", serverJwtValue);
 
     await fs.writeFile(envPath, envContents, { encoding: "utf8" });
@@ -117,6 +114,7 @@ async function setupAuth() {
     console.log("Updated .env with:");
     console.log("- JWT_PUBLIC_KEY");
     console.log("- JWT_PRIVATE_KEY");
+    console.log("- JWT_PUBLIC_JWKS");
     console.log("- SERVER_JWT");
     console.log("----------------------------------------");
   } catch (error) {

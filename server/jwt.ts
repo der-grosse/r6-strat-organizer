@@ -23,7 +23,7 @@ async function loadKeys() {
   } catch (error) {
     console.error("Error loading JWT keys:", error);
     throw new Error(
-      "Failed to load JWT keys. Please ensure your keys are in the correct PEM format."
+      "Failed to load JWT keys. Please ensure your keys are in the correct PEM format.",
     );
   }
 }
@@ -67,12 +67,12 @@ export async function generateJWT(user: Omit<JWTPayload, "v">) {
     activeTeamID: user.activeTeamID,
   } satisfies JWTPayload)
     .setSubject(user._id.toString())
-    .setProtectedHeader({ alg: "RS256", kid: "r6-strats-key-1" })
+    .setProtectedHeader({ alg: "RS256", kid: "r6-strats-key-2" })
     .setAudience("r6-strats")
     .setIssuer("https://r6-strats.com")
-    .setIssuedAt()
+    .setIssuedAt(new Date(Date.now() - 60 * 1000)) // Set issued at 1 minute in the past to account for clock skew between convex and server
     .setExpirationTime(
-      new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+      new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
     )
     .sign(privateKey);
   return token;

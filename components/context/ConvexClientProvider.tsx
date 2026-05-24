@@ -87,7 +87,7 @@ function useJWTAuth() {
         }
       }
     },
-    []
+    [],
   );
 
   useEffect(() => {
@@ -102,6 +102,6 @@ function useJWTAuth() {
       isAuthenticated,
       fetchAccessToken,
     }),
-    [isLoading, isAuthenticated, fetchAccessToken]
+    [isLoading, isAuthenticated, fetchAccessToken],
   );
 }
