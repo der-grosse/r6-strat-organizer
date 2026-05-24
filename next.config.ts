@@ -7,12 +7,7 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: "200mb",
     },
-  },
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      config.devtool = "source-map";
-    }
-    return config;
+    serverSourceMaps: true,
   },
   allowedDevOrigins: ["192.168.0.41"],
 };
