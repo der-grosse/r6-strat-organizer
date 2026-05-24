@@ -2,12 +2,14 @@
   "keys": [
     {
       "kty": "RSA",
+      "n": "xGJP3aalPlYHv_B2jhnFqhWkLTA2f6iOSJTAJOMXsI5ZgnSB4uDFgFWG-7jCbhxP5HEjtmxf0ljnG21Q7rE7sSC_MnFqxqVlSjiqtpcjJDsCN14-GBN6uKOZQW9JczmOvp9No4Ke6WDhmNDpeqvxRul1THWTrFqN0alIKOYlyBOB-QQ3isB_qyvJHeX-NX1r3fKcEzbDY0bGOvOYjk8hR5X7WVORSrwQyQ1gBSFODJ0e1Qjv8S8aPiNsGF5nIiVSuxiG0SEttk5ZcwJPYdDL6XOQSjbWlWXpjtZTr7KIRrF5_uYHZtzkL0M9_ubz07WsVoLP3qPYzxIasAlkiiez4Q",
+      "e": "AQAB",
       "alg": "RS256",
-      "key_ops": ["verify"],
+      "key_ops": [
+        "verify"
+      ],
       "kid": "r6-strats-key-1",
-      "use": "sig",
-      "n": "mbnN6Am75YafSkJhs7di4cempvOXBaqGbX7Vmo_vn0esM8UCed5XX3_KS_K5DyoFPyLWfmMK8XaLi6RoixxQPoNWS9ISKkSaUhPMpvgKAAvb4izHGUx6AMcF06X79i-jPklSBnI-M2Y7soaPNMCoLo4GJzs22B-KDbMzpNrcsk2rO6e_ZnB5UHTnamjHFiOcSQm3vcICeL-02_zPt5MU_EenJFuCj2zQMslI6YqBQk634YeUV7Yk0pGeJXQMLjmfG46LI7vRSd5hTc9hre_32fOAR1dGhCh7Xsq8SVFi67-X960uYABG3mPl3u6LxWiP8oMWRwIbuPmTe6yVJUWzSw",
-      "e": "AQAB"
+      "use": "sig"
     }
   ]
 }

@@ -41,7 +41,7 @@ async function setupAuth() {
       .setIssuer("https://r6-strats.com")
       .setIssuedAt()
       .setExpirationTime(
-        new Date(new Date().setFullYear(new Date().getFullYear() + 100))
+        new Date(new Date().setFullYear(new Date().getFullYear() + 100)),
       )
       .sign(privateKey);
 
@@ -61,10 +61,15 @@ async function setupAuth() {
     };
     const jwksString = JSON.stringify(jwks, null, 2);
 
-    // Create base64 encoded data URI for JWKS
-    // The format in the example was "data:application/json;base64,..."
-    const jwksBase64 = Buffer.from(jwksString).toString("base64");
-    const jwksDataUri = `data:application/json;base64,${jwksBase64}`;
+    // Write the JWKS to the public endpoint used by Convex.
+    const jwksPath = path.join(
+      process.cwd(),
+      "public",
+      ".well-known",
+      "jwks.json",
+    );
+    await fs.mkdir(path.dirname(jwksPath), { recursive: true });
+    await fs.writeFile(jwksPath, jwksString, { encoding: "utf8" });
 
     // 4. Update .env file
     console.log("Updating .env file...");
@@ -93,16 +98,14 @@ async function setupAuth() {
     const privateKeyEscaped =
       '"' + privateKeyPem.replace(/\r?\n/g, "\\n") + '"';
     const serverJwtValue = `"${serverToken}"`;
-    const jwksValue = `"${jwksDataUri}"`;
 
     envContents = setEnvValue(envContents, "JWT_PUBLIC_KEY", publicKeyEscaped);
     envContents = setEnvValue(
       envContents,
       "JWT_PRIVATE_KEY",
-      privateKeyEscaped
+      privateKeyEscaped,
     );
     envContents = setEnvValue(envContents, "SERVER_JWT", serverJwtValue);
-    envContents = setEnvValue(envContents, "JWT_PUBLIC_JWKS", jwksValue);
 
     await fs.writeFile(envPath, envContents, { encoding: "utf8" });
 
@@ -113,7 +116,6 @@ async function setupAuth() {
     console.log("- JWT_PUBLIC_KEY");
     console.log("- JWT_PRIVATE_KEY");
     console.log("- SERVER_JWT");
-    console.log("- JWT_PUBLIC_JWKS");
     console.log("----------------------------------------");
   } catch (error) {
     console.error("Error setting up auth:", error);
