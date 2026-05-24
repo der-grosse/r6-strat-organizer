@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { requireServerJWT, requireUser } from "./auth";
+import { ensureUserHasTeam, requireServerJWT, requireUser } from "./auth";
 import { Id } from "./_generated/dataModel";
 import { generate } from "random-words";
 
@@ -277,6 +277,140 @@ export const removeTeamMember = mutation({
     }
 
     await ctx.db.delete(membership._id);
+  },
+});
+
+// Removes the calling user's own membership from a team. The last admin cannot
+// leave (that would orphan the team) — they must delete the team instead.
+export const leaveTeam = mutation({
+  args: {
+    userID: v.id("users"),
+    teamID: v.id("teams"),
+  },
+  async handler(ctx, args) {
+    await requireServerJWT(ctx);
+
+    const memberships = await ctx.db
+      .query("userTeams")
+      .withIndex("byTeam", (q) => q.eq("teamID", args.teamID))
+      .collect();
+
+    const myMembership = memberships.find((m) => m.userID === args.userID);
+    if (!myMembership) {
+      throw new Error("You are not a member of this team");
+    }
+
+    if (myMembership.isAdmin) {
+      const adminCount = memberships.filter((m) => m.isAdmin).length;
+      if (adminCount <= 1) {
+        throw new Error(
+          "You are the last admin of this team. Delete the team instead of leaving.",
+        );
+      }
+    }
+
+    await ctx.db.delete(myMembership._id);
+
+    // If that was their last team, give them a fresh personal one so they
+    // always have somewhere to work.
+    await ensureUserHasTeam(ctx, args.userID);
+    return true;
+  },
+});
+
+// Permanently deletes a team and every record that belongs to it. Only an admin
+// of the team may do this.
+export const deleteTeam = mutation({
+  args: {
+    userID: v.id("users"),
+    teamID: v.id("teams"),
+  },
+  async handler(ctx, args) {
+    await requireServerJWT(ctx);
+
+    const membership = await ctx.db
+      .query("userTeams")
+      .withIndex("byUserAndTeam", (q) =>
+        q.eq("userID", args.userID).eq("teamID", args.teamID),
+      )
+      .first();
+    if (!membership || !membership.isAdmin) {
+      throw new Error("Only an admin can delete the team");
+    }
+
+    // Delete every strat and the records that hang off each strat.
+    const strats = await ctx.db
+      .query("strats")
+      .withIndex("byTeam", (q) => q.eq("teamID", args.teamID))
+      .collect();
+    for (const strat of strats) {
+      const [placedAssets, stratPositions, pickedOperators, selectedAssets] =
+        await Promise.all([
+          ctx.db
+            .query("placedAssets")
+            .withIndex("byStrat", (q) => q.eq("stratID", strat._id))
+            .collect(),
+          ctx.db
+            .query("stratPositions")
+            .withIndex("byStrat", (q) => q.eq("stratID", strat._id))
+            .collect(),
+          ctx.db
+            .query("pickedOperators")
+            .withIndex("byStrat", (q) => q.eq("stratID", strat._id))
+            .collect(),
+          ctx.db
+            .query("selectedAssets")
+            .withIndex("byStrat", (q) => q.eq("stratID", strat._id))
+            .collect(),
+        ]);
+      for (const record of [
+        ...placedAssets,
+        ...stratPositions,
+        ...pickedOperators,
+        ...selectedAssets,
+      ]) {
+        await ctx.db.delete(record._id);
+      }
+      await ctx.db.delete(strat._id);
+    }
+
+    // Delete the remaining team-scoped records.
+    const teamPositions = await ctx.db
+      .query("teamPositions")
+      .withIndex("byTeam", (q) => q.eq("teamID", args.teamID))
+      .collect();
+    const activeStrats = await ctx.db
+      .query("activeStrats")
+      .withIndex("byTeam", (q) => q.eq("teamID", args.teamID))
+      .collect();
+    const bannedOps = await ctx.db
+      .query("bannedOps")
+      .withIndex("byTeam", (q) => q.eq("teamID", args.teamID))
+      .collect();
+    const teamInvites = await ctx.db
+      .query("teamInvites")
+      .withIndex("byTeam", (q) => q.eq("teamID", args.teamID))
+      .collect();
+    const userTeams = await ctx.db
+      .query("userTeams")
+      .withIndex("byTeam", (q) => q.eq("teamID", args.teamID))
+      .collect();
+
+    for (const record of [
+      ...teamPositions,
+      ...activeStrats,
+      ...bannedOps,
+      ...teamInvites,
+      ...userTeams,
+    ]) {
+      await ctx.db.delete(record._id);
+    }
+
+    await ctx.db.delete(args.teamID);
+
+    // Deleting your only team would leave you team-less — create a fresh one.
+    await ensureUserHasTeam(ctx, args.userID);
+    return true;
   },
 });
 

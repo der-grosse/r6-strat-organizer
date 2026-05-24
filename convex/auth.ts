@@ -187,6 +187,51 @@ export const getUserFromName = query({
   },
 });
 
+// Inserts a team, makes `userID` its admin, and seeds the default empty player
+// positions. Shared by every code path that spins up a team.
+export async function createTeamWithAdmin(
+  ctx: MutationCtx,
+  args: { teamName: string; userID: Id<"users"> },
+) {
+  const teamID = await ctx.db.insert("teams", {
+    name: args.teamName,
+  });
+  await ctx.db.insert("userTeams", {
+    userID: args.userID,
+    teamID,
+    isAdmin: true,
+  });
+
+  const PLAYER_COUNT = 5;
+  const positions = Array.from({ length: PLAYER_COUNT }, (_, i) => ({
+    playerID: undefined,
+    positionName: `Position ${i + 1}`,
+    teamID,
+    index: i,
+  }));
+  for (const position of positions) {
+    await ctx.db.insert("teamPositions", position);
+  }
+
+  return teamID;
+}
+
+// Guarantees a user is always in at least one team: if they have none, a fresh
+// personal team is created for them. Call this after removing a membership.
+export async function ensureUserHasTeam(ctx: MutationCtx, userID: Id<"users">) {
+  const memberships = await ctx.db
+    .query("userTeams")
+    .withIndex("byUser", (q) => q.eq("userID", userID))
+    .collect();
+  if (memberships.length > 0) return null;
+
+  const userDoc = await ctx.db.get(userID);
+  return createTeamWithAdmin(ctx, {
+    teamName: userDoc ? `${userDoc.name}'s Team` : "My Team",
+    userID,
+  });
+}
+
 // Creates a new team whose admin is either a brand-new account (signup: pass
 // `name`/`password`/`email`) or an already-registered user (logged-in: pass
 // `userID`). Either way the team is seeded with empty player positions.
@@ -242,26 +287,10 @@ export const createTeam = mutation({
       });
     }
 
-    const teamID = await ctx.db.insert("teams", {
-      name: args.teamName,
-    });
-    await ctx.db.insert("userTeams", {
+    const teamID = await createTeamWithAdmin(ctx, {
+      teamName: args.teamName,
       userID,
-      teamID,
-      isAdmin: true,
     });
-
-    // create empty player positions
-    const PLAYER_COUNT = 5;
-    const positions = Array.from({ length: PLAYER_COUNT }, (_, i) => ({
-      playerID: undefined,
-      positionName: `Position ${i + 1}`,
-      teamID,
-      index: i,
-    }));
-    for (const position of positions) {
-      await ctx.db.insert("teamPositions", position);
-    }
 
     return { success: true, teamID };
   },

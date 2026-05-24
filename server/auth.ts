@@ -137,6 +137,37 @@ export async function createTeamForCurrentUser(teamName: string) {
   return { teamID };
 }
 
+// Removes the current user from a team. Throws (via the mutation) if they are
+// the last admin — they must delete the team instead.
+export async function leaveTeam(teamID: string) {
+  const current = await getPayload();
+  if (!current) throw new Error("Not authenticated");
+
+  await fetchMutation(
+    api.team.leaveTeam,
+    { userID: current._id as Id<"users">, teamID: teamID as Id<"teams"> },
+    { token: process.env.SERVER_JWT! },
+  );
+
+  // Refresh the JWT so the left team disappears from the switcher; resetJWT
+  // re-points activeTeamID if it was the team we just left.
+  await resetJWT();
+}
+
+// Permanently deletes a team (admin only) and refreshes the current user's JWT.
+export async function deleteTeam(teamID: string) {
+  const current = await getPayload();
+  if (!current) throw new Error("Not authenticated");
+
+  await fetchMutation(
+    api.team.deleteTeam,
+    { userID: current._id as Id<"users">, teamID: teamID as Id<"teams"> },
+    { token: process.env.SERVER_JWT! },
+  );
+
+  await resetJWT();
+}
+
 // Looks up which team an invite key belongs to (for the accept-invite page).
 export async function getInviteInfo(inviteKey: string) {
   return fetchQuery(

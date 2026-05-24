@@ -3,6 +3,7 @@ import TeamInfo from "./TeamInfo";
 import TeamMembers from "./TeamMembers";
 import TeamInviteKeys from "./TeamInviteKeys";
 import TeamPositions from "./TeamPositions";
+import TeamDangerZone from "./TeamDangerZone";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -23,6 +24,8 @@ export default function TeamPage() {
       <TeamPositions team={team} canEdit={team.isSelfAdmin} />
 
       {team.isSelfAdmin && <TeamInviteKeys teamID={team._id} />}
+
+      <TeamDangerZone team={team} />
     </div>
   );
 }
