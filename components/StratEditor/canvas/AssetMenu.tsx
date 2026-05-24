@@ -12,11 +12,7 @@ import {
   ALargeSmall,
   Ban,
   Brush,
-  CircleSlash,
   EyeOff,
-  Minus,
-  Pencil,
-  Plus,
   TextCursorInput,
   Trash,
   UserRound,
@@ -90,14 +86,18 @@ export default function AssetMenu({
                         )}
                         onMouseDown={(e) => e.stopPropagation()}
                         onClick={() => {
+                          const allAlreadySetToThisPosition =
+                            selectedAssets.every(
+                              (asset) =>
+                                asset.stratPositionID ===
+                                stratPositionOfMember._id,
+                            );
                           updateAssets(
                             selectedAssets.map((asset) => ({
                               ...asset,
-                              stratPositionID:
-                                asset.stratPositionID ===
-                                stratPositionOfMember._id
-                                  ? undefined
-                                  : stratPositionOfMember._id,
+                              stratPositionID: allAlreadySetToThisPosition
+                                ? undefined
+                                : stratPositionOfMember._id,
                               customColor: undefined,
                             })),
                           );
@@ -542,7 +542,7 @@ const LAYOUT_VARIANT_ASPECT_RATIO: Record<string, number> = {
   headholes: 1,
   floorholes: 1,
   ceilingholes: 1,
-  reinforcement: 5 / 4,
+  reinforcement: 3 / 2,
   explosion: 1,
 };
 

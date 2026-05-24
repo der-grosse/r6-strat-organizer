@@ -1,4 +1,4 @@
-const FloorClickablerClickHandler =
+const MapFloorClickableHandler =
   (onClick: MapFloorClickableProps["onClick"], viewboxWidth = 3332) =>
   (e: React.MouseEvent<SVGPathElement>) => {
     e.preventDefault();
@@ -45,12 +45,12 @@ const FloorClickablerClickHandler =
         centerY / viewboxWidth,
         rel_width,
         rel_height,
-        rotation
+        rotation,
       );
     } else {
       const d = e.currentTarget.getAttribute("d");
       const coords = d?.match(
-        /M(\d+\.?\d*),(\d+\.?\d*) L(\d+\.?\d*),(\d+\.?\d*)/
+        /M(\d+\.?\d*),(\d+\.?\d*) L(\d+\.?\d*),(\d+\.?\d*)/,
       );
       if (!coords || coords.length !== 5) {
         console.error("Invalid path data for", type, ":", d);
@@ -72,9 +72,9 @@ const FloorClickablerClickHandler =
         centerY / viewboxWidth,
         rel_width / viewboxWidth,
         rel_height / viewboxWidth,
-        rotation
+        rotation,
       );
     }
   };
 
-export default FloorClickablerClickHandler;
+export default MapFloorClickableHandler;

@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
-import FloorClickablerClickHandler from "../clickHandler";
+import MapFloorClickableHandler from "../clickHandler";
 
 export default function ClubhouseB(props: MapFloorClickableProps) {
-  const onClickHandler = FloorClickablerClickHandler(props.onClick);
+  const onClickHandler = MapFloorClickableHandler(props.onClick);
   return (
     <svg
       width="799.68"

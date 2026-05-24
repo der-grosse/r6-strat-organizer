@@ -26,6 +26,7 @@ import { ReactMutation, useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import useDebounced from "../hooks/useDebounced";
 import useOnUnmount from "../hooks/useOnUnmount";
+import isKeyDown from "../hooks/isKeyDown";
 
 interface StratEditorProps {
   strat: Strat;
@@ -133,7 +134,10 @@ export function StratEditor({
   );
   useDebounced(selected, {
     onChange(selected) {
-      setSelectedAssets({ placedAssetIDs: selected, stratID: strat._id });
+      setSelectedAssets({
+        placedAssetIDs: selected.filter((s) => s !== "UNSET"),
+        stratID: strat._id,
+      });
     },
   });
   useOnUnmount(() =>
@@ -186,6 +190,11 @@ export function StratEditor({
       undoEvent(strat._id, event, fcts);
     }
   }, [setAssets, strat._id]);
+
+  const shiftPressed = isKeyDown("Shift");
+  useEffect(() => {
+    console.log("Shift pressed:", shiftPressed);
+  }, [shiftPressed]);
 
   useKeys([
     {
@@ -270,10 +279,15 @@ export function StratEditor({
           ...asset,
         } as PlacedAsset;
         setAssets((assets) => [...assets, placedAsset]);
+        setSelected((s) =>
+          shiftPressed ? [...s, placedAsset._id] : [placedAsset._id],
+        );
         addAsset(placedAsset)
           .then((result) => {
             if (result?.success && result.placedAssetID) {
-              setSelected((s) => [...s, result.placedAssetID]);
+              setSelected((s) =>
+                [...s, result.placedAssetID].filter((id) => id !== "UNSET"),
+              );
             }
           })
           .catch((err) =>
@@ -327,10 +341,15 @@ export function StratEditor({
               ...asset,
             } as PlacedAsset;
             setAssets((assets) => [...assets, placedAsset]);
+            setSelected((s) =>
+              shiftPressed ? [...s, placedAsset._id] : [placedAsset._id],
+            );
             addAsset(placedAsset)
               .then((result) => {
                 if (result?.success && result.placedAssetID) {
-                  setSelected((s) => [...s, result.placedAssetID]);
+                  setSelected((s) =>
+                    [...s, result.placedAssetID].filter((id) => id !== "UNSET"),
+                  );
                 }
               })
               .catch((err) =>

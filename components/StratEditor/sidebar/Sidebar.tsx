@@ -93,8 +93,8 @@ export default function StratEditorSidebar(
                 color: string | null;
                 count: number;
               }
-            >([
-              ...props.strat.stratPositions.map((stratPos) => {
+            >(
+              props.strat.stratPositions.map((stratPos) => {
                 const position =
                   props.team.teamPositions.find(
                     (teamPos) => teamPos._id === stratPos.teamPositionID,
@@ -118,7 +118,7 @@ export default function StratEditorSidebar(
                   },
                 ] as const;
               }),
-            ]),
+            ),
           )
           .values(),
       ),

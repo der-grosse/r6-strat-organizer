@@ -2,7 +2,6 @@
 import { DEFENDERS } from "@/lib/static/operator";
 import { Badge } from "../../ui/badge";
 import { ScrollArea } from "../../ui/scroll-area";
-import { Button } from "../../ui/button";
 import OperatorIcon from "../../general/OperatorIcon";
 import { DEFAULT_COLORS } from "@/lib/static/colors";
 import { Asset, OperatorAsset } from "@/lib/types/asset.types";
