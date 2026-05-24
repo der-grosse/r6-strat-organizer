@@ -46,7 +46,8 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public folder files (e.g. /images, /fonts)
+     * - .well-known folder files (e.g. /jwks.json)
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|\\.well-known/.*\\.(?:svg|png|jpg|jpeg|gif|webp|json)$).*)",
   ],
 };

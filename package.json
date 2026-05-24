@@ -66,11 +66,5 @@
     "tsx": "^4.19.4",
     "tw-animate-css": "^1.2.9",
     "typescript": "^5"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "sharp"
-    ]
   }
 }
