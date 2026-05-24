@@ -2,13 +2,13 @@
   "keys": [
     {
       "kty": "RSA",
-      "n": "xGJP3aalPlYHv_B2jhnFqhWkLTA2f6iOSJTAJOMXsI5ZgnSB4uDFgFWG-7jCbhxP5HEjtmxf0ljnG21Q7rE7sSC_MnFqxqVlSjiqtpcjJDsCN14-GBN6uKOZQW9JczmOvp9No4Ke6WDhmNDpeqvxRul1THWTrFqN0alIKOYlyBOB-QQ3isB_qyvJHeX-NX1r3fKcEzbDY0bGOvOYjk8hR5X7WVORSrwQyQ1gBSFODJ0e1Qjv8S8aPiNsGF5nIiVSuxiG0SEttk5ZcwJPYdDL6XOQSjbWlWXpjtZTr7KIRrF5_uYHZtzkL0M9_ubz07WsVoLP3qPYzxIasAlkiiez4Q",
+      "n": "xod_MhPL06hwmY4AqRTEtUvF02yE2gbQCCPNPHxjNlL9Z5yLrck8IqgPXLRYUVjf2qx56S58kSJuPVFbhrIQ2LAE4mA2CYJCsvMtWCzt5VFwpaYIS21sn4Oltta9cpea-_NSVaXagtxU21HDL4sn5dOhZYarzrVu2RbvCznnYHeDA44rMLY_o-aWXxtQDS_bHlhBN4oMc0ZtCsoi3KkQFpgUUZcfB1rqCUD9OU5UXsmFkoBSmyr6W4O97WBbwdPdx0grz4J7X08Z2-mODSKuIgb63jaw0QfdNRt72pwavnC7Te8y8eOsJsdXJ6QTtktcLAxWYSvt4JHPfo3Bj9Ec2w",
       "e": "AQAB",
       "alg": "RS256",
       "key_ops": [
         "verify"
       ],
-      "kid": "r6-strats-key-1",
+      "kid": "r6-strats-key-2",
       "use": "sig"
     }
   ]

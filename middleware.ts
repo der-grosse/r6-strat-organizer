@@ -9,7 +9,10 @@ function isAuthRoute(pathname: string) {
 }
 
 export async function middleware(request: NextRequest) {
-  if (request.nextUrl.pathname.startsWith("/api")) {
+  if (
+    request.nextUrl.pathname.startsWith("/api") ||
+    request.nextUrl.pathname.startsWith("/.well-known")
+  ) {
     return NextResponse.next();
   }
 
@@ -48,6 +51,6 @@ export const config = {
      * - public folder files (e.g. /images, /fonts)
      * - .well-known folder files (e.g. /jwks.json)
      */
-    "/((?!_next/static|_next/image|favicon.ico|\\.well-known/.*\\.(?:svg|png|jpg|jpeg|gif|webp|json)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|\\.well-known/.*).*)",
   ],
 };

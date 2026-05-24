@@ -6,6 +6,8 @@ import * as dotenv from "dotenv";
 // Load environment variables
 dotenv.config();
 
+const KEY_ID = "r6-strats-key-2";
+
 async function setupAuth() {
   try {
     console.log("Starting auth setup...");
@@ -36,7 +38,7 @@ async function setupAuth() {
       teams: [],
     })
       .setSubject("NEXTJS_SERVER_JWT")
-      .setProtectedHeader({ alg: "RS256", kid: "r6-strats-key-1" })
+      .setProtectedHeader({ alg: "RS256", kid: KEY_ID })
       .setAudience("r6-strats")
       .setIssuer("https://r6-strats.com")
       .setIssuedAt()
@@ -54,7 +56,7 @@ async function setupAuth() {
           ...jwk,
           alg: "RS256",
           key_ops: ["verify"],
-          kid: "r6-strats-key-1",
+          kid: KEY_ID,
           use: "sig",
         },
       ],
