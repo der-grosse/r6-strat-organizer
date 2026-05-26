@@ -25,6 +25,7 @@ import Explosion from "../assets/Explosion";
 import Rotation from "@/components/icons/rotation";
 import WoodenBarricade from "@/components/icons/woodenBarricade";
 import GadgetIcon from "@/components/general/GadgetIcon";
+import { DEFENDERS } from "@/lib/static/operator";
 
 export interface AssetMenuProps {
   selectedAssets: PlacedAsset[];
@@ -280,10 +281,25 @@ export default function AssetMenu({
                         asset.type === "layout" ? asset.placedOn : undefined,
                     };
                   } else {
+                    const operatorOfGadget = DEFENDERS.find(
+                      (o) => "gadget" in o && o.gadget === id,
+                    )?.name;
+                    // find the strat position that has that operator picked at the lowest index
+                    const stratPositionId = stratPositions
+                      .map((s) => ({
+                        operatorIndex: s.pickedOperators.findIndex(
+                          (o) => o.operator === operatorOfGadget,
+                        ),
+                        id: s._id,
+                      }))
+                      .sort((a, b) => a.operatorIndex - b.operatorIndex)
+                      .find((i) => i.operatorIndex !== -1)?.id;
+
                     return {
                       ...baseAsset,
                       type: "gadget",
                       gadget: id,
+                      stratPositionID: asset.stratPositionID ?? stratPositionId,
                     };
                   }
                 }),

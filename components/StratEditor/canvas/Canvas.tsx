@@ -134,7 +134,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
     map,
     svgRef,
     baseWidth: CANVAS_BASE_SIZE,
-    isViewportMovable: !readonly && activeAction === "none",
+    isViewportMovable: activeAction === "none",
   });
 
   // mouse down on asset

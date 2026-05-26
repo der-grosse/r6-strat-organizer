@@ -12,6 +12,8 @@ import { api } from "@/convex/_generated/api";
 import { deepCopy, filterNull } from "../Objects";
 import { DEFENDERS } from "@/lib/static/operator";
 import { Skeleton } from "../ui/skeleton";
+import { Id } from "@/convex/_generated/dataModel";
+import { useUser } from "../context/UserContext";
 
 export interface StratViewerProps {
   strat: Strat;
@@ -26,7 +28,21 @@ export default function StratViewer({
   assetModifier,
   onLoaded,
 }: StratViewerProps) {
+  const { user } = useUser();
   const bannedOperators = useQuery(api.bannedOps.get);
+  const settings = useQuery(api.settings.get);
+  const hideEmptyFloors = settings?.hideEmptyFloors ?? true;
+
+  const ownStratPositionId = useMemo(() => {
+    if (!user) return null;
+    const teamPosition = team.teamPositions.find(
+      (tp) => tp.playerID === user._id,
+    );
+    const position = strat.stratPositions.find(
+      (sp) => sp.teamPositionID === teamPosition?._id,
+    );
+    return position?._id ?? null;
+  }, [strat.stratPositions, team.teamPositions, user]);
 
   const { renderAsset } = useMountAssets(
     { team, stratPositions: strat.stratPositions },
@@ -58,8 +74,20 @@ export default function StratViewer({
       bannedOperators ?? [],
       strat,
     );
-    return removeUnusedFloors(modifiedAssets, map);
-  }, [assets, map, bannedOperators, strat]);
+    return removeUnusedFloors(
+      modifiedAssets,
+      map,
+      hideEmptyFloors,
+      ownStratPositionId,
+    );
+  }, [
+    assets,
+    map,
+    bannedOperators,
+    strat,
+    hideEmptyFloors,
+    ownStratPositionId,
+  ]);
 
   const loaded = !!allAssets && !!map;
   useEffect(() => {
@@ -95,6 +123,8 @@ function getViewBoxDimensions(floorCount: number, baseWidth: number) {
 function removeUnusedFloors(
   assets: PlacedAsset[],
   map: R6Map,
+  hideEmptyFloors: boolean,
+  ownStratPositionId: Id<"stratPositions"> | null,
 ): { assets: PlacedAsset[]; map: R6Map } {
   const baseWidth = CANVAS_BASE_SIZE;
 
@@ -141,7 +171,12 @@ function removeUnusedFloors(
     }
   }
 
-  const usedFloors = floors.filter((f) => f.assets.length > 0);
+  const usedFloors = floors.filter((f) => {
+    const assets = hideEmptyFloors
+      ? f.assets.filter((a) => a.stratPositionID === ownStratPositionId)
+      : f.assets;
+    return assets.length > 0;
+  });
 
   if (usedFloors.length === 0) {
     return { assets, map };

@@ -95,6 +95,36 @@ export default function AppSettings() {
             );
           })}
         </div>
+
+        <div className="space-y-2">
+          <Label>Floors</Label>
+          <p className="text-sm text-muted-foreground">
+            Hide floors that have no setup placed on them when viewing a strat.
+          </p>
+          {(() => {
+            const hideEmptyFloors = settings?.hideEmptyFloors ?? true;
+            return (
+              <Button
+                variant="outline"
+                className="w-full justify-start gap-2"
+                onClick={() =>
+                  updateSettings({ hideEmptyFloors: !hideEmptyFloors })
+                }
+              >
+                {hideEmptyFloors ? (
+                  <EyeOff className="size-4" />
+                ) : (
+                  <Eye className="size-4 text-muted-foreground" />
+                )}
+                <span
+                  className={!hideEmptyFloors ? "text-muted-foreground" : ""}
+                >
+                  Hide empty floors
+                </span>
+              </Button>
+            );
+          })()}
+        </div>
       </CardContent>
     </Card>
   );

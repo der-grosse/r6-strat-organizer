@@ -204,7 +204,7 @@ export const DEFENDERS = [
     icon: "/ops/def/smoke.webp",
     iconBW: "/ops/def/smoke_bw.png",
     gadget: "toxic_canister",
-    secondaryGadgets: ["barbed_wire", "proximity_alarm"],
+    secondaryGadgets: ["barbed_wire", "proximity_alarm", "deployable_shield"],
     hasPrimaryShotgun: true,
   },
   {

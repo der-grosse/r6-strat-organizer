@@ -10,6 +10,7 @@ const DEFAULT_SETTINGS = {
     mapName: false,
     siteName: true,
   },
+  hideEmptyFloors: true, // if a floor has no own assets, hide it
 };
 
 export const get = query({
@@ -50,6 +51,7 @@ export const update = mutation({
         siteName: v.boolean(),
       }),
     ),
+    hideEmptyFloors: v.optional(v.boolean()),
   },
   async handler(ctx, args) {
     const user = await requireUser(ctx);

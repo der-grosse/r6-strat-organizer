@@ -192,9 +192,6 @@ export function StratEditor({
   }, [setAssets, strat._id]);
 
   const shiftPressed = isKeyDown("Shift");
-  useEffect(() => {
-    console.log("Shift pressed:", shiftPressed);
-  }, [shiftPressed]);
 
   useKeys([
     {
