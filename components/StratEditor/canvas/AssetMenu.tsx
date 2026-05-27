@@ -299,7 +299,7 @@ export default function AssetMenu({
                       ...baseAsset,
                       type: "gadget",
                       gadget: id,
-                      stratPositionID: asset.stratPositionID ?? stratPositionId,
+                      stratPositionID: stratPositionId ?? asset.stratPositionID,
                     };
                   }
                 }),

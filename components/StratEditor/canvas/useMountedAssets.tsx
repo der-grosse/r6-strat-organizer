@@ -28,7 +28,10 @@ export default function useMountAssets(
   {
     team,
     stratPositions,
-  }: { team: FullTeam; stratPositions: StratPositions[] },
+  }: {
+    team: FullTeam;
+    stratPositions: StratPositions[];
+  },
   {
     deleteAssets,
     updateAssets,
@@ -88,7 +91,9 @@ export default function useMountAssets(
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey && textEditorAsset) {
                 e.preventDefault();
-                updateAssets([{ ...textEditorAsset, text: textEditorValue } as PlacedAsset]);
+                updateAssets([
+                  { ...textEditorAsset, text: textEditorValue } as PlacedAsset,
+                ]);
                 setTextEditorOpen(false);
               }
             }}
@@ -96,16 +101,18 @@ export default function useMountAssets(
             autoFocus
           />
           <DialogFooter>
-            <Button
-              variant="ghost"
-              onClick={() => setTextEditorOpen(false)}
-            >
+            <Button variant="ghost" onClick={() => setTextEditorOpen(false)}>
               Cancel
             </Button>
             <Button
               onClick={() => {
                 if (textEditorAsset) {
-                  updateAssets([{ ...textEditorAsset, text: textEditorValue } as PlacedAsset]);
+                  updateAssets([
+                    {
+                      ...textEditorAsset,
+                      text: textEditorValue,
+                    } as PlacedAsset,
+                  ]);
                   setTextEditorOpen(false);
                 }
               }}
@@ -240,9 +247,7 @@ export default function useMountAssets(
               }}
               openTextEditorForAsset={(asset) => {
                 setTextEditorAsset(asset);
-                setTextEditorValue(
-                  asset.type === "textbox" ? asset.text : "",
-                );
+                setTextEditorValue(asset.type === "textbox" ? asset.text : "");
                 setTextEditorOpen(true);
               }}
             />
@@ -253,16 +258,13 @@ export default function useMountAssets(
     [team, stratPositions],
   );
 
-  const onAssetDoubleClick = useCallback(
-    (asset: PlacedAsset) => {
-      if (asset.type === "textbox") {
-        setTextEditorAsset(asset);
-        setTextEditorValue(asset.text);
-        setTextEditorOpen(true);
-      }
-    },
-    [],
-  );
+  const onAssetDoubleClick = useCallback((asset: PlacedAsset) => {
+    if (asset.type === "textbox") {
+      setTextEditorAsset(asset);
+      setTextEditorValue(asset.text);
+      setTextEditorOpen(true);
+    }
+  }, []);
 
   return {
     renderAsset,
