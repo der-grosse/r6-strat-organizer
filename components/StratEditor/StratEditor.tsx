@@ -83,6 +83,9 @@ export function StratEditor({
 
   const { user } = useUser();
 
+  const [activeStratPosition, setActiveStratPosition] =
+    useState<Id<"stratPositions"> | null>(null);
+
   const addAsset = useCallback(
     async (asset: Omit<PlacedAsset, "_id">) => {
       const result = await addAssetFct({
@@ -266,6 +269,8 @@ export function StratEditor({
 
   return (
     <StratEditorLayout
+      activeStratPosition={activeStratPosition}
+      onActiveStratPositionChange={setActiveStratPosition}
       hideAssets={!!strat.drawingID}
       onAssetAdd={(asset) => {
         const placedAsset = {
@@ -273,6 +278,7 @@ export function StratEditor({
           size: { width: ASSET_BASE_SIZE, height: ASSET_BASE_SIZE },
           position: { x: CANVAS_BASE_SIZE / 20, y: CANVAS_BASE_SIZE / 20 },
           rotation: 0,
+          stratPositionID: activeStratPosition ?? undefined,
           ...asset,
         } as PlacedAsset;
         setAssets((assets) => [...assets, placedAsset]);
@@ -335,6 +341,7 @@ export function StratEditor({
               size: { width: ASSET_BASE_SIZE, height: ASSET_BASE_SIZE },
               position: { x: CANVAS_BASE_SIZE / 20, y: CANVAS_BASE_SIZE / 20 },
               rotation: 0,
+              stratPositionID: activeStratPosition ?? undefined,
               ...asset,
             } as PlacedAsset;
             setAssets((assets) => [...assets, placedAsset]);

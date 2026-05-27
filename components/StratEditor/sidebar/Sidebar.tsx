@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import StratEditorOperatorsSidebar from "./Operator";
 import {
   ChessRook,
+  CircleOff,
   DoorOpen,
   Fingerprint,
   Info,
@@ -30,6 +31,8 @@ import { Asset, PlacedAsset } from "@/lib/types/asset.types";
 import { Strat } from "@/lib/types/strat.types";
 import { FullTeam, TeamMember, TeamPosition } from "@/lib/types/team.types";
 import { Id } from "@/convex/_generated/dataModel";
+import MultiOptionSelector from "../canvas/MultiOptionSelector";
+import CurrentStratPositionSelector from "./CurrentStratPositionSelector";
 
 export interface StratEditorSidebarProps {
   onAssetAdd: (asset: Omit<Asset & Partial<PlacedAsset>, "_id">) => void;
@@ -37,6 +40,8 @@ export interface StratEditorSidebarProps {
   assets: PlacedAsset[];
   team: FullTeam;
   hideAssets?: boolean;
+  activeStratPosition: Id<"stratPositions"> | null;
+  onActiveStratPositionChange: (id: Id<"stratPositions"> | null) => void;
 }
 
 export default function StratEditorSidebar(
@@ -60,7 +65,7 @@ export default function StratEditorSidebar(
     [props.onAssetAdd],
   );
 
-  const placedReeinforcements = useMemo(
+  const placedReinforcements = useMemo(
     () =>
       Array.from(
         props.assets
@@ -244,12 +249,21 @@ export default function StratEditorSidebar(
           />
         )}
         <div className="flex-1" />
+        <CurrentStratPositionSelector
+          strat={props.strat}
+          team={props.team}
+          selected={props.activeStratPosition}
+          onSelect={(sp) => {
+            console.log("Selected primary position", sp);
+            props.onActiveStratPositionChange(sp);
+          }}
+        />
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="flex gap-1 p-1 items-center cursor-default">
               <span className="text-xs text-muted-foreground text-right">
                 {MAX_REINFORCEMENT -
-                  placedReeinforcements
+                  placedReinforcements
                     .map((v) => v.count)
                     .reduce((a, b) => a + b, 0)}
               </span>
@@ -261,12 +275,12 @@ export default function StratEditorSidebar(
           <TooltipContent side="right">
             <p className="text-sm">
               {MAX_REINFORCEMENT -
-                placedReeinforcements
+                placedReinforcements
                   .map((v) => v.count)
                   .reduce((a, b) => a + b, 0)}{" "}
               Reinforcements remaining
             </p>
-            {placedReeinforcements
+            {placedReinforcements
               .filter((p) => p.count > 0)
               .map((p) => (
                 <div
