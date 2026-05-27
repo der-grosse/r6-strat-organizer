@@ -8,6 +8,7 @@ import {
   Download,
   Eye,
   GripVertical,
+  Info,
   MoreHorizontal,
   Pencil,
   Slash,
@@ -53,6 +54,11 @@ import {
 } from "@/components/ui/popover";
 import { useStratExport } from "@/components/StratEditor/ExportRenderer";
 import { PromiseButton } from "@/components/ui/promise-button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const TABLE_SIZES = {
   handle: "5%",
@@ -93,6 +99,18 @@ export default function AllStratsPage() {
         <div />
         <p className="text-center text-muted-foreground leading-none">
           All Strats
+          <Tooltip>
+            <TooltipTrigger className="align-baseline ml-1">
+              <Info className="size-4" />
+            </TooltipTrigger>
+            <TooltipContent>
+              <b>Shortcuts</b>
+              <ul className="list-disc ml-4">
+                <li>Edit a strat by double clicking</li>
+                <li>Edit strat name by double clicking the name</li>
+              </ul>
+            </TooltipContent>
+          </Tooltip>
           <br />
           <span className="text-xs leading-none">
             (total {strats?.length ?? 0})
@@ -277,7 +295,6 @@ function StratItem({
   const updateStrat = useMutation(api.strats.update);
 
   const openStrat = async () => {
-    if (disabled) return;
     if (isLeading) {
       await setActiveStrat({ stratID: strat._id });
       router.push("/");
@@ -287,14 +304,13 @@ function StratItem({
   };
 
   const handleRowClick = () => {
-    if (disabled) return;
     if (rowClickTimeoutRef.current) {
       clearTimeout(rowClickTimeoutRef.current);
     }
     // Delay row open slightly so double-click name editing can cancel navigation.
     rowClickTimeoutRef.current = setTimeout(() => {
       void openStrat();
-    }, 180);
+    }, 250);
   };
 
   return (
@@ -303,6 +319,13 @@ function StratItem({
       ref={setNodeRef}
       style={style}
       onClick={handleRowClick}
+      onDoubleClick={() => {
+        // open edit strat when double clicking anywhere on the row except the name (which has its own double click handler)
+        if (rowClickTimeoutRef.current) {
+          clearTimeout(rowClickTimeoutRef.current);
+        }
+        router.push(`/editor/${strat._id}`);
+      }}
       className={cn(
         { "opacity-25": disabled },
         "flex items-center hover:bg-muted/50 py-2 border-y border-border border-collapse font-medium cursor-pointer",
@@ -365,13 +388,22 @@ function StratItem({
         className="flex justify-end pr-4"
         style={{ width: TABLE_SIZES.filters }}
       >
-        {strat.filters?.attackers?.attackers.map((op) => (
+        {[
+          ...(strat.filters?.attackers?.operators?.map((a) => ({
+            type: "attackers" as const,
+            op: a,
+          })) || []),
+          ...(strat.filters?.defenders?.operators.map((d) => ({
+            type: "defenders" as const,
+            op: d,
+          })) || []),
+        ].map(({ type, op }) => (
           <div className="relative" key={op}>
             <OperatorIcon op={op} />
-            {((strat.filters?.attackers?.triggerOn === "banned" &&
-              strat.filters.attackers.action === "show") ||
-              (strat.filters?.attackers?.triggerOn === "available" &&
-                strat.filters.attackers.action === "hide")) && (
+            {((strat.filters?.[type]?.triggerOn === "banned" &&
+              strat.filters[type].action === "show") ||
+              (strat.filters?.[type]?.triggerOn === "available" &&
+                strat.filters[type].action === "hide")) && (
               <Slash className="size-8 absolute top-0 left-0 opacity-70 text-destructive" />
             )}
           </div>

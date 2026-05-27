@@ -78,7 +78,15 @@ const schema = defineSchema({
             triggerOn: v.union(v.literal("banned"), v.literal("available")),
             action: v.union(v.literal("hide"), v.literal("show")),
             filterType: v.union(v.literal("any"), v.literal("all")),
-            attackers: v.array(v.string()),
+            operators: v.array(v.string()),
+          }),
+        ),
+        defenders: v.optional(
+          v.object({
+            triggerOn: v.union(v.literal("banned"), v.literal("available")),
+            action: v.union(v.literal("hide"), v.literal("show")),
+            filterType: v.union(v.literal("any"), v.literal("all")),
+            operators: v.array(v.string()),
           }),
         ),
       }),

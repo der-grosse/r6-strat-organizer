@@ -27,13 +27,16 @@ export interface Strat {
   hiddenFloors: number[];
   stratPositions: StratPositions[];
   filters?: {
-    attackers?: {
-      triggerOn: "banned" | "available";
-      action: "hide" | "show";
-      filterType: "any" | "all";
-      attackers: string[];
-    };
+    attackers?: StratFilter;
+    defenders?: StratFilter;
   };
+}
+
+interface StratFilter {
+  triggerOn: "banned" | "available";
+  action: "hide" | "show";
+  filterType: "any" | "all";
+  operators: string[];
 }
 
 export interface StratPositions {

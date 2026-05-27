@@ -9,20 +9,21 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import SidebarLabeledToggle from "@/components/ui/sidebarLabeledToggle";
 import { Strat } from "@/lib/types/strat.types";
-import { ChevronDown, Swords } from "lucide-react";
+import { ChessRook, ChevronDown, Swords } from "lucide-react";
 
-type Filter = NonNullable<Strat["filters"]>["attackers"];
+type Filter = NonNullable<Strat["filters"]>["defenders"];
 
-export interface AttackerFilterProps {
+export interface OperatorFilterProps {
   filter: Filter;
   onChange: (newFilter: Filter) => void;
+  type: "attackers" | "defenders";
 }
 
 const DEFAULT_FILTER = {
   triggerOn: "banned",
   action: "show",
   filterType: "all",
-  attackers: [],
+  operators: [],
 } satisfies Filter;
 
 const SLOT_STYLES = {
@@ -34,17 +35,24 @@ const SLOT_STYLES = {
   },
 };
 
-export default function AttackerFilter(props: AttackerFilterProps) {
+export default function OperatorFilter(props: OperatorFilterProps) {
   return (
-    <Collapsible defaultOpen className="rounded-md border bg-muted/50 py-1">
+    <Collapsible className="rounded-md border bg-muted/50 py-1">
       <CollapsibleTrigger asChild>
         <Button
           variant="ghost"
           className="group flex w-full items-center justify-between gap-2 !px-2 text-muted-foreground hover:bg-muted/70"
         >
           <span className="flex items-center gap-1 text-sm">
-            <Swords className="h-4 w-4" />
-            Attacker Filter
+            {props.type === "attackers" ? (
+              <Swords className="h-4 w-4" />
+            ) : (
+              <ChessRook className="h-4 w-4" />
+            )}
+            {props.type === "attackers" ? "Attacker" : "Defender"} Filter
+            {props.filter && props.filter.operators.length > 0 && (
+              <span className="text-xs text-muted-foreground">(active)</span>
+            )}
           </span>
           <ChevronDown className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
         </Button>
@@ -92,19 +100,21 @@ export default function AttackerFilter(props: AttackerFilterProps) {
         />
         <Label className="text-muted-foreground p-1">Operators</Label>
         <OperatorPicker
-          side="attacker"
-          selected={props.filter?.attackers ?? []}
+          side={props.type === "attackers" ? "attacker" : "defender"}
+          selected={props.filter?.operators ?? []}
           multiple
           trigger={({ children, ...rest }) => (
             <Button {...rest} variant="secondary" className="w-full">
-              {props.filter?.attackers?.length ? children : "Select Attackers"}
+              {props.filter?.operators?.length
+                ? children
+                : `Select ${props.type === "attackers" ? "Attackers" : "Defenders"}`}
             </Button>
           )}
-          onChange={(attackers) => {
+          onChange={(operators) => {
             props.onChange({
               ...DEFAULT_FILTER,
               ...props.filter,
-              attackers,
+              operators,
             });
           }}
         />
@@ -127,8 +137,8 @@ export default function AttackerFilter(props: AttackerFilterProps) {
 }
 
 function stringifyFilter(filter: Filter) {
-  if (!filter?.attackers.length) {
+  if (!filter?.operators.length) {
     return "No filter set";
   }
-  return `If ${filter.filterType} selected attacker${filter.filterType === "all" ? "s are" : " is"} ${filter.triggerOn}, this strat is ${filter.action === "hide" ? "hidden" : "shown"}`;
+  return `If ${filter.filterType} selected operator${filter.filterType === "all" ? "s are" : " is"} ${filter.triggerOn}, this strat is ${filter.action === "hide" ? "hidden" : "shown"}`;
 }

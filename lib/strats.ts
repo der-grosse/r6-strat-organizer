@@ -32,30 +32,33 @@ export function filterPlayableStrats(
         }
         return true;
       })();
-      const shouldHideDueToAttackerFilter = (() => {
-        if (
-          !strat.filters?.attackers ||
-          !strat.filters?.attackers?.attackers.length
-        )
-          return false;
-        const { attackers, action, filterType, triggerOn } =
-          strat.filters.attackers;
-        const isHit = (() => {
-          if (triggerOn === "banned") {
-            return attackers[filterType === "any" ? "some" : "every"]((op) =>
-              bannedOps.includes(op),
-            );
-          } else {
-            return attackers[filterType === "any" ? "some" : "every"](
-              (op) => !bannedOps.includes(op),
-            );
-          }
-        })();
-        return isHit ? action === "hide" : action === "show";
+      const shouldHideDueToOperatorFilter = (() => {
+        function check(type: "attackers" | "defenders") {
+          if (
+            !strat.filters?.[type] ||
+            !strat.filters?.[type]?.operators.length
+          )
+            return false;
+          const { operators, action, filterType, triggerOn } =
+            strat.filters[type];
+          const isHit = (() => {
+            if (triggerOn === "banned") {
+              return operators[filterType === "any" ? "some" : "every"]((op) =>
+                bannedOps.includes(op),
+              );
+            } else {
+              return operators[filterType === "any" ? "some" : "every"](
+                (op) => !bannedOps.includes(op),
+              );
+            }
+          })();
+          return isHit ? action === "hide" : action === "show";
+        }
+        return check("attackers") || check("defenders");
       })();
       return {
         strat,
-        playable: powerPositionsPlayable && !shouldHideDueToAttackerFilter,
+        playable: powerPositionsPlayable && !shouldHideDueToOperatorFilter,
       };
     });
 }

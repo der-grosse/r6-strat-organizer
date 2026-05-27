@@ -33,7 +33,7 @@ import { Strat } from "@/lib/types/strat.types";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import MAPS from "@/lib/static/maps";
-import AttackerFilter from "./AttackerFilter";
+import OperatorFilter from "./OperatorFilter";
 import SidebarLabeledToggle from "@/components/ui/sidebarLabeledToggle";
 import { FullTeam } from "@/lib/types/team.types";
 import { useStratExport } from "../ExportRenderer";
@@ -198,12 +198,23 @@ export default function StratEditorMetaSidebar(
             <Funnel className="text-muted-foreground" />
             <Label className="text-muted-foreground">Filters</Label>
           </div>
-          <AttackerFilter
+          <OperatorFilter
+            type="attackers"
             filter={props.strat.filters?.attackers}
             onChange={(attackers) => {
               updateStrat({
                 _id: props.strat._id,
                 filters: { ...props.strat.filters, attackers },
+              });
+            }}
+          />
+          <OperatorFilter
+            type="defenders"
+            filter={props.strat.filters?.defenders}
+            onChange={(defenders) => {
+              updateStrat({
+                _id: props.strat._id,
+                filters: { ...props.strat.filters, defenders },
               });
             }}
           />

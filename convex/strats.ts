@@ -12,6 +12,25 @@ import { Strat } from "../lib/types/strat.types";
 import { PlacedAsset } from "../lib/types/asset.types";
 import { DefenderSecondaryGadget } from "../lib/static/operator";
 
+const stratFilters = v.object({
+  attackers: v.optional(
+    v.object({
+      triggerOn: v.union(v.literal("banned"), v.literal("available")),
+      action: v.union(v.literal("hide"), v.literal("show")),
+      filterType: v.union(v.literal("any"), v.literal("all")),
+      operators: v.array(v.string()),
+    }),
+  ),
+  defenders: v.optional(
+    v.object({
+      triggerOn: v.union(v.literal("banned"), v.literal("available")),
+      action: v.union(v.literal("hide"), v.literal("show")),
+      filterType: v.union(v.literal("any"), v.literal("all")),
+      operators: v.array(v.string()),
+    }),
+  ),
+});
+
 export const get = query({
   args: {
     id: v.id("strats"),
@@ -219,20 +238,7 @@ export const update = mutation({
     drawingID: v.optional(v.nullable(v.string())),
     hiddenFloors: v.optional(v.array(v.number())),
     showFloorNames: v.optional(v.boolean()),
-    filters: v.optional(
-      v.nullable(
-        v.object({
-          attackers: v.optional(
-            v.object({
-              triggerOn: v.union(v.literal("banned"), v.literal("available")),
-              action: v.union(v.literal("hide"), v.literal("show")),
-              filterType: v.union(v.literal("any"), v.literal("all")),
-              attackers: v.array(v.string()),
-            }),
-          ),
-        }),
-      ),
-    ),
+    filters: v.optional(v.nullable(stratFilters)),
   },
   async handler(ctx, args) {
     const { activeTeamID } = await requireUser(ctx);
@@ -276,18 +282,7 @@ export const create = mutation({
     name: v.string(),
     description: v.string(),
     drawingID: v.optional(v.nullable(v.string())),
-    filters: v.optional(
-      v.object({
-        attackers: v.optional(
-          v.object({
-            triggerOn: v.union(v.literal("banned"), v.literal("available")),
-            action: v.union(v.literal("hide"), v.literal("show")),
-            filterType: v.union(v.literal("any"), v.literal("all")),
-            attackers: v.array(v.string()),
-          }),
-        ),
-      }),
-    ),
+    filters: v.optional(stratFilters),
   },
   async handler(ctx, args) {
     const { activeTeamID } = await requireUser(ctx);
