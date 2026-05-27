@@ -6,17 +6,18 @@ import {
 } from "@/lib/static/operator";
 import { Badge } from "../../ui/badge";
 import { ScrollArea } from "../../ui/scroll-area";
-import { Button } from "../../ui/button";
 import PrimaryGadgetIcon from "@/components/general/PrimaryGadgetIcon";
 import SecondaryGadgetIcon from "@/components/general/SecondaryGadgetIcon";
 import { ASSET_BASE_SIZE } from "../canvas/Canvas";
 import { Asset, GadgetAsset, PlacedAsset } from "@/lib/types/asset.types";
 import { StratPositions } from "@/lib/types/strat.types";
 import DraggableAssetButton from "./DraggableAssetButton";
+import { Id } from "@/convex/_generated/dataModel";
 
 export interface StratEditorGadgetsSidebarProps {
   onAssetAdd: (asset: Omit<Asset & Partial<PlacedAsset>, "_id">) => void;
   stratPositions: StratPositions[];
+  activeStratPositionID: Id<"stratPositions"> | null;
 }
 
 export default function StratEditorGadgetsSidebar(
@@ -41,30 +42,43 @@ export default function StratEditorGadgetsSidebar(
         : undefined!,
     )
     .filter(Boolean);
-  const selectedSecondaryGadgets = props.stratPositions
-    .map((position) => {
-      const gadgetIDs = position.pickedOperators.flatMap((op) => [
-        op.secondaryGadget,
-        ...("tertiaryGadgets" in op ? [op.tertiaryGadget] : []),
-      ]);
-      return {
-        gadgets: DEFENDER_SECONDARY_GADGETS.filter((g) =>
-          gadgetIDs.includes(g.id),
-        )!,
-        position,
-      };
-    })
-    .flatMap(({ gadgets, position }) =>
-      gadgets.map((gadget) => ({
-        gadget,
-        position,
-      })),
-    )
+  const selectedSecondaryGadgets = (() => {
+    const gadgets = props.stratPositions
+      .map((position) => {
+        const gadgetIDs = position.pickedOperators.flatMap((op) => [
+          op.secondaryGadget,
+          ...("tertiaryGadgets" in op ? [op.tertiaryGadget] : []),
+        ]);
+        return {
+          gadgets: DEFENDER_SECONDARY_GADGETS.filter((g) =>
+            gadgetIDs.includes(g.id),
+          )!,
+          position,
+        };
+      })
+      .flatMap(({ gadgets, position }) =>
+        gadgets.map((gadget) => ({
+          gadget,
+          position,
+        })),
+      );
+
     // prevent duplicates
-    .filter(
+    const assignedGadgets = gadgets.filter(
       (g1, i, gadgets) =>
         !gadgets.some((g2, j) => g1.gadget.id === g2.gadget.id && i > j),
     );
+
+    const activeAssignedGadgets = assignedGadgets.map(
+      (g) =>
+        gadgets.find(
+          (g1) =>
+            g1.gadget.id === g.gadget.id &&
+            g1.position._id === props.activeStratPositionID,
+        ) ?? g,
+    );
+    return activeAssignedGadgets;
+  })();
 
   return (
     <div className="h-full absolute inset-0">

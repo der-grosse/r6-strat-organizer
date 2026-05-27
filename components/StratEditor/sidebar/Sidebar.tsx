@@ -146,6 +146,7 @@ export default function StratEditorSidebar(
           <StratEditorGadgetsSidebar
             onAssetAdd={onAssetAdd}
             stratPositions={props.strat.stratPositions}
+            activeStratPositionID={props.activeStratPosition}
           />
         );
       case "player-ops":
@@ -164,7 +165,7 @@ export default function StratEditorSidebar(
           </div>
         );
     }
-  }, [openTab, onAssetAdd, props.strat, props.team]);
+  }, [openTab, onAssetAdd, props.strat, props.team, props.activeStratPosition]);
 
   return (
     <div className="flex relative z-10">
