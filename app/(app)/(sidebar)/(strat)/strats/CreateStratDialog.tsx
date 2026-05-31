@@ -40,6 +40,7 @@ import {
 import { extractDrawingID } from "@/lib/googleDrawings";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   map: z.string().min(1, "Map is required"),
@@ -50,6 +51,7 @@ const formSchema = z.object({
 });
 
 export function CreateStratDialog() {
+  const router = useRouter();
   const createStrat = useMutation(api.strats.create);
   const [open, setOpen] = useState(false);
 
@@ -84,7 +86,7 @@ export function CreateStratDialog() {
 
       setOpen(false);
       form.reset();
-      toast.success("Strat created successfully");
+      router.push(`/editor/${result.stratID}`);
     } catch (error) {
       console.error("Error creating strat:", error);
       toast.error("Failed to create strat");

@@ -10,7 +10,7 @@ export default function StratEditorLayout({
   } & StratEditorSidebarProps
 >) {
   return (
-    <div className="h-screen w-screen overflow-hidden grid grid-cols-[auto_1fr] xl:grid-cols-[1fr_4fr]">
+    <div className="h-screen w-screen overflow-hidden grid grid-cols-[auto_1fr] lg:grid-cols-[1fr_4fr]">
       <StratEditorSidebar {...props} />
 
       {/* Canvas */}

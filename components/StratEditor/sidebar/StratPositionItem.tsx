@@ -31,7 +31,7 @@ import { forwardRef, useState } from "react";
 import { useEffect } from "react";
 import Shotgun from "../assets/Shotgun";
 import SecondaryGadgetPicker from "@/components/general/SecondaryGadgetPicker";
-import { DEFENDERS, DefenderSecondaryGadget } from "@/lib/static/operator";
+import { DEFENDERS, DefenderSecondaryGadgetID } from "@/lib/static/operator";
 import { PickedOperator, Strat, StratPositions } from "@/lib/types/strat.types";
 import { FullTeam } from "@/lib/types/team.types";
 import { Id } from "@/convex/_generated/dataModel";
@@ -114,7 +114,7 @@ export default function StratPositionItem({
           )}
         >
           <TeamPositionPicker
-            className="flex-1 pl-2 pr-0 overflow-hidden truncate w-[calc(100%_-_var(--spacing)_*_12)]"
+            className="flex-1 p-1 pr-0 overflow-hidden truncate w-[calc(100%_-_var(--spacing)_*_12)]"
             popoverOffset={88}
             teamPositionID={stratPosition.teamPositionID}
             team={team}
@@ -319,7 +319,7 @@ function OperatorItem({
     (DEFENDERS.find((def) => def.name === op.operator) || {});
 
   return (
-    <div ref={setNodeRef} style={style} className="flex pl-3">
+    <div ref={setNodeRef} style={style} className="flex -mr-2">
       <div
         {...attributes}
         {...listeners}
@@ -371,7 +371,7 @@ function OperatorItem({
             stratPositionID: op.stratPositionID,
           })
         }
-        selected={op.secondaryGadget as DefenderSecondaryGadget | undefined}
+        selected={op.secondaryGadget as DefenderSecondaryGadgetID | undefined}
         popoverOffset={52}
         closeOnSelect
         onlyShowIcon
@@ -386,7 +386,7 @@ function OperatorItem({
             {...props}
             variant="ghost"
             size="icon"
-            className="text-muted-foreground -ml-2 gap-1"
+            className="text-muted-foreground -ml-1 gap-1"
           />
         )}
       />
@@ -402,7 +402,7 @@ function OperatorItem({
               stratPositionID: op.stratPositionID,
             })
           }
-          selected={op.tertiaryGadget as DefenderSecondaryGadget | undefined}
+          selected={op.tertiaryGadget as DefenderSecondaryGadgetID | undefined}
           popoverOffset={52}
           closeOnSelect
           onlyShowIcon

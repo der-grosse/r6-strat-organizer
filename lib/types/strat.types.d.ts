@@ -1,5 +1,5 @@
 import { Id } from "@/convex/_generated/dataModel";
-import { DefenderSecondaryGadget } from "../static/operator";
+import { DefenderSecondaryGadgetID } from "../static/operator";
 
 export interface R6Map {
   name: string;
@@ -53,7 +53,7 @@ export interface PickedOperator {
   _id: Id<"pickedOperators">;
   stratPositionID: Id<"stratPositions">;
   operator: string;
-  secondaryGadget: DefenderSecondaryGadget | undefined;
-  tertiaryGadget: DefenderSecondaryGadget | undefined; // only used for operator sentry
+  secondaryGadget: DefenderSecondaryGadgetID | undefined;
+  tertiaryGadget: DefenderSecondaryGadgetID | undefined; // only used for operator sentry
   index: number;
 }

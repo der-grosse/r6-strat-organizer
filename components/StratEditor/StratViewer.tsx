@@ -171,12 +171,18 @@ function removeUnusedFloors(
     }
   }
 
-  const usedFloors = floors.filter((f) => {
-    const assets = hideEmptyFloors
-      ? f.assets.filter((a) => a.stratPositionID === ownStratPositionId)
-      : f.assets;
-    return assets.length > 0;
-  });
+  const ownUsedFloors = floors.filter(
+    (f) =>
+      f.assets.filter((a) => a.stratPositionID === ownStratPositionId).length >
+      0,
+  );
+
+  const generalUsedFloors = floors.filter((f) => f.assets.length > 0);
+
+  const usedFloors =
+    hideEmptyFloors && ownUsedFloors.length > 0
+      ? ownUsedFloors
+      : generalUsedFloors;
 
   if (usedFloors.length === 0) {
     return { assets, map };

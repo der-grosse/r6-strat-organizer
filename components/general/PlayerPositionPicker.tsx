@@ -30,10 +30,10 @@ export default function TeamPositionPicker(props: TeamPositionPickerProps) {
   const [open, setOpen] = useState(false);
 
   const teamMember = props.team.members.find(
-    (member) => member.teamPositionID === props.teamPositionID
+    (member) => member.teamPositionID === props.teamPositionID,
   );
   const position = props.team.teamPositions.find(
-    (teamPos) => teamPos._id === props.teamPositionID
+    (teamPos) => teamPos._id === props.teamPositionID,
   );
 
   return (
@@ -109,10 +109,10 @@ export default function TeamPositionPicker(props: TeamPositionPickerProps) {
                 .toSorted((a, b) => {
                   if (a.teamPositionID && b.teamPositionID) {
                     const indexA = props.team.teamPositions.findIndex(
-                      (teamPos) => teamPos._id === a.teamPositionID
+                      (teamPos) => teamPos._id === a.teamPositionID,
                     );
                     const indexB = props.team.teamPositions.findIndex(
-                      (teamPos) => teamPos._id === b.teamPositionID
+                      (teamPos) => teamPos._id === b.teamPositionID,
                     );
                     return indexA - indexB;
                   }

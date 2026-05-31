@@ -1,14 +1,14 @@
 import {
   DEFENDER_PRIMARY_GADGETS,
   DEFENDER_SECONDARY_GADGETS,
-  DefenderSecondaryGadget,
+  DefenderSecondaryGadgetID,
   PrimaryGadget,
 } from "@/lib/static/operator";
 import PrimaryGadgetIcon from "./PrimaryGadgetIcon";
 import SecondaryGadgetIcon from "./SecondaryGadgetIcon";
 
 export interface GadgetIconProps {
-  id: PrimaryGadget["id"] | DefenderSecondaryGadget;
+  id: PrimaryGadget["id"] | DefenderSecondaryGadgetID;
   showName?: boolean;
   variant?: number;
   className?: string;
@@ -38,7 +38,7 @@ export default function GadgetIcon(props: GadgetIconProps) {
   }
   return (
     <SecondaryGadgetIcon
-      id={props.id as DefenderSecondaryGadget}
+      id={props.id as DefenderSecondaryGadgetID}
       variant={props.variant}
       className={props.className}
       showName={props.showName}

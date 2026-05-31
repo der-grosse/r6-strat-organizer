@@ -1,5 +1,5 @@
 import { Id } from "@/convex/_generated/dataModel";
-import { DefenderSecondaryGadget, PrimaryGadget } from "../static/operator";
+import { DefenderSecondaryGadgetID, PrimaryGadget } from "../static/operator";
 
 export interface BaseAsset {
   _id: Id<"placedAssets">;
@@ -30,7 +30,7 @@ export interface OperatorAsset extends BaseAsset {
 
 export interface GadgetAsset extends BaseAsset {
   type: "gadget";
-  gadget: DefenderSecondaryGadget | PrimaryGadget["id"];
+  gadget: DefenderSecondaryGadgetID | PrimaryGadget["id"];
 }
 
 export interface TextboxAsset extends BaseAsset {

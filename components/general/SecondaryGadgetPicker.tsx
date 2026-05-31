@@ -1,7 +1,7 @@
 import {
   DEFENDER_SECONDARY_GADGETS,
   DEFENDERS,
-  DefenderSecondaryGadget,
+  DefenderSecondaryGadgetID,
 } from "@/lib/static/operator";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Check, ChevronRight, CircleOff } from "lucide-react";
@@ -20,8 +20,8 @@ import GadgetIcon from "./GadgetIcon";
 import { Button } from "../ui/button";
 
 export interface SecondaryGadgetPickerProps {
-  selected: DefenderSecondaryGadget | undefined;
-  onChange: (value: DefenderSecondaryGadget | undefined) => void;
+  selected: DefenderSecondaryGadgetID | undefined;
+  onChange: (value: DefenderSecondaryGadgetID | undefined) => void;
   trigger?: React.FC<{ children: React.ReactNode }>;
   modal?: boolean;
   closeOnSelect?: boolean;
@@ -52,7 +52,7 @@ export default function SecondaryGadgetPicker({
 
   const selectedGadget = useMemo(
     () => DEFENDER_SECONDARY_GADGETS.find((g) => g.id === selected),
-    [selected]
+    [selected],
   );
 
   const prioritizedGadgets = useMemo(() => {
@@ -65,14 +65,14 @@ export default function SecondaryGadgetPicker({
       const gadgetIDsOfOps = Array.from(
         new Set(
           DEFENDERS.filter((def) =>
-            showGadgetOfOperators?.includes(def.name)
-          ).flatMap((def) => def.secondaryGadgets)
-        )
+            showGadgetOfOperators?.includes(def.name),
+          ).flatMap((def) => def.secondaryGadgets),
+        ),
       ).filter((id) => id !== selected);
       return [
         ...(selectedGadget ? [selectedGadget] : []),
         ...DEFENDER_SECONDARY_GADGETS.filter((g) =>
-          gadgetIDsOfOps.includes(g.id)
+          gadgetIDsOfOps.includes(g.id),
         ),
       ];
     }
@@ -80,7 +80,7 @@ export default function SecondaryGadgetPicker({
 
   const otherGadgets = useMemo(() => {
     return DEFENDER_SECONDARY_GADGETS.filter(
-      (g) => !prioritizedGadgets.some((prio) => prio.id === g.id)
+      (g) => !prioritizedGadgets.some((prio) => prio.id === g.id),
     );
   }, [prioritizedGadgets]);
 

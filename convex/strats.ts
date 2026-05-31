@@ -10,7 +10,7 @@ import { requireUser } from "./auth";
 import { Doc, Id } from "./_generated/dataModel";
 import { Strat } from "../lib/types/strat.types";
 import { PlacedAsset } from "../lib/types/asset.types";
-import { DefenderSecondaryGadget } from "../lib/static/operator";
+import { DefenderSecondaryGadgetID } from "../lib/static/operator";
 
 const stratFilters = v.object({
   attackers: v.optional(
@@ -117,10 +117,10 @@ export const list = query({
                 stratPositionID: op.stratPositionID,
                 operator: op.operator,
                 secondaryGadget: op.secondaryGadget as
-                  | DefenderSecondaryGadget
+                  | DefenderSecondaryGadgetID
                   | undefined,
                 tertiaryGadget: op.tertiaryGadget as
-                  | DefenderSecondaryGadget
+                  | DefenderSecondaryGadgetID
                   | undefined,
                 index: op.index,
               }))
@@ -180,10 +180,10 @@ export async function getStrat(
             stratPositionID: op.stratPositionID,
             operator: op.operator,
             secondaryGadget: op.secondaryGadget as
-              | DefenderSecondaryGadget
+              | DefenderSecondaryGadgetID
               | undefined,
             tertiaryGadget: op.tertiaryGadget as
-              | DefenderSecondaryGadget
+              | DefenderSecondaryGadgetID
               | undefined,
             index: op.index,
           }))

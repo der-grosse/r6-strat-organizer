@@ -163,8 +163,8 @@ export type Defender = {
   icon: string;
   iconBW: string;
   gadget?: PrimaryGadget;
-  secondaryGadgets?: DefenderSecondaryGadget[];
-  tertiaryGadgets?: DefenderSecondaryGadget[];
+  secondaryGadgets?: DefenderSecondaryGadgetID[];
+  tertiaryGadgets?: DefenderSecondaryGadgetID[];
   hasPrimaryShotgun?: boolean;
   hasSecondaryShotgun?: boolean;
 };
@@ -657,7 +657,7 @@ export const DEFENDER_PRIMARY_GADGETS = [
     id: "razorbloom_shell",
     name: "Razorbloom Shell",
     icon: ["/gadgets/thorn.png"],
-    count: 3,
+    count: 4,
   },
   {
     id: "kiba_barrier",
@@ -756,4 +756,6 @@ export const DEFENDER_SECONDARY_GADGETS = [
 }[];
 
 export type DefenderSecondaryGadget =
-  (typeof DEFENDER_SECONDARY_GADGETS)[number]["id"];
+  (typeof DEFENDER_SECONDARY_GADGETS)[number];
+
+export type DefenderSecondaryGadgetID = DefenderSecondaryGadget["id"];

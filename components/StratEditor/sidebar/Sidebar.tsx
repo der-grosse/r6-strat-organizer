@@ -2,7 +2,10 @@
 import { Button } from "@/components/ui/button";
 import StratEditorOperatorsSidebar from "./Operator";
 import {
+  AlertCircle,
+  BicepsFlexed,
   ChessRook,
+  Circle,
   CircleOff,
   DoorOpen,
   Fingerprint,
@@ -16,7 +19,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import StratEditorGadgetsSidebar from "./Gadgets";
 import StratEditorMetaSidebar from "./Meta";
 import { cn } from "@/lib/utils";
@@ -24,15 +27,15 @@ import Reinforcement from "@/components/icons/reinforcement";
 import { MAX_REINFORCEMENT } from "@/lib/static/general";
 import Link from "next/link";
 import StratEditorPlayerPositionsSidebar from "./StratPositions";
-import StratEditorLayoutSidebar from "./Layout";
 import { getAssetColor } from "../canvas/useMountedAssets";
 import { ColorButton } from "@/components/general/ColorPickerDialog";
 import { Asset, PlacedAsset } from "@/lib/types/asset.types";
 import { Strat } from "@/lib/types/strat.types";
 import { FullTeam, TeamMember, TeamPosition } from "@/lib/types/team.types";
 import { Id } from "@/convex/_generated/dataModel";
-import MultiOptionSelector from "../canvas/MultiOptionSelector";
 import CurrentStratPositionSelector from "./CurrentStratPositionSelector";
+import { DRAG_ASSET_DATA_TYPE } from "./DraggableAssetButton";
+import StratEditorSelectedElementsSidebar from "./Selected";
 
 export interface StratEditorSidebarProps {
   onAssetAdd: (asset: Omit<Asset & Partial<PlacedAsset>, "_id">) => void;
@@ -50,12 +53,36 @@ export default function StratEditorSidebar(
   const [openTab, setOpenTab] = useState<
     | "meta"
     | "player-ops"
+    | "selected-elements"
     | "operator-gadgets"
-    | "layout-assets"
     | "operator-assets"
   >("meta");
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // While an asset is being dragged out of the sidebar, the full-screen
+  // backdrop (used to close the sidebar on tap) would otherwise swallow the
+  // drop event before it reaches the canvas. Track the drag globally so we can
+  // let the drop pass through to the canvas underneath.
+  const [draggingAsset, setDraggingAsset] = useState(false);
+
+  useEffect(() => {
+    const onDragStart = (e: DragEvent) => {
+      if (e.dataTransfer?.types.includes(DRAG_ASSET_DATA_TYPE)) {
+        setDraggingAsset(true);
+      }
+    };
+    const onDragEnd = () => setDraggingAsset(false);
+
+    window.addEventListener("dragstart", onDragStart);
+    window.addEventListener("dragend", onDragEnd);
+    window.addEventListener("drop", onDragEnd);
+    return () => {
+      window.removeEventListener("dragstart", onDragStart);
+      window.removeEventListener("dragend", onDragEnd);
+      window.removeEventListener("drop", onDragEnd);
+    };
+  }, []);
 
   const onAssetAdd = useCallback(
     (asset: Omit<Asset, "_id">) => {
@@ -141,12 +168,22 @@ export default function StratEditorSidebar(
             stratPositions={props.strat.stratPositions}
           />
         );
+      case "selected-elements":
+        return (
+          <StratEditorSelectedElementsSidebar
+            onAssetAdd={onAssetAdd}
+            stratPositions={props.strat.stratPositions}
+            activeStratPositionID={props.activeStratPosition}
+            assets={props.assets}
+          />
+        );
       case "operator-gadgets":
         return (
           <StratEditorGadgetsSidebar
             onAssetAdd={onAssetAdd}
             stratPositions={props.strat.stratPositions}
             activeStratPositionID={props.activeStratPosition}
+            assets={props.assets}
           />
         );
       case "player-ops":
@@ -156,8 +193,6 @@ export default function StratEditorSidebar(
             team={props.team}
           />
         );
-      case "layout-assets":
-        return <StratEditorLayoutSidebar onAssetAdd={onAssetAdd} />;
       default:
         return (
           <div className="flex items-center justify-center h-full">
@@ -197,10 +232,28 @@ export default function StratEditorSidebar(
           }}
           active={openTab === "player-ops"}
         />
+        {/* selected elements - gadgets and operator icons of selected operators - layout assets */}
+        {!props.hideAssets && (
+          <SidebarButton
+            icon={<Circle />}
+            onClick={() => {
+              setOpenTab("selected-elements");
+              setSidebarOpen((open) =>
+                openTab === "selected-elements" ? !open : true,
+              );
+            }}
+            tooltip={{
+              title: "Selected Elements",
+              description:
+                "Overview of all gadgets of selected operators as well as layout assets like rotates, reinforcements or text annotations",
+            }}
+            active={openTab === "selected-elements"}
+          />
+        )}
         {/* operator gadget assets */}
         {!props.hideAssets && (
           <SidebarButton
-            icon={<Fingerprint />}
+            icon={<BicepsFlexed />}
             onClick={() => {
               setOpenTab("operator-gadgets");
               setSidebarOpen((open) =>
@@ -212,24 +265,6 @@ export default function StratEditorSidebar(
               description: "Add primary and secondary operator gadgets",
             }}
             active={openTab === "operator-gadgets"}
-          />
-        )}
-        {/* layout assets - rotate, reinforcement */}
-        {!props.hideAssets && (
-          <SidebarButton
-            icon={<LayoutGrid />}
-            onClick={() => {
-              setOpenTab("layout-assets");
-              setSidebarOpen((open) =>
-                openTab === "layout-assets" ? !open : true,
-              );
-            }}
-            tooltip={{
-              title: "Layout Assets",
-              description:
-                "Add rotates, headholes, barricades or reinforcements",
-            }}
-            active={openTab === "layout-assets"}
           />
         )}
         {/* operator assets - extra operators */}
@@ -321,17 +356,26 @@ export default function StratEditorSidebar(
       </div>
       <Separator orientation="vertical" className="h-full" />
       <div
-        style={{ "--sidebar-width": "min(90vw, 20rem)" } as React.CSSProperties}
+        style={
+          {
+            "--sidebar-width": "min(30vw, 17rem)",
+            "--sidebar-overlay-width": "min(80vw, 17em)",
+          } as React.CSSProperties
+        }
         className={cn(
-          "bg-background flex-1 h-full absolute xl:relative transition-[left] duration-300 max-xl:w-(--sidebar-width) border-r border-border",
-          sidebarOpen ? "max-xl:left-[100%]" : "max-xl:-left-(--sidebar-width)",
+          "bg-background flex-1 h-full absolute lg:relative transition-[left] duration-300 w-(--sidebar-overlay-width) lg:w-(--sidebar-width) border-r border-border",
+          sidebarOpen
+            ? "max-lg:left-[100%]"
+            : "max-lg:-left-(--sidebar-overlay-width)",
         )}
       >
         {sidebarContent}
         <div
           className={cn(
-            "xl:hidden w-screen h-full absolute top-0 left-[100%]",
+            "lg:hidden w-screen h-full absolute top-0 left-[100%]",
             !sidebarOpen && "hidden",
+            // Let drag/drop pass through to the canvas while dragging an asset
+            draggingAsset && "pointer-events-none",
           )}
           onClick={() => setSidebarOpen(false)}
         />
