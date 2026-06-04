@@ -515,7 +515,7 @@ export default function AssetMenu({
   return (
     <div
       className={cn(
-        "absolute bottom-[110%] left-[50%] -translate-x-1/2 bg-muted text-muted-foreground rounded-lg flex items-center justify-center scale-200 origin-bottom z-100 h-9",
+        "absolute bottom-0 left-[50%] -translate-x-1/2 bg-muted text-muted-foreground rounded-lg flex items-center justify-center scale-200 origin-bottom z-100 h-9 pointer-events-auto",
       )}
       onMouseDown={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}

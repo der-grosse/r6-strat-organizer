@@ -2,6 +2,13 @@
 import { useRef } from "react";
 import { cn } from "@/lib/utils";
 
+// The menu's foreignObject must be large enough to contain the (2x scaled) menu
+// in every browser. Firefox clips to these bounds, so they are intentionally
+// generous; the box is non-interactive (pointerEvents: none) and only its
+// content (the menu) receives pointer events.
+const MENU_FO_WIDTH = 4000;
+const MENU_FO_HEIGHT = 400;
+
 interface SVGAssetProps {
   position: { x: number; y: number };
   size: { width: number; height: number };
@@ -130,8 +137,15 @@ export default function SVGAsset({
         />
       </g>
       {menu && (
+        // Firefox does not paint content that overflows a 0-sized foreignObject
+        // (unlike Chrome/WebKit), so the box needs explicit non-zero dimensions.
+        // We size it generously and offset it by (-width/2, -height) so its
+        // bottom-center stays at the anchor point computed by the transform,
+        // then the menu anchors to the bottom-center of this box.
         <foreignObject
-          style={{ overflow: "visible" }}
+          width={MENU_FO_WIDTH}
+          height={MENU_FO_HEIGHT}
+          style={{ overflow: "visible", pointerEvents: "none" }}
           // matrix(sx, 0, 0, sy, cx-sx*cx, cy-sy*cy) -> to scale with a transform origin at the center bottom
           transform={`matrix(${zoom}, 0, 0, ${zoom}, ${
             size.width / 2 - (size.width / 2) * zoom
@@ -155,7 +169,7 @@ export default function SVGAsset({
 
                   return -Math.max(0, offset);
                 })()) - 15
-          })`}
+          }) translate(${-MENU_FO_WIDTH / 2}, ${-MENU_FO_HEIGHT})`}
         >
           {menu}
         </foreignObject>
