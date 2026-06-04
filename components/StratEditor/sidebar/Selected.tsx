@@ -11,6 +11,7 @@ import PrimaryGadgetIcon from "@/components/general/PrimaryGadgetIcon";
 import SecondaryGadgetIcon from "@/components/general/SecondaryGadgetIcon";
 import { ASSET_BASE_SIZE } from "../canvas/Canvas";
 import {
+  ArrowAsset,
   Asset,
   GadgetAsset,
   LayoutAsset,
@@ -26,7 +27,7 @@ import Reinforcement from "@/components/icons/reinforcement";
 import WoodenBarricade from "@/components/icons/woodenBarricade";
 import Rotation from "@/components/icons/rotation";
 import Explosion from "../assets/Explosion";
-import { Type } from "lucide-react";
+import { MoveUpRight, Type } from "lucide-react";
 
 export interface StratEditorSelectedElementsSidebarProps {
   onAssetAdd: (asset: Omit<Asset & Partial<PlacedAsset>, "_id">) => void;
@@ -280,6 +281,24 @@ export default function StratEditorSelectedElementsSidebar(
             }
           >
             <Type className="size-full" />
+          </DraggableAssetButton>
+          <DraggableAssetButton
+            variant="outline"
+            size="unset"
+            key="arrow"
+            className="p-1 h-auto aspect-square"
+            onAssetAdd={props.onAssetAdd}
+            asset={
+              {
+                type: "arrow",
+                startCorner: "bl",
+                startArrowHead: false,
+                endArrowHead: true,
+                size: { width: 160, height: 100 },
+              } as Omit<ArrowAsset, "_id">
+            }
+          >
+            <MoveUpRight className="size-full" />
           </DraggableAssetButton>
         </div>
       </ScrollArea>

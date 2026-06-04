@@ -10,6 +10,8 @@ import { FullTeam } from "@/lib/types/team.types";
 import { cn } from "@/lib/utils";
 import {
   ALargeSmall,
+  ArrowLeft,
+  ArrowRight,
   Ban,
   Brush,
   EyeOff,
@@ -402,6 +404,55 @@ export default function AssetMenu({
           <div key={`divider-${index}`} className="bg-border w-[1px] h-6" />,
         );
         break;
+      case "arrow-heads": {
+        const arrows = selectedAssets.filter((a) => a.type === "arrow");
+        if (arrows.length === 0) break;
+        const allStartHeads = arrows.every(
+          (a) => a.type === "arrow" && a.startArrowHead,
+        );
+        const allEndHeads = arrows.every(
+          (a) => a.type === "arrow" && a.endArrowHead,
+        );
+        sections.push(
+          <Fragment key="arrow-heads">
+            <Button
+              size="icon"
+              variant="ghost"
+              className={cn(allStartHeads && "bg-card dark:hover:bg-card")}
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={() =>
+                updateAssets(
+                  selectedAssets.map((asset) =>
+                    asset.type === "arrow"
+                      ? { ...asset, startArrowHead: !allStartHeads }
+                      : asset,
+                  ),
+                )
+              }
+            >
+              <ArrowLeft />
+            </Button>
+            <Button
+              size="icon"
+              variant="ghost"
+              className={cn(allEndHeads && "bg-card dark:hover:bg-card")}
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={() =>
+                updateAssets(
+                  selectedAssets.map((asset) =>
+                    asset.type === "arrow"
+                      ? { ...asset, endArrowHead: !allEndHeads }
+                      : asset,
+                  ),
+                )
+              }
+            >
+              <ArrowRight />
+            </Button>
+          </Fragment>,
+        );
+        break;
+      }
       case "text-edit": {
         const textboxAsset = selectedAssets.find((a) => a.type === "textbox");
         if (textboxAsset && openTextEditorForAsset) {
@@ -532,6 +583,7 @@ type MenuItemID =
   | "rotation-type"
   | "door-type"
   | "hatch-type"
+  | "arrow-heads"
   | "text-edit"
   | "font-size"
   | "text-background"
@@ -545,6 +597,7 @@ const MENU_ITEM_IDS_ORDER: MenuItemID[] = [
   "hatch-type",
   "rotation-type",
   "door-type",
+  "arrow-heads",
   "text-edit",
   "font-size",
   "text-background",
@@ -584,6 +637,9 @@ function getMenuItemsIDs(assets: PlacedAsset[]): MenuItemID[] {
       ids.add("text-edit");
       ids.add("font-size");
       ids.add("text-background");
+    }
+    if (asset.type === "arrow") {
+      ids.add("arrow-heads");
     }
   }
   return MENU_ITEM_IDS_ORDER.filter((id) => ids.has(id)).filter(

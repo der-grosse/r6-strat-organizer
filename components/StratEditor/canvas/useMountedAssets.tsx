@@ -1,5 +1,6 @@
 import Operator from "../assets/Operator";
 import Textbox from "../assets/Textbox";
+import Arrow from "../assets/Arrow";
 import { useCallback, useMemo, useState } from "react";
 import GadgetIcon from "../../general/GadgetIcon";
 import AssetOutline from "../assets/AssetOutline";
@@ -161,6 +162,15 @@ export default function useMountAssets(
                 stratPositions={stratPositions}
               />
             );
+          case "arrow":
+            return (
+              <Arrow
+                asset={asset}
+                team={team}
+                stratPositions={stratPositions}
+                selected={selectedAssets.some((a) => a._id === asset._id)}
+              />
+            );
           //@ts-expect-error -- for legacy types, should not occur after migration
           case "reinforcement":
           //@ts-expect-error
@@ -205,7 +215,9 @@ export default function useMountAssets(
       const fullAsset = (() => {
         if (
           selectedBy.length === 0 ||
-          selectedBy.every((id) => id === user?._id)
+          selectedBy.every((id) => id === user?._id) ||
+          // arrows render as native SVG and cannot be wrapped in an HTML div
+          asset.type === "arrow"
         ) {
           return assetElement;
         } else {

@@ -40,7 +40,26 @@ export interface TextboxAsset extends BaseAsset {
   background: "none" | "light" | "dark";
 }
 
-export type Asset = LayoutAsset | OperatorAsset | GadgetAsset | TextboxAsset;
+// An arrow is the diagonal of its bounding box. `startCorner` marks which
+// corner the (tail) start point sits at; the (head) end point is always the
+// diagonally opposite corner. This keeps arrows compatible with the generic
+// position/size box model while still allowing both line ends to be moved
+// freely into any of the four orientations.
+export type ArrowCorner = "tl" | "tr" | "bl" | "br";
+
+export interface ArrowAsset extends BaseAsset {
+  type: "arrow";
+  startCorner: ArrowCorner;
+  startArrowHead: boolean;
+  endArrowHead: boolean;
+}
+
+export type Asset =
+  | LayoutAsset
+  | OperatorAsset
+  | GadgetAsset
+  | TextboxAsset
+  | ArrowAsset;
 
 export type PlacedAsset = Asset & {
   position: Position;

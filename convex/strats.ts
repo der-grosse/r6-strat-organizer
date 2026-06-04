@@ -807,6 +807,9 @@ export const getAssets = query({
           text: asset.text,
           fontSize: asset.fontSize,
           background: asset.background,
+          startCorner: asset.startCorner,
+          startArrowHead: asset.startArrowHead,
+          endArrowHead: asset.endArrowHead,
 
           position: { x: asset.posX, y: asset.posY },
           size: { width: asset.width, height: asset.height },
@@ -837,6 +840,9 @@ export const addAsset = mutation({
     text: v.optional(v.string()),
     fontSize: v.optional(v.number()),
     background: v.optional(v.string()),
+    startCorner: v.optional(v.string()),
+    startArrowHead: v.optional(v.boolean()),
+    endArrowHead: v.optional(v.boolean()),
   },
   async handler(ctx, args) {
     const { activeTeamID } = await requireUser(ctx);
@@ -866,6 +872,9 @@ export const addAsset = mutation({
       text: args.text,
       fontSize: args.fontSize,
       background: args.background,
+      startCorner: args.startCorner,
+      startArrowHead: args.startArrowHead,
+      endArrowHead: args.endArrowHead,
     });
     return { success: true, placedAssetID };
   },
@@ -894,6 +903,9 @@ export const updateAssets = mutation({
         text: v.optional(v.string()),
         fontSize: v.optional(v.number()),
         background: v.optional(v.string()),
+        startCorner: v.optional(v.string()),
+        startArrowHead: v.optional(v.boolean()),
+        endArrowHead: v.optional(v.boolean()),
       }),
     ),
   },
@@ -932,6 +944,15 @@ export const updateAssets = mutation({
         ...(asset.fontSize !== undefined ? { fontSize: asset.fontSize } : {}),
         ...(asset.background !== undefined
           ? { background: asset.background }
+          : {}),
+        ...(asset.startCorner !== undefined
+          ? { startCorner: asset.startCorner }
+          : {}),
+        ...(asset.startArrowHead !== undefined
+          ? { startArrowHead: asset.startArrowHead }
+          : {}),
+        ...(asset.endArrowHead !== undefined
+          ? { endArrowHead: asset.endArrowHead }
           : {}),
       });
     }

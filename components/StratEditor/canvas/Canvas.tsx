@@ -1,6 +1,8 @@
 "use client";
 import { useRef, useState, useEffect, useMemo, useCallback } from "react";
-import SVGAsset from "./SVGAsset";
+import SVGAsset, { AssetHandle } from "./SVGAsset";
+import { arrowGeomFromEndpoints, getArrowEndpoints } from "./arrow";
+import { ArrowCorner } from "@/lib/types/asset.types";
 import { useKeys } from "../../hooks/useKey";
 import isKeyDown from "../../hooks/isKeyDown";
 import { deepCopy } from "../../Objects";
@@ -104,7 +106,12 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
   const svgRef = useRef<SVGSVGElement>(null!);
 
   const [activeAction, setActiveAction] = useState<
-    "none" | "dragging" | "resizing" | "rotating"
+    | "none"
+    | "dragging"
+    | "resizing"
+    | "rotating"
+    | "moving-arrow-start"
+    | "moving-arrow-end"
   >("none");
   // store time from last action end to prevent deselect on click right after rotating
   const actionEndTime = useRef(0);
@@ -139,11 +146,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
 
   // mouse down on asset
   const handleMouseDown = useCallback(
-    (
-      e: React.MouseEvent,
-      assetId: string,
-      handle: "resize" | "rotate" | "none",
-    ) => {
+    (e: React.MouseEvent, assetId: string, handle: AssetHandle) => {
       if (readonly) return;
       const svg = svgRef.current;
       if (!svg) return;
@@ -180,6 +183,10 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
         setActiveAction("resizing");
       } else if (handle === "rotate") {
         setActiveAction("rotating");
+      } else if (handle === "arrow-start") {
+        setActiveAction("moving-arrow-start");
+      } else if (handle === "arrow-end") {
+        setActiveAction("moving-arrow-end");
       } else {
         setActiveAction("dragging");
       }
@@ -206,11 +213,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
 
   // touch start on asset
   const handleTouchStart = useCallback(
-    (
-      e: React.TouchEvent,
-      assetId: string,
-      handle: "resize" | "rotate" | "none",
-    ) => {
+    (e: React.TouchEvent, assetId: string, handle: AssetHandle) => {
       if (readonly) return;
       const svg = svgRef.current;
       if (!svg) return;
@@ -249,6 +252,10 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
         setActiveAction("resizing");
       } else if (handle === "rotate") {
         setActiveAction("rotating");
+      } else if (handle === "arrow-start") {
+        setActiveAction("moving-arrow-start");
+      } else if (handle === "arrow-end") {
+        setActiveAction("moving-arrow-end");
       } else {
         setActiveAction("dragging");
       }
@@ -273,6 +280,43 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
     [userSelectedAssets, readonly],
   );
 
+  // recompute an arrow's box + start corner while a line end is being dragged
+  const moveArrowEndpoint = useCallback(
+    (assets: A[], svgP: { x: number; y: number }): A[] => {
+      const arrow = actionStart.asset;
+      if (!arrow) return assets;
+      const startCorner =
+        (arrow as CanvasAsset & { startCorner?: ArrowCorner }).startCorner ??
+        "tl";
+      const { start, end } = getArrowEndpoints(
+        arrow.position,
+        arrow.size,
+        startCorner,
+      );
+      // the endpoint not being dragged stays fixed
+      const fixed = activeAction === "moving-arrow-start" ? end : start;
+      const moving = {
+        x: clamp(svgP.x, 0, viewBox.width),
+        y: clamp(svgP.y, 0, viewBox.height),
+      };
+      const geom = arrowGeomFromEndpoints(
+        activeAction === "moving-arrow-start" ? moving : fixed,
+        activeAction === "moving-arrow-start" ? fixed : moving,
+      );
+      return assets.map((a) =>
+        a._id === arrow._id
+          ? ({
+              ...a,
+              position: geom.position,
+              size: geom.size,
+              startCorner: geom.startCorner,
+            } as A)
+          : a,
+      );
+    },
+    [activeAction, actionStart, viewBox.width, viewBox.height],
+  );
+
   // mouse move when dragging/resizing/rotating assets
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
@@ -290,7 +334,12 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
         svg.getScreenCTM()?.inverse() || new DOMMatrix(),
       );
 
-      if (activeAction === "dragging") {
+      if (
+        activeAction === "moving-arrow-start" ||
+        activeAction === "moving-arrow-end"
+      ) {
+        setAssets((assets) => moveArrowEndpoint(assets, svgP));
+      } else if (activeAction === "dragging") {
         const dx = svgP.x - actionStart.x;
         const dy = svgP.y - actionStart.y;
         const distance = Math.sqrt(dx ** 2 + dy ** 2);
@@ -401,7 +450,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
         }
       }
     },
-    [activeAction, userSelectedAssets, actionStart],
+    [activeAction, userSelectedAssets, actionStart, moveArrowEndpoint],
   );
 
   // mouse up when dragging/resizing/rotating assets
@@ -444,7 +493,12 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
         svg.getScreenCTM()?.inverse() || new DOMMatrix(),
       );
 
-      if (activeAction === "dragging") {
+      if (
+        activeAction === "moving-arrow-start" ||
+        activeAction === "moving-arrow-end"
+      ) {
+        setAssets((assets) => moveArrowEndpoint(assets, svgP));
+      } else if (activeAction === "dragging") {
         const dx = svgP.x - actionStart.x;
         const dy = svgP.y - actionStart.y;
         const distance = Math.sqrt(dx ** 2 + dy ** 2);
@@ -551,7 +605,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
         }
       }
     },
-    [activeAction, userSelectedAssets, actionStart],
+    [activeAction, userSelectedAssets, actionStart, moveArrowEndpoint],
   );
 
   // touch end when dragging/resizing/rotating assets
@@ -757,6 +811,12 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
               menu={render.menu}
               zoom={zoomFactor}
               readonly={readonly}
+              arrowStartCorner={
+                asset.type === "arrow"
+                  ? ((asset as CanvasAsset & { startCorner?: ArrowCorner })
+                      .startCorner ?? "tl")
+                  : undefined
+              }
             >
               {render.asset}
             </SVGAsset>

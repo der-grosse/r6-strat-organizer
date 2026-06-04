@@ -115,6 +115,9 @@ const schema = defineSchema({
     text: v.optional(v.string()),
     fontSize: v.optional(v.number()),
     background: v.optional(v.string()),
+    startCorner: v.optional(v.string()),
+    startArrowHead: v.optional(v.boolean()),
+    endArrowHead: v.optional(v.boolean()),
   }).index("byStrat", ["stratID"]),
 
   stratPositions: defineTable({

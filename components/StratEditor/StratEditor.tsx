@@ -15,6 +15,7 @@ import StratDisplay from "../StratDisplay/StratDisplay";
 import { FullTeam, TeamMember } from "@/lib/types/team.types";
 import { Strat } from "@/lib/types/strat.types";
 import {
+  ArrowAsset,
   GadgetAsset,
   LayoutAsset,
   OperatorAsset,
@@ -649,6 +650,18 @@ function convertPlacedAssetToAPI<
     background:
       asset.type === "textbox"
         ? (asset as Omit<TextboxAsset, "_id">).background
+        : undefined,
+    startCorner:
+      asset.type === "arrow"
+        ? (asset as Omit<ArrowAsset, "_id">).startCorner
+        : undefined,
+    startArrowHead:
+      asset.type === "arrow"
+        ? (asset as Omit<ArrowAsset, "_id">).startArrowHead
+        : undefined,
+    endArrowHead:
+      asset.type === "arrow"
+        ? (asset as Omit<ArrowAsset, "_id">).endArrowHead
         : undefined,
   };
 }
