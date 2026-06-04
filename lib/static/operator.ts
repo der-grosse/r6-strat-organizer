@@ -571,7 +571,7 @@ export const DEFENDER_PRIMARY_GADGETS = [
     id: "yokai",
     name: "Yokai",
     icon: ["/gadgets/yokai.png"],
-    count: 2,
+    count: 3,
   },
   {
     id: "black_mirror",
