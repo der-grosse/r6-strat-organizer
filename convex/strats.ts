@@ -810,6 +810,7 @@ export const getAssets = query({
           startCorner: asset.startCorner,
           startArrowHead: asset.startArrowHead,
           endArrowHead: asset.endArrowHead,
+          url: asset.url,
 
           position: { x: asset.posX, y: asset.posY },
           size: { width: asset.width, height: asset.height },
@@ -843,6 +844,7 @@ export const addAsset = mutation({
     startCorner: v.optional(v.string()),
     startArrowHead: v.optional(v.boolean()),
     endArrowHead: v.optional(v.boolean()),
+    url: v.optional(v.string()),
   },
   async handler(ctx, args) {
     const { activeTeamID } = await requireUser(ctx);
@@ -875,6 +877,7 @@ export const addAsset = mutation({
       startCorner: args.startCorner,
       startArrowHead: args.startArrowHead,
       endArrowHead: args.endArrowHead,
+      url: args.url,
     });
     return { success: true, placedAssetID };
   },
@@ -906,6 +909,7 @@ export const updateAssets = mutation({
         startCorner: v.optional(v.string()),
         startArrowHead: v.optional(v.boolean()),
         endArrowHead: v.optional(v.boolean()),
+        url: v.optional(v.string()),
       }),
     ),
   },
@@ -954,6 +958,7 @@ export const updateAssets = mutation({
         ...(asset.endArrowHead !== undefined
           ? { endArrowHead: asset.endArrowHead }
           : {}),
+        ...(asset.url !== undefined ? { url: asset.url } : {}),
       });
     }
     return { success: true };

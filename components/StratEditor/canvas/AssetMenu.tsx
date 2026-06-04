@@ -15,6 +15,7 @@ import {
   Ban,
   Brush,
   EyeOff,
+  ImageIcon,
   TextCursorInput,
   Trash,
   UserRound,
@@ -37,6 +38,7 @@ export interface AssetMenuProps {
   deleteAssets: (assets: PlacedAsset[]) => void;
   openColorPickerForAssets: (assets: PlacedAsset[]) => void;
   openTextEditorForAsset?: (asset: PlacedAsset) => void;
+  openImageUrlEditorForAsset?: (asset: PlacedAsset) => void;
 }
 
 export default function AssetMenu({
@@ -47,6 +49,7 @@ export default function AssetMenu({
   deleteAssets,
   openColorPickerForAssets,
   openTextEditorForAsset,
+  openImageUrlEditorForAsset,
 }: AssetMenuProps) {
   const assetStratPosition = stratPositions.find((op) =>
     selectedAssets.every((asset) => asset.stratPositionID === op._id),
@@ -548,6 +551,23 @@ export default function AssetMenu({
         }
         break;
       }
+      case "image-url": {
+        const imageAsset = selectedAssets.find((a) => a.type === "image");
+        if (imageAsset && openImageUrlEditorForAsset) {
+          sections.push(
+            <Button
+              key="image-url"
+              size="icon"
+              variant="ghost"
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={() => openImageUrlEditorForAsset(imageAsset)}
+            >
+              <ImageIcon />
+            </Button>,
+          );
+        }
+        break;
+      }
       case "delete":
         sections.push(
           <Button
@@ -587,6 +607,7 @@ type MenuItemID =
   | "text-edit"
   | "font-size"
   | "text-background"
+  | "image-url"
   | "delete"
   | "divider";
 const MENU_ITEM_IDS_ORDER: MenuItemID[] = [
@@ -601,6 +622,7 @@ const MENU_ITEM_IDS_ORDER: MenuItemID[] = [
   "text-edit",
   "font-size",
   "text-background",
+  "image-url",
   "divider",
   "delete",
 ];
@@ -640,6 +662,9 @@ function getMenuItemsIDs(assets: PlacedAsset[]): MenuItemID[] {
     }
     if (asset.type === "arrow") {
       ids.add("arrow-heads");
+    }
+    if (asset.type === "image") {
+      ids.add("image-url");
     }
   }
   return MENU_ITEM_IDS_ORDER.filter((id) => ids.has(id)).filter(

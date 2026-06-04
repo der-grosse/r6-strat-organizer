@@ -54,12 +54,19 @@ export interface ArrowAsset extends BaseAsset {
   endArrowHead: boolean;
 }
 
+// An image referenced by an external URL.
+export interface ImageAsset extends BaseAsset {
+  type: "image";
+  url: string;
+}
+
 export type Asset =
   | LayoutAsset
   | OperatorAsset
   | GadgetAsset
   | TextboxAsset
-  | ArrowAsset;
+  | ArrowAsset
+  | ImageAsset;
 
 export type PlacedAsset = Asset & {
   position: Position;

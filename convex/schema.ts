@@ -118,6 +118,7 @@ const schema = defineSchema({
     startCorner: v.optional(v.string()),
     startArrowHead: v.optional(v.boolean()),
     endArrowHead: v.optional(v.boolean()),
+    url: v.optional(v.string()),
   }).index("byStrat", ["stratID"]),
 
   stratPositions: defineTable({

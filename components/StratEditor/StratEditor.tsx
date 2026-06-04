@@ -17,6 +17,7 @@ import { Strat } from "@/lib/types/strat.types";
 import {
   ArrowAsset,
   GadgetAsset,
+  ImageAsset,
   LayoutAsset,
   OperatorAsset,
   PlacedAsset,
@@ -662,6 +663,10 @@ function convertPlacedAssetToAPI<
     endArrowHead:
       asset.type === "arrow"
         ? (asset as Omit<ArrowAsset, "_id">).endArrowHead
+        : undefined,
+    url:
+      asset.type === "image"
+        ? (asset as Omit<ImageAsset, "_id">).url
         : undefined,
   };
 }

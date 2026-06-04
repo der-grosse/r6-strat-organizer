@@ -14,6 +14,7 @@ import {
   ArrowAsset,
   Asset,
   GadgetAsset,
+  ImageAsset,
   LayoutAsset,
   OperatorAsset,
   PlacedAsset,
@@ -27,7 +28,7 @@ import Reinforcement from "@/components/icons/reinforcement";
 import WoodenBarricade from "@/components/icons/woodenBarricade";
 import Rotation from "@/components/icons/rotation";
 import Explosion from "../assets/Explosion";
-import { MoveUpRight, Type } from "lucide-react";
+import { ImageIcon, MoveUpRight, Type } from "lucide-react";
 
 export interface StratEditorSelectedElementsSidebarProps {
   onAssetAdd: (asset: Omit<Asset & Partial<PlacedAsset>, "_id">) => void;
@@ -299,6 +300,22 @@ export default function StratEditorSelectedElementsSidebar(
             }
           >
             <MoveUpRight className="size-full" />
+          </DraggableAssetButton>
+          <DraggableAssetButton
+            variant="outline"
+            size="unset"
+            key="image"
+            className="p-1 h-auto aspect-square"
+            onAssetAdd={props.onAssetAdd}
+            asset={
+              {
+                type: "image",
+                url: "",
+                size: { width: 120, height: 120 },
+              } as Omit<ImageAsset, "_id">
+            }
+          >
+            <ImageIcon className="size-full" />
           </DraggableAssetButton>
         </div>
       </ScrollArea>

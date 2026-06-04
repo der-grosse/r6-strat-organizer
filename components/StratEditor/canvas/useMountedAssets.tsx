@@ -1,6 +1,7 @@
 import Operator from "../assets/Operator";
 import Textbox from "../assets/Textbox";
 import Arrow from "../assets/Arrow";
+import Image from "../assets/Image";
 import { useCallback, useMemo, useState } from "react";
 import GadgetIcon from "../../general/GadgetIcon";
 import AssetOutline from "../assets/AssetOutline";
@@ -24,6 +25,7 @@ import { StratPositions } from "@/lib/types/strat.types";
 import { PlacedAsset } from "@/lib/types/asset.types";
 import { Id } from "@/convex/_generated/dataModel";
 import AssetMenu from "./AssetMenu";
+import { Input } from "@/components/ui/input";
 
 export default function useMountAssets(
   {
@@ -51,6 +53,10 @@ export default function useMountAssets(
     null,
   );
   const [textEditorValue, setTextEditorValue] = useState("");
+  const [imageUrlEditorOpen, setImageUrlEditorOpen] = useState(false);
+  const [imageUrlEditorAsset, setImageUrlEditorAsset] =
+    useState<PlacedAsset | null>(null);
+  const [imageUrlEditorValue, setImageUrlEditorValue] = useState("");
 
   const colorPickerDialog = useMemo(
     () => (
@@ -127,6 +133,71 @@ export default function useMountAssets(
     [textEditorOpen, textEditorValue, textEditorAsset, updateAssets],
   );
 
+  const imageUrlEditorDialog = useMemo(
+    () => (
+      <Dialog open={imageUrlEditorOpen} onOpenChange={setImageUrlEditorOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Image URL</DialogTitle>
+          </DialogHeader>
+          <span className="text-sm text-muted-foreground mb-1 block">
+            The link must be publicly accessible and directly point to an image
+            file (e.g. ending in .png or .jpg). <br />
+            If the image fails to load, check the URL.
+          </span>
+          <Input
+            type="url"
+            value={imageUrlEditorValue}
+            onChange={(e) => setImageUrlEditorValue(e.target.value)}
+            placeholder="https://example.com/image.png"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && imageUrlEditorAsset) {
+                e.preventDefault();
+                updateAssets([
+                  {
+                    ...imageUrlEditorAsset,
+                    url: imageUrlEditorValue,
+                  } as PlacedAsset,
+                ]);
+                setImageUrlEditorOpen(false);
+              }
+            }}
+            autoFocus
+          />
+          <DialogFooter>
+            <Button
+              variant="ghost"
+              onClick={() => setImageUrlEditorOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                if (imageUrlEditorAsset) {
+                  updateAssets([
+                    {
+                      ...imageUrlEditorAsset,
+                      url: imageUrlEditorValue,
+                    } as PlacedAsset,
+                  ]);
+                  setImageUrlEditorOpen(false);
+                }
+              }}
+            >
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    ),
+    [
+      imageUrlEditorOpen,
+      imageUrlEditorValue,
+      imageUrlEditorAsset,
+      updateAssets,
+    ],
+  );
+
   const renderAsset = useCallback(
     function renderAsset(
       asset: PlacedAsset,
@@ -169,6 +240,14 @@ export default function useMountAssets(
                 team={team}
                 stratPositions={stratPositions}
                 selected={selectedAssets.some((a) => a._id === asset._id)}
+              />
+            );
+          case "image":
+            return (
+              <Image
+                asset={asset}
+                team={team}
+                stratPositions={stratPositions}
               />
             );
           //@ts-expect-error -- for legacy types, should not occur after migration
@@ -262,6 +341,11 @@ export default function useMountAssets(
                 setTextEditorValue(asset.type === "textbox" ? asset.text : "");
                 setTextEditorOpen(true);
               }}
+              openImageUrlEditorForAsset={(asset) => {
+                setImageUrlEditorAsset(asset);
+                setImageUrlEditorValue(asset.type === "image" ? asset.url : "");
+                setImageUrlEditorOpen(true);
+              }}
             />
           ) : undefined,
         asset: fullAsset,
@@ -275,6 +359,10 @@ export default function useMountAssets(
       setTextEditorAsset(asset);
       setTextEditorValue(asset.text);
       setTextEditorOpen(true);
+    } else if (asset.type === "image") {
+      setImageUrlEditorAsset(asset);
+      setImageUrlEditorValue(asset.url);
+      setImageUrlEditorOpen(true);
     }
   }, []);
 
@@ -285,6 +373,7 @@ export default function useMountAssets(
       <>
         {colorPickerDialog}
         {textEditorDialog}
+        {imageUrlEditorDialog}
       </>
     ),
   };

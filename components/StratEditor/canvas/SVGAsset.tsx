@@ -15,8 +15,17 @@ export type AssetHandle =
 // in every browser. Firefox clips to these bounds, so they are intentionally
 // generous; the box is non-interactive (pointerEvents: none) and only its
 // content (the menu) receives pointer events.
+//
+// The MultiOptionSelector dropdown aligns the selected option with the menu bar,
+// so it expands BOTH upward and downward (at scale-200, with up to ~11 options
+// it reaches several hundred px in each direction). The box therefore reserves
+// MENU_FO_ABOVE above and MENU_FO_BELOW below the menu bar; the menu sits at the
+// bottom of a wrapper of height MENU_FO_ABOVE, so it lands exactly on the anchor
+// point while leaving room for the dropdown to overflow in either direction.
 const MENU_FO_WIDTH = 4000;
-const MENU_FO_HEIGHT = 400;
+const MENU_FO_ABOVE = 1000;
+const MENU_FO_BELOW = 1000;
+const MENU_FO_HEIGHT = MENU_FO_ABOVE + MENU_FO_BELOW;
 
 interface SVGAssetProps {
   position: { x: number; y: number };
@@ -195,9 +204,10 @@ export default function SVGAsset({
       {menu && (
         // Firefox does not paint content that overflows a 0-sized foreignObject
         // (unlike Chrome/WebKit), so the box needs explicit non-zero dimensions.
-        // We size it generously and offset it by (-width/2, -height) so its
-        // bottom-center stays at the anchor point computed by the transform,
-        // then the menu anchors to the bottom-center of this box.
+        // We size it generously and offset it by (-width/2, -MENU_FO_ABOVE) so
+        // the menu bar (bottom-anchored within a wrapper of height
+        // MENU_FO_ABOVE) lands on the anchor point computed by the transform,
+        // leaving MENU_FO_BELOW of paintable room beneath it for the dropdown.
         <foreignObject
           width={MENU_FO_WIDTH}
           height={MENU_FO_HEIGHT}
@@ -225,9 +235,22 @@ export default function SVGAsset({
 
                   return -Math.max(0, offset);
                 })()) - 15
-          }) translate(${-MENU_FO_WIDTH / 2}, ${-MENU_FO_HEIGHT})`}
+          }) translate(${-MENU_FO_WIDTH / 2}, ${-MENU_FO_ABOVE})`}
         >
-          {menu}
+          {/* Wrapper height = MENU_FO_ABOVE so the menu's `bottom-0` anchors on
+              the computed point; the dropdown can overflow above (into this
+              wrapper) and below (into the MENU_FO_BELOW region) without Firefox
+              clipping it. */}
+          <div
+            style={{
+              position: "relative",
+              width: MENU_FO_WIDTH,
+              height: MENU_FO_ABOVE,
+              pointerEvents: "none",
+            }}
+          >
+            {menu}
+          </div>
         </foreignObject>
       )}
     </g>
