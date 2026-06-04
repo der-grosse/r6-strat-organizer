@@ -26,30 +26,35 @@ export default function VariableWidthIcon({
           src={parts.end.src}
           alt={parts.end.alt}
           className="h-full aspect-auto object-contain max-h-full"
+          draggable={false}
         />
         <div className="flex h-full">
           <img
             src={parts.between.src}
             alt={parts.between.alt}
             className="h-full aspect-auto flex-[1_1_0]"
+            draggable={false}
           />
         </div>
         <img
           src={parts.middle.src}
           alt={parts.middle.alt}
           className="h-full aspect-auto object-contain"
+          draggable={false}
         />
         <div className="flex h-full">
           <img
             src={parts.between.src}
             alt={parts.between.alt}
             className="h-full aspect-auto flex-[1_1_0]"
+            draggable={false}
           />
         </div>
         <img
           src={parts.end.src}
           alt={parts.end.alt}
           className="h-full aspect-auto object-contain -scale-x-100"
+          draggable={false}
         />
       </div>
     );
