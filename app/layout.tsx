@@ -18,6 +18,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      {/* mobile debugger */}
+      {/* <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+      <script>eruda.init();</script> */}
       <body className="antialiased m-0 dark w-screen min-h-screen">
         {children}
       </body>

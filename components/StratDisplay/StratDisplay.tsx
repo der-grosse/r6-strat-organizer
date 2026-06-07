@@ -216,7 +216,7 @@ export default function StratDisplay(props: StratDisplayProps) {
   return (
     <div
       className={cn(
-        "relative h-full w-full flex justify-center items-center flex-col z-0",
+        "relative h-full w-full flex justify-center flex-col z-0",
         props.strat &&
           settings?.activeStratLayout === "top" &&
           "flex-col-reverse",
