@@ -811,6 +811,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
               menu={render.menu}
               zoom={zoomFactor}
               readonly={readonly}
+              nativeSvg={asset.type === "operator"}
               arrowStartCorner={
                 asset.type === "arrow"
                   ? ((asset as CanvasAsset & { startCorner?: ArrowCorner })

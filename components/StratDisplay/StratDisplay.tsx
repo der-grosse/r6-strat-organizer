@@ -235,8 +235,8 @@ export default function StratDisplay(props: StratDisplayProps) {
           {Details}
         </>
       ) : props.strat ? (
-        <>
-          <div className="flex-1 relative h-screen overflow-hidden py-0 block">
+        <div className="absolute inset-0 flex flex-col justify-center">
+          <div className="flex-1 overflow-hidden py-0 block">
             <div className="relative h-full w-full flex items-center justify-center">
               <StratViewer
                 strat={props.strat}
@@ -264,7 +264,7 @@ export default function StratDisplay(props: StratDisplayProps) {
             </div>
           </div>
           {Details}
-        </>
+        </div>
       ) : props.strat === null ? (
         <>
           <Ban className="text-muted-foreground" height={64} width={64} />

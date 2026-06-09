@@ -41,6 +41,14 @@ interface SVGAssetProps {
   zoom: number;
   readonly?: boolean;
   /**
+   * When true, the children are rendered as native SVG directly (not wrapped in
+   * a foreignObject), while keeping the normal resize/rotate handles. Used for
+   * assets that draw themselves as SVG (e.g. operators) to avoid Safari's
+   * foreignObject rendering bugs. Ignored for arrows, which already render
+   * natively via `arrowStartCorner`.
+   */
+  nativeSvg?: boolean;
+  /**
    * When set, the asset is an arrow: its children are rendered as native SVG
    * (not in a foreignObject) and the start/end corners get draggable line-end
    * handles instead of the resize/rotate handles.
@@ -61,6 +69,7 @@ export default function SVGAsset({
   menu,
   zoom,
   readonly,
+  nativeSvg,
   arrowStartCorner,
 }: Readonly<SVGAssetProps>) {
   const assetRef = useRef<SVGGElement>(null);
@@ -132,16 +141,20 @@ export default function SVGAsset({
           </>
         ) : (
           <>
-            <foreignObject
-              width={size.width}
-              height={size.height}
-              style={{
-                overflow: "visible",
-                zIndex: 1,
-              }}
-            >
-              {children}
-            </foreignObject>
+            {nativeSvg ? (
+              children
+            ) : (
+              <foreignObject
+                width={size.width}
+                height={size.height}
+                style={{
+                  overflow: "visible",
+                  zIndex: 1,
+                }}
+              >
+                {children}
+              </foreignObject>
+            )}
             <rect
               x={0}
               y={0}

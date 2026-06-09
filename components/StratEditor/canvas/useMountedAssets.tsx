@@ -1,4 +1,4 @@
-import Operator from "../assets/Operator";
+import SVGOperator from "../assets/SVGOperator";
 import Textbox from "../assets/Textbox";
 import Arrow from "../assets/Arrow";
 import Image from "../assets/Image";
@@ -209,7 +209,7 @@ export default function useMountAssets(
         switch (asset.type) {
           case "operator":
             return (
-              <Operator
+              <SVGOperator
                 asset={asset}
                 team={team}
                 stratPositions={stratPositions}
@@ -295,8 +295,10 @@ export default function useMountAssets(
         if (
           selectedBy.length === 0 ||
           selectedBy.every((id) => id === user?._id) ||
-          // arrows render as native SVG and cannot be wrapped in an HTML div
-          asset.type === "arrow"
+          // arrows and operators render as native SVG and cannot be wrapped in
+          // an HTML div
+          asset.type === "arrow" ||
+          asset.type === "operator"
         ) {
           return assetElement;
         } else {
