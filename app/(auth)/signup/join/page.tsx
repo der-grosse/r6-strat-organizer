@@ -18,13 +18,7 @@ export default async function JoinPage({
   // creating a brand-new account.
   if (payload) {
     const info = inviteKey ? await getInviteInfo(inviteKey) : null;
-    return (
-      <AcceptInvite
-        userName={payload.name}
-        inviteKey={inviteKey}
-        info={info}
-      />
-    );
+    return <AcceptInvite userName={payload.name} inviteKey={inviteKey} info={info} />;
   }
 
   // Logged-out visitors register a new account against the invite.

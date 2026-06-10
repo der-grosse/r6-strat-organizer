@@ -1,11 +1,5 @@
 "use client";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState } from "react";
 import ColorPickerDialog from "@/components/general/ColorPickerDialog";
 import TeamMemberList from "./TeamMemberList";
@@ -27,17 +21,14 @@ export default function TeamMembers(props: TeamMembersProps) {
   const [userColorID, setUserColorID] = useState<Id<"users"> | null>(null);
 
   const [changeUbisoftIDOpen, setChangeUbisoftIDOpen] = useState(false);
-  const [changeUbisoftIDUser, setChangeUbisoftIDUser] =
-    useState<TeamMember | null>(null);
+  const [changeUbisoftIDUser, setChangeUbisoftIDUser] = useState<TeamMember | null>(null);
 
   return (
     <>
       <Card>
         <CardHeader>
           <CardTitle>Team Members</CardTitle>
-          <CardDescription>
-            Manage your team members and their roles
-          </CardDescription>
+          <CardDescription>Manage your team members and their roles</CardDescription>
         </CardHeader>
         <CardContent>
           <TeamMemberList

@@ -24,11 +24,7 @@ export default function Arrow({
   selected: boolean;
 }) {
   const color = getAssetColor(asset, stratPositions, team) ?? "white";
-  const { start, end } = getArrowEndpoints(
-    { x: 0, y: 0 },
-    asset.size,
-    asset.startCorner ?? "tl",
-  );
+  const { start, end } = getArrowEndpoints({ x: 0, y: 0 }, asset.size, asset.startCorner ?? "tl");
 
   const dx = end.x - start.x;
   const dy = end.y - start.y;
@@ -47,11 +43,7 @@ export default function Arrow({
 
   // An arrowhead pointing outward along (dirX, dirY) at `point`. The tip sits
   // `headForward` past the endpoint and the base is `headLength` behind the tip.
-  const headPoints = (
-    point: { x: number; y: number },
-    dirX: number,
-    dirY: number,
-  ) => {
+  const headPoints = (point: { x: number; y: number }, dirX: number, dirY: number) => {
     const tipX = point.x + dirX * headForward;
     const tipY = point.y + dirY * headForward;
     const baseX = tipX - dirX * headLength;
@@ -103,11 +95,7 @@ export default function Arrow({
         />
       )}
       {asset.endArrowHead && (
-        <polygon
-          points={headPoints(end, ux, uy)}
-          fill={color}
-          style={{ pointerEvents: "none" }}
-        />
+        <polygon points={headPoints(end, ux, uy)} fill={color} style={{ pointerEvents: "none" }} />
       )}
     </g>
   );

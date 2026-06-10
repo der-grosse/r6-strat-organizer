@@ -4,8 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "R6 Strats",
-  description:
-    "Plan and organize your Rainbow Six Siege strategies - R6 Strat Organizer Tool",
+  description: "Plan and organize your Rainbow Six Siege strategies - R6 Strat Organizer Tool",
   icons: {
     icon: favicon.src,
   },
@@ -21,9 +20,7 @@ export default function RootLayout({
       {/* mobile debugger */}
       {/* <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
       <script>eruda.init();</script> */}
-      <body className="antialiased m-0 dark w-screen min-h-screen">
-        {children}
-      </body>
+      <body className="antialiased m-0 dark w-screen min-h-screen">{children}</body>
     </html>
   );
 }

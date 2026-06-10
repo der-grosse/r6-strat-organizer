@@ -8,11 +8,7 @@ const OPPOSITE_CORNER: Record<ArrowCorner, ArrowCorner> = {
 };
 
 /** Absolute position of a bounding box corner. */
-export function cornerPoint(
-  corner: ArrowCorner,
-  position: Position,
-  size: Size,
-): Position {
+export function cornerPoint(corner: ArrowCorner, position: Position, size: Size): Position {
   switch (corner) {
     case "tl":
       return { x: position.x, y: position.y };

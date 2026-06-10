@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useRef,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import StratViewer from "./StratViewer";
 import { Strat } from "@/lib/types/strat.types";
@@ -41,11 +35,7 @@ interface ExportJob {
   reject: (err: unknown) => void;
 }
 
-export function StratExportProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function StratExportProvider({ children }: { children: React.ReactNode }) {
   const [job, setJob] = useState<ExportJob | null>(null);
   const jobRef = useRef<ExportJob | null>(null);
 
@@ -72,18 +62,9 @@ export function StratExportProvider({
   }, []);
 
   return (
-    <StratExportContext.Provider
-      value={{ exporting: job !== null, exportStratAsPNG }}
-    >
+    <StratExportContext.Provider value={{ exporting: job !== null, exportStratAsPNG }}>
       {children}
-      {job && (
-        <ExportRenderer
-          strat={job.strat}
-          team={job.team}
-          onFinish={finish}
-          onFail={fail}
-        />
-      )}
+      {job && <ExportRenderer strat={job.strat} team={job.team} onFinish={finish} onFail={fail} />}
     </StratExportContext.Provider>
   );
 }
@@ -128,12 +109,7 @@ function waitForImages(container: HTMLElement): Promise<void> {
   });
 }
 
-function ExportRenderer({
-  strat,
-  team,
-  onFinish,
-  onFail,
-}: ExportRendererProps) {
+function ExportRenderer({ strat, team, onFinish, onFail }: ExportRendererProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const running = useRef(false);
 

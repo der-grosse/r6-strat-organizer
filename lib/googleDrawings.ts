@@ -10,9 +10,7 @@ export function extractDrawingID(urlOrID: string | null): string | null {
     return urlOrID.split("https://drive.google.com/open?id=")[1];
   }
   if (urlOrID.startsWith("https://docs.google.com/drawings/d/")) {
-    return urlOrID
-      .split("https://docs.google.com/drawings/d/")[1]
-      .split("/")[0];
+    return urlOrID.split("https://docs.google.com/drawings/d/")[1].split("/")[0];
   }
   return urlOrID;
 }

@@ -1,9 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { PlacedAsset } from "@/lib/types/asset.types";
 import { StratPositions } from "@/lib/types/strat.types";
 import { FullTeam } from "@/lib/types/team.types";
@@ -66,16 +62,13 @@ export default function AssetMenu({
             {team.members
               .map((m) => ({
                 member: m,
-                position: team.teamPositions.find(
-                  (p) => p._id === m.teamPositionID,
-                )!,
+                position: team.teamPositions.find((p) => p._id === m.teamPositionID)!,
               }))
               .filter((m) => m.position)
               .sort((a, b) => a.position.index - b.position.index)
               .map(({ member }) => {
                 const stratPositionOfMember = stratPositions?.find(
-                  (stratPos) =>
-                    stratPos.teamPositionID === member.teamPositionID,
+                  (stratPos) => stratPos.teamPositionID === member.teamPositionID,
                 );
                 if (!stratPositionOfMember) return null;
                 return (
@@ -86,18 +79,14 @@ export default function AssetMenu({
                         size="icon"
                         variant="ghost"
                         className={cn(
-                          member.teamPositionID ===
-                            assetStratPosition?.teamPositionID &&
+                          member.teamPositionID === assetStratPosition?.teamPositionID &&
                             "bg-card dark:hover:bg-card",
                         )}
                         onMouseDown={(e) => e.stopPropagation()}
                         onClick={() => {
-                          const allAlreadySetToThisPosition =
-                            selectedAssets.every(
-                              (asset) =>
-                                asset.stratPositionID ===
-                                stratPositionOfMember._id,
-                            );
+                          const allAlreadySetToThisPosition = selectedAssets.every(
+                            (asset) => asset.stratPositionID === stratPositionOfMember._id,
+                          );
                           updateAssets(
                             selectedAssets.map((asset) => ({
                               ...asset,
@@ -112,8 +101,7 @@ export default function AssetMenu({
                         <div
                           className={cn(
                             "w-4 h-4 rounded-full",
-                            !member.defaultColor &&
-                              "outline-2 outline-offset-1 outline-muted",
+                            !member.defaultColor && "outline-2 outline-offset-1 outline-muted",
                           )}
                           style={{
                             background: member.defaultColor ?? undefined,
@@ -125,9 +113,8 @@ export default function AssetMenu({
                       <p className="text-sm">
                         {member.name} |{" "}
                         {
-                          team.teamPositions.find(
-                            (p) => p._id === member.teamPositionID,
-                          )?.positionName
+                          team.teamPositions.find((p) => p._id === member.teamPositionID)
+                            ?.positionName
                         }
                       </p>
                     </TooltipContent>
@@ -144,8 +131,7 @@ export default function AssetMenu({
             size="icon"
             variant="ghost"
             className={cn(
-              selectedAssets.every((asset) => asset.customColor) &&
-                "bg-card dark:hover:bg-card",
+              selectedAssets.every((asset) => asset.customColor) && "bg-card dark:hover:bg-card",
             )}
             onMouseDown={(e) => e.stopPropagation()}
             onClick={() => openColorPickerForAssets(selectedAssets)}
@@ -212,9 +198,7 @@ export default function AssetMenu({
               },
             ]}
             selected={
-              mainVariant === "reinforcement" || mainVariant === "explosion"
-                ? mainVariant
-                : null
+              mainVariant === "reinforcement" || mainVariant === "explosion" ? mainVariant : null
             }
             onSelect={(id) => {
               updateAssets(
@@ -231,9 +215,7 @@ export default function AssetMenu({
         break;
       }
       case "door-type": {
-        const types = selectedAssets
-          .map((asset) => getDoorType(asset)!)
-          .filter(Boolean);
+        const types = selectedAssets.map((asset) => getDoorType(asset)!).filter(Boolean);
         const mainVariant = types.reduce<(typeof types)[0] | null>(
           (acc, type) => (acc === type ? acc : null),
           types[0],
@@ -250,16 +232,12 @@ export default function AssetMenu({
               {
                 id: "armor_panel",
                 label: "Castle Barricade",
-                icon: (
-                  <GadgetIcon id="armor_panel" className="w-[16px] h-[16px]" />
-                ),
+                icon: <GadgetIcon id="armor_panel" className="w-[16px] h-[16px]" />,
               },
               {
                 id: "surya_gate",
                 label: "Aruni Gate",
-                icon: (
-                  <GadgetIcon id="surya_gate" className="w-[16px] h-[16px]" />
-                ),
+                icon: <GadgetIcon id="surya_gate" className="w-[16px] h-[16px]" />,
               },
             ]}
             selected={mainVariant}
@@ -282,8 +260,7 @@ export default function AssetMenu({
                       ...baseAsset,
                       type: "layout",
                       variant: "barricade",
-                      placedOn:
-                        asset.type === "layout" ? asset.placedOn : undefined,
+                      placedOn: asset.type === "layout" ? asset.placedOn : undefined,
                     };
                   } else {
                     const operatorOfGadget = DEFENDERS.find(
@@ -332,14 +309,7 @@ export default function AssetMenu({
                 icon: <Reinforcement width={16} height={16} />,
               },
               ...(
-                [
-                  "full",
-                  "crouch",
-                  "jump",
-                  "headholes",
-                  "floorholes",
-                  "ceilingholes",
-                ] as const
+                ["full", "crouch", "jump", "headholes", "floorholes", "ceilingholes"] as const
               ).map((id) => ({
                 id,
                 label: id,
@@ -360,11 +330,8 @@ export default function AssetMenu({
                   // reinforcements are wide while rotates are square
                   // change the height accordingly to keep the same width, so the asset doesn't look stretched or squished
                   // recenter the asset position to keep it centered on the same point
-                  const oldVariant =
-                    asset.type === "layout" ? asset.variant : null;
-                  const oldAspectRatio = oldVariant
-                    ? LAYOUT_VARIANT_ASPECT_RATIO[oldVariant]
-                    : 1;
+                  const oldVariant = asset.type === "layout" ? asset.variant : null;
+                  const oldAspectRatio = oldVariant ? LAYOUT_VARIANT_ASPECT_RATIO[oldVariant] : 1;
                   const newAspectRatio = LAYOUT_VARIANT_ASPECT_RATIO[id];
                   const aspectRatioDiff = newAspectRatio / oldAspectRatio;
                   const newHeight = asset.size.height / aspectRatioDiff;
@@ -383,8 +350,7 @@ export default function AssetMenu({
                             y: asset.position.y + heightChange / 2,
                           },
                           rotation:
-                            oldVariant === "reinforcement" &&
-                            id !== "reinforcement"
+                            oldVariant === "reinforcement" && id !== "reinforcement"
                               ? 0
                               : asset.rotation, // reset rotation for non-reinforcement variants, since they look weird when rotated and don't have a specific rotation variant
                         }
@@ -403,19 +369,13 @@ export default function AssetMenu({
         break;
       }
       case "divider":
-        sections.push(
-          <div key={`divider-${index}`} className="bg-border w-[1px] h-6" />,
-        );
+        sections.push(<div key={`divider-${index}`} className="bg-border w-[1px] h-6" />);
         break;
       case "arrow-heads": {
         const arrows = selectedAssets.filter((a) => a.type === "arrow");
         if (arrows.length === 0) break;
-        const allStartHeads = arrows.every(
-          (a) => a.type === "arrow" && a.startArrowHead,
-        );
-        const allEndHeads = arrows.every(
-          (a) => a.type === "arrow" && a.endArrowHead,
-        );
+        const allStartHeads = arrows.every((a) => a.type === "arrow" && a.startArrowHead);
+        const allEndHeads = arrows.every((a) => a.type === "arrow" && a.endArrowHead);
         sections.push(
           <Fragment key="arrow-heads">
             <Button
@@ -426,9 +386,7 @@ export default function AssetMenu({
               onClick={() =>
                 updateAssets(
                   selectedAssets.map((asset) =>
-                    asset.type === "arrow"
-                      ? { ...asset, startArrowHead: !allStartHeads }
-                      : asset,
+                    asset.type === "arrow" ? { ...asset, startArrowHead: !allStartHeads } : asset,
                   ),
                 )
               }
@@ -443,9 +401,7 @@ export default function AssetMenu({
               onClick={() =>
                 updateAssets(
                   selectedAssets.map((asset) =>
-                    asset.type === "arrow"
-                      ? { ...asset, endArrowHead: !allEndHeads }
-                      : asset,
+                    asset.type === "arrow" ? { ...asset, endArrowHead: !allEndHeads } : asset,
                   ),
                 )
               }
@@ -496,9 +452,7 @@ export default function AssetMenu({
                   ),
                 )
               }
-              selected={
-                textAssets[0].type === "textbox" ? textAssets[0].fontSize : null
-              }
+              selected={textAssets[0].type === "textbox" ? textAssets[0].fontSize : null}
               fixedSelectedIcon={<ALargeSmall className="size-6" />}
             />,
           );
@@ -509,9 +463,7 @@ export default function AssetMenu({
         const textAssets = selectedAssets.filter((a) => a.type === "textbox");
         if (textAssets.length > 0) {
           const currentBg =
-            textAssets[0].type === "textbox"
-              ? (textAssets[0].background ?? "none")
-              : "none";
+            textAssets[0].type === "textbox" ? (textAssets[0].background ?? "none") : "none";
           sections.push(
             <MultiOptionSelector
               key="text-background"
@@ -524,25 +476,19 @@ export default function AssetMenu({
                 {
                   id: "light" as const,
                   label: "Light background",
-                  icon: (
-                    <div className="w-4 h-4 rounded-sm bg-white border border-neutral-300" />
-                  ),
+                  icon: <div className="w-4 h-4 rounded-sm bg-white border border-neutral-300" />,
                 },
                 {
                   id: "dark" as const,
                   label: "Dark background",
-                  icon: (
-                    <div className="w-4 h-4 rounded-sm bg-black border border-neutral-600" />
-                  ),
+                  icon: <div className="w-4 h-4 rounded-sm bg-black border border-neutral-600" />,
                 },
               ]}
               selected={currentBg}
               onSelect={(id) => {
                 updateAssets(
                   selectedAssets.map((asset) =>
-                    asset.type === "textbox"
-                      ? { ...asset, background: id }
-                      : asset,
+                    asset.type === "textbox" ? { ...asset, background: id } : asset,
                   ),
                 );
               }}
@@ -638,12 +584,7 @@ const LAYOUT_VARIANT_ASPECT_RATIO: Record<string, number> = {
 };
 
 function getMenuItemsIDs(assets: PlacedAsset[]): MenuItemID[] {
-  const ids = new Set<MenuItemID>([
-    "strat-position",
-    "color-picker",
-    "delete",
-    "divider",
-  ]);
+  const ids = new Set<MenuItemID>(["strat-position", "color-picker", "delete", "divider"]);
   for (const asset of assets) {
     if (asset.type === "layout") {
       if (asset.placedOn === "hatch") {
@@ -667,16 +608,14 @@ function getMenuItemsIDs(assets: PlacedAsset[]): MenuItemID[] {
       ids.add("image-url");
     }
   }
-  return MENU_ITEM_IDS_ORDER.filter((id) => ids.has(id)).filter(
-    (id, idx, arr) => {
-      // remove divider if it's the first or last item, or if the previous item is also a divider
-      if (id === "divider") {
-        if (idx === 0 || idx === arr.length - 1) return false;
-        if (arr[idx - 1] === "divider") return false;
-      }
-      return true;
-    },
-  );
+  return MENU_ITEM_IDS_ORDER.filter((id) => ids.has(id)).filter((id, idx, arr) => {
+    // remove divider if it's the first or last item, or if the previous item is also a divider
+    if (id === "divider") {
+      if (idx === 0 || idx === arr.length - 1) return false;
+      if (arr[idx - 1] === "divider") return false;
+    }
+    return true;
+  });
 }
 
 function getDoorType(asset: PlacedAsset) {

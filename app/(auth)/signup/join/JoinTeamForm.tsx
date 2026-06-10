@@ -42,9 +42,7 @@ export default function JoinTeamForm() {
     <div className="min-h-screen flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">
-            Join a team
-          </h2>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">Join a team</h2>
           <p className="mt-2 text-center text-sm text-muted-foreground">
             Or{" "}
             <Link
@@ -59,11 +57,7 @@ export default function JoinTeamForm() {
           <div className="rounded-md shadow-sm space-y-4">
             {/* since we might load the code from search params, we need to wrap it in a suspense */}
             <Suspense>
-              <CodeInput
-                value={inviteKey}
-                onChange={setInviteKey}
-                error={!!error}
-              />
+              <CodeInput value={inviteKey} onChange={setInviteKey} error={!!error} />
             </Suspense>
             <div>
               <label htmlFor="username" className="sr-only">
@@ -112,9 +106,7 @@ export default function JoinTeamForm() {
             </div>
           </div>
 
-          {error && (
-            <div className="text-destructive text-sm text-center">{error}</div>
-          )}
+          {error && <div className="text-destructive text-sm text-center">{error}</div>}
 
           <div>
             <Button type="submit" className="w-full" disabled={loading}>

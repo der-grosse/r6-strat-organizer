@@ -1,10 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Fragment } from "react";
 
-function Skeleton({
-  className,
-  ...props
-}: React.ComponentProps<"div"> & { amount?: number }) {
+function Skeleton({ className, ...props }: React.ComponentProps<"div"> & { amount?: number }) {
   const getSkeleton = () => (
     <div
       data-slot="skeleton"

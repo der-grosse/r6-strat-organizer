@@ -13,10 +13,7 @@ export interface StratEditorClientProps {
 }
 
 export default function StratEditorClient(props: StratEditorClientProps) {
-  const strat = useQuery(
-    api.strats.get,
-    props.id ? { id: props.id as Id<"strats"> } : "skip"
-  );
+  const strat = useQuery(api.strats.get, props.id ? { id: props.id as Id<"strats"> } : "skip");
   const team = useQuery(api.team.get, {});
 
   useEffect(() => {

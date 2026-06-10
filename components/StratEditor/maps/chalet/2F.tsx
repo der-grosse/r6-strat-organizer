@@ -21,26 +21,10 @@ export default function Chalet2F(props: MapFloorClickableProps) {
         className="*:cursor-pointer"
       >
         {/* windows start */}
-        <path
-          d="M1938.34,162.06 L1979.01,162.06"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1999.34,162.06 L2040.01,162.06"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M2350.94,953.34 L2350.94,1038.52"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1470.44,735.84 L1470.44,776.51"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M1938.34,162.06 L1979.01,162.06" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1999.34,162.06 L2040.01,162.06" data-type="barricade" onClick={onClickHandler} />
+        <path d="M2350.94,953.34 L2350.94,1038.52" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1470.44,735.84 L1470.44,776.51" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M1470.44,1372.84 L1470.44,1413.51"
           data-type="barricade"
@@ -56,38 +40,14 @@ export default function Chalet2F(props: MapFloorClickableProps) {
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M835.94,1704.34 L835.94,1789.52"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M993.34,2226.06 L1034.01,2226.06"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M835.94,1704.34 L835.94,1789.52" data-type="barricade" onClick={onClickHandler} />
+        <path d="M993.34,2226.06 L1034.01,2226.06" data-type="barricade" onClick={onClickHandler} />
         {/* windows end */}
         {/* doors start */}
-        <path
-          d="M2109.25,538.69 L2151.46,538.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1895.25,726.69 L1937.46,726.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M2001.31,953.25 L2001.31,995.46"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1508.25,882.69 L1550.46,882.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M2109.25,538.69 L2151.46,538.69" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1895.25,726.69 L1937.46,726.69" data-type="barricade" onClick={onClickHandler} />
+        <path d="M2001.31,953.25 L2001.31,995.46" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1508.25,882.69 L1550.46,882.69" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M2145.25,1465.69 L2187.46,1465.69"
           data-type="barricade"
@@ -118,11 +78,7 @@ export default function Chalet2F(props: MapFloorClickableProps) {
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M1674.25,538.69 L1716.46,538.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M1674.25,538.69 L1716.46,538.69" data-type="barricade" onClick={onClickHandler} />
         {/* doors end */}
         {/* reinforcements start */}
         <path

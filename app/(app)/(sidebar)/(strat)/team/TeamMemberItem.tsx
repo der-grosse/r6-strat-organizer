@@ -11,11 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { TableCell, TableRow } from "@/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { DEFAULT_COLORS } from "@/lib/static/colors";
@@ -55,9 +51,7 @@ export default function TeamMemberItem({
       await updateMember({ userID, teamID, isAdmin: true });
       toast.success("User promoted to admin successfully");
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to promote user to admin"
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to promote user to admin");
     }
   };
 
@@ -66,9 +60,7 @@ export default function TeamMemberItem({
       await updateMember({ userID, teamID, isAdmin: false });
       toast.success("User demoted from admin successfully");
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to demote user from admin"
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to demote user from admin");
     }
   };
 
@@ -90,11 +82,7 @@ export default function TeamMemberItem({
           {member.ubisoftID && (
             <Tooltip>
               <TooltipTrigger className="mr-2 size-8">
-                <UbisoftAvatar
-                  ubisoftID={member.ubisoftID}
-                  className="size-8"
-                  showUbisoftIndex
-                />
+                <UbisoftAvatar ubisoftID={member.ubisoftID} className="size-8" showUbisoftIndex />
               </TooltipTrigger>
               <TooltipContent>
                 <span>Ubisoft ID provided: {member.ubisoftID}</span>
@@ -153,16 +141,12 @@ export default function TeamMemberItem({
                 )}
                 <DropdownMenuSeparator />
                 {!member.isAdmin ? (
-                  <DropdownMenuItem
-                    onClick={() => handlePromoteToAdmin(member._id)}
-                  >
+                  <DropdownMenuItem onClick={() => handlePromoteToAdmin(member._id)}>
                     <Shield className="mr-2 h-4 w-4" />
                     Promote to Admin
                   </DropdownMenuItem>
                 ) : (
-                  <DropdownMenuItem
-                    onClick={() => handleDemoteFromAdmin(member._id)}
-                  >
+                  <DropdownMenuItem onClick={() => handleDemoteFromAdmin(member._id)}>
                     <ShieldOff className="mr-2 h-4 w-4" />
                     Demote from Admin
                   </DropdownMenuItem>
@@ -180,11 +164,7 @@ export default function TeamMemberItem({
             </DropdownMenu>
           ) : (
             // Placeholder to keep the cell height
-            <Button
-              variant="ghost"
-              size="icon"
-              className="invisible pointer-events-none"
-            >
+            <Button variant="ghost" size="icon" className="invisible pointer-events-none">
               <MoreVertical className="h-4 w-4" />
             </Button>
           )}

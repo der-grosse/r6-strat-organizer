@@ -21,9 +21,7 @@ export default function StratEditorPlayerPositionsSidebar({
       stratPositions
         .map((data) => ({
           data,
-          position: team.teamPositions.find(
-            (pos) => pos._id === data.teamPositionID
-          ),
+          position: team.teamPositions.find((pos) => pos._id === data.teamPositionID),
         }))
         .sort((a, b) => {
           if (a.position && b.position) {
@@ -32,15 +30,13 @@ export default function StratEditorPlayerPositionsSidebar({
           return 0;
         })
         .map(({ data }) => data),
-    [stratPositions, team]
+    [stratPositions, team],
   );
 
   return (
     <ScrollArea className="h-screen">
       <div className="p-2 flex flex-col gap-4">
-        <Label className="text-muted-foreground p-2 -mb-2">
-          Player positions
-        </Label>
+        <Label className="text-muted-foreground p-2 -mb-2">Player positions</Label>
 
         {sortedStratPositions.map((stratPos) => (
           <StratPositionItem
@@ -51,11 +47,10 @@ export default function StratEditorPlayerPositionsSidebar({
             hasError={stratPositions.some(
               (o) =>
                 o._id !== stratPos._id &&
-                ((stratPos.teamPositionID &&
-                  o.teamPositionID === stratPos.teamPositionID) ||
+                ((stratPos.teamPositionID && o.teamPositionID === stratPos.teamPositionID) ||
                   (o.pickedOperators.length === 1 &&
                     stratPos.pickedOperators.length === 1 &&
-                    o.pickedOperators[0] === stratPos.pickedOperators[0]))
+                    o.pickedOperators[0] === stratPos.pickedOperators[0])),
             )}
           />
         ))}

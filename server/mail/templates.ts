@@ -1,7 +1,4 @@
-export const PASSWORD_RESET_MAIL_TEMPLATE = (
-  email: string,
-  token: string
-) => `<!DOCTYPE html>
+export const PASSWORD_RESET_MAIL_TEMPLATE = (email: string, token: string) => `<!DOCTYPE html>
 <html
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:v="urn:schemas-microsoft-com:vml"
@@ -323,7 +320,7 @@ export const PASSWORD_RESET_MAIL_TEMPLATE = (
                                 >
                                   <a
                                     href="https://r6-strats.com/reset-password/${token}?email=${encodeURIComponent(
-                                      email
+                                      email,
                                     )}"
                                     style="
                                       display: inline-block;
@@ -379,7 +376,7 @@ export const PASSWORD_RESET_MAIL_TEMPLATE = (
                             >
                               <span style="color: rgb(119, 119, 121)"
                                 >https://r6-strats.com/reset-password/${token}?email=${encodeURIComponent(
-                                  email
+                                  email,
                                 )}</span
                               >
                             </p>

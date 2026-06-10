@@ -15,9 +15,7 @@ export default function StratEditorLayout({
 
       {/* Canvas */}
       <div className="flex-1 relative h-screen overflow-hidden py-0 block">
-        <div className="relative h-full w-full flex items-center justify-center">
-          {children}
-        </div>
+        <div className="relative h-full w-full flex items-center justify-center">{children}</div>
       </div>
     </div>
   );

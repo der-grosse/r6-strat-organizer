@@ -3,11 +3,7 @@ import MapSelector from "@/components/general/MapSelector";
 import OperatorPicker from "@/components/general/OperatorPicker";
 import SiteSelector from "@/components/general/SiteSelector";
 import { Fill } from "@/components/layout/Fill";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -18,19 +14,8 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  ChevronDown,
-  CircleSlash,
-  Crown,
-  Eye,
-  MapPinned,
-  X,
-} from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { ChevronDown, CircleSlash, Crown, Eye, MapPinned, X } from "lucide-react";
 import SidebarStrats from "./SidebarStrats";
 import { useRouter } from "next/navigation";
 import { useFilter } from "@/components/context/FilterContext";
@@ -40,20 +25,14 @@ import { api } from "@/convex/_generated/api";
 import { usePlayableStrats } from "@/lib/strats";
 import BannedOpsSelector from "./bannedOpsSelector";
 
-export default function StratsLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function StratsLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const setActiveStrat = useMutation(api.activeStrat.set);
   const bannedOps = useQuery(api.bannedOps.get) || [];
   const { filter, setFilter, isLeading, setIsLeading } = useFilter();
   const playableStrats = usePlayableStrats(filter, bannedOps);
   const filteredStrats =
-    playableStrats
-      ?.filter(({ playable }) => playable)
-      .map(({ strat }) => strat) ?? [];
+    playableStrats?.filter(({ playable }) => playable).map(({ strat }) => strat) ?? [];
 
   return (
     <>
@@ -87,8 +66,7 @@ export default function StratsLayout({
                           setFilter((filter) => ({
                             ...filter,
                             map: map.name,
-                            site:
-                              filter.map === map.name ? filter.site : undefined,
+                            site: filter.map === map.name ? filter.site : undefined,
                           }));
                         }
                       }}
@@ -137,9 +115,7 @@ export default function StratsLayout({
                   ) : null}
                   {filter.map && filteredStrats.length === 0 && (
                     <SidebarMenuItem className="text-muted-foreground">
-                      <SidebarMenuButton disabled>
-                        No strats found
-                      </SidebarMenuButton>
+                      <SidebarMenuButton disabled>No strats found</SidebarMenuButton>
                     </SidebarMenuItem>
                   )}
                   {!filter.map && (
@@ -163,17 +139,14 @@ export default function StratsLayout({
               <TooltipTrigger asChild>
                 <SidebarMenuButton onClick={() => setIsLeading(!isLeading)}>
                   {isLeading ? <Crown /> : <Eye />}
-                  {isLeading
-                    ? "Leading active strat"
-                    : "Not leading active strat"}
+                  {isLeading ? "Leading active strat" : "Not leading active strat"}
                 </SidebarMenuButton>
               </TooltipTrigger>
               <TooltipContent side="top">
                 <p className="text-sm">Lead active strat</p>
                 <p className="text-xs text-muted-foreground">
-                  When this option is selected, your open strat will be shown to
-                  all users of your team, that have the <em>Active strat</em>{" "}
-                  tab open.
+                  When this option is selected, your open strat will be shown to all users of your
+                  team, that have the <em>Active strat</em> tab open.
                 </p>
               </TooltipContent>
             </Tooltip>
@@ -196,8 +169,8 @@ export default function StratsLayout({
                 <TooltipContent side="top">
                   <p className="text-sm">Clear currently open strat</p>
                   <p className="text-xs text-muted-foreground">
-                    You can only clear the current strat when you are leading
-                    the currently open strat.
+                    You can only clear the current strat when you are leading the currently open
+                    strat.
                   </p>
                 </TooltipContent>
               </Tooltip>

@@ -20,36 +20,12 @@ export default function Lair1F(props: MapFloorClickableProps) {
         className="*:cursor-pointer"
       >
         {/* windows start */}
-        <path
-          d="M664.25,483.81 L720.97,483.81"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1417.25,941.81 L1473.97,941.81"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1336.19,824.25 L1336.19,880.97"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M2646.19,530.25 L2646.19,586.97"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M517.25,1978.81 L573.97,1978.81"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1417.25,941.81 L1473.97,941.81"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M664.25,483.81 L720.97,483.81" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1417.25,941.81 L1473.97,941.81" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1336.19,824.25 L1336.19,880.97" data-type="barricade" onClick={onClickHandler} />
+        <path d="M2646.19,530.25 L2646.19,586.97" data-type="barricade" onClick={onClickHandler} />
+        <path d="M517.25,1978.81 L573.97,1978.81" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1417.25,941.81 L1473.97,941.81" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M2209.25,2212.81 L2265.97,2212.81"
           data-type="barricade"
@@ -62,51 +38,27 @@ export default function Lair1F(props: MapFloorClickableProps) {
         />
         {/* windows end */}
         {/* doors start */}
-        <path
-          d="M788.31,1018.25 L788.31,1070.72"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M788.31,1018.25 L788.31,1070.72" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M1820.75,1094.31 L1768.28,1094.31"
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M1829.75,483.31 L1777.28,483.31"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M1829.75,483.31 L1777.28,483.31" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M1161.75,1555.31 L1109.28,1555.31"
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M788.69,1927.75 L788.69,1875.28"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M788.69,1927.75 L788.69,1875.28" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M1368.69,1927.75 L1368.69,1875.28"
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M347.73,1618.09 L347.54,1724.12"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M656.75,1555.31 L604.28,1555.31"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M574.69,1206.75 L574.69,1154.28"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M347.73,1618.09 L347.54,1724.12" data-type="barricade" onClick={onClickHandler} />
+        <path d="M656.75,1555.31 L604.28,1555.31" data-type="barricade" onClick={onClickHandler} />
+        <path d="M574.69,1206.75 L574.69,1154.28" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M1675.69,1471.75 L1675.69,1419.28"
           data-type="barricade"
@@ -132,11 +84,7 @@ export default function Lair1F(props: MapFloorClickableProps) {
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M2516.75,774.31 L2464.28,774.31"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M2516.75,774.31 L2464.28,774.31" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M2207.81,1053.07 L2244.91,1090.17"
           data-type="barricade"

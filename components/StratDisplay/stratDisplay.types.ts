@@ -1,5 +1,1 @@
-export type StratViewModifier =
-  | "hideForeign"
-  | "grayscaleForeign"
-  | "none"
-  | undefined;
+export type StratViewModifier = "hideForeign" | "grayscaleForeign" | "none" | undefined;

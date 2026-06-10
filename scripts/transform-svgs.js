@@ -39,17 +39,14 @@ function parseTranslate(transform) {
  * @returns {string} Modified path data
  */
 function applyTranslateToPath(pathData, offsetX, offsetY) {
-  return pathData.replace(
-    /([MLHVCSQTAZ])([-\d.]+)/gi,
-    (match, command, value) => {
-      // Only apply to coordinate pairs (handle M, L, C, S, Q, T commands)
-      if (["M", "L", "C", "S", "Q", "T"].includes(command.toUpperCase())) {
-        // This is a simplified version - a full implementation would need more sophisticated parsing
-        return match;
-      }
+  return pathData.replace(/([MLHVCSQTAZ])([-\d.]+)/gi, (match, command, value) => {
+    // Only apply to coordinate pairs (handle M, L, C, S, Q, T commands)
+    if (["M", "L", "C", "S", "Q", "T"].includes(command.toUpperCase())) {
+      // This is a simplified version - a full implementation would need more sophisticated parsing
       return match;
-    },
-  );
+    }
+    return match;
+  });
 }
 
 /**
@@ -122,8 +119,7 @@ function toInteractiveJsx(svgElement, dataType) {
   const { tagName, attributes } = parseSvgElement(svgElement.element);
   if (!tagName) return null;
 
-  const allowedAttributes =
-    tagName === "rect" ? ["x", "y", "width", "height", "rx", "ry"] : ["d"];
+  const allowedAttributes = tagName === "rect" ? ["x", "y", "width", "height", "rx", "ry"] : ["d"];
 
   const geometryAttributes = allowedAttributes
     .filter((name) => attributes[name] !== undefined)
@@ -219,11 +215,7 @@ function consolidateAttributes(svgContent) {
   let content = svgContent;
 
   // Add stroke and fill to group if not already present
-  if (
-    pathStrokeMatch &&
-    !content.includes("<g fill=") &&
-    !content.includes("<g stroke=")
-  ) {
+  if (pathStrokeMatch && !content.includes("<g fill=") && !content.includes("<g stroke=")) {
     content = content.replace(/<g([^>]*)>/, (match) => {
       let attrs = `stroke="${pathStrokeMatch[1]}"`;
       if (pathFillMatch) {
@@ -299,27 +291,19 @@ function transformSVG(inputPath, outputPath) {
     let content = fs.readFileSync(inputPath, "utf8");
 
     // 1. Remove XML declaration and DOCTYPE
-    content = content
-      .replace(/<\?xml[^?]*\?>\n?/g, "")
-      .replace(/<!DOCTYPE[^>]*>\n?/g, "");
+    content = content.replace(/<\?xml[^?]*\?>\n?/g, "").replace(/<!DOCTYPE[^>]*>\n?/g, "");
 
     // 2. Remove xlink namespace if unused
     content = content.replace(/ xmlns:xlink="[^"]*"/g, "");
 
     // 3. Handle transform attributes - bake into coordinates
-    const groupTransformMatch = content.match(
-      /<g([^>]*?)transform="([^"]*)"([^>]*)>/,
-    );
+    const groupTransformMatch = content.match(/<g([^>]*?)transform="([^"]*)"([^>]*)>/);
     if (groupTransformMatch) {
       const translate = parseTranslate(groupTransformMatch[2]);
       if (translate) {
         // Apply translate to all path coordinates
         content = content.replace(/d="([^"]*)"/g, (match, pathData) => {
-          const modified = applyTranslateToCoordinates(
-            pathData,
-            translate.x,
-            translate.y,
-          );
+          const modified = applyTranslateToCoordinates(pathData, translate.x, translate.y);
           return `d="${modified}"`;
         });
 
@@ -353,9 +337,7 @@ function transformSVG(inputPath, outputPath) {
 
     return true;
   } catch (error) {
-    console.error(
-      `Error transforming ${path.basename(inputPath)}: ${error.message}`,
-    );
+    console.error(`Error transforming ${path.basename(inputPath)}: ${error.message}`);
     return false;
   }
 }
@@ -369,9 +351,7 @@ function convertFilename(filename) {
   // "MAP 1F Doors.svg" -> "1f-doors.svg"
   // "MAP 2F Hatches.svg" -> "2f-hatches.svg"
   // "MAP B Walls.svg" -> "b-walls.svg"
-  const floor = ["1F", "2F", "3F", "B"]
-    .find((f) => filename.includes(f))
-    ?.toLowerCase();
+  const floor = ["1F", "2F", "3F", "B"].find((f) => filename.includes(f))?.toLowerCase();
   const type = ["doors", "hatches", "walls", "windows"].find((t) =>
     filename.toLocaleLowerCase().includes(t),
   );
@@ -539,9 +519,7 @@ function generateTSXComponent(floor, svgLayers, floorName, outputPath) {
       elements.doors = extractSVGElements(svgLayers.doors);
     }
     if (svgLayers.reinforcements || svgLayers.walls) {
-      elements.reinforcements = extractSVGElements(
-        svgLayers.reinforcements || svgLayers.walls,
-      );
+      elements.reinforcements = extractSVGElements(svgLayers.reinforcements || svgLayers.walls);
     }
     if (svgLayers.hatches) {
       elements.hatches = extractSVGElements(svgLayers.hatches);
@@ -637,9 +615,7 @@ export default function ${floorName}(props: MapFloorClickableProps) {
     fs.writeFileSync(outputPath, tsx, "utf8");
     return true;
   } catch (error) {
-    console.error(
-      `Error generating TSX component for ${floor}: ${error.message}`,
-    );
+    console.error(`Error generating TSX component for ${floor}: ${error.message}`);
     return false;
   }
 }
@@ -665,9 +641,7 @@ function processAllSVGs() {
   const rawFiles = allSvgFiles.filter((file) => /\s/.test(file));
   const files = (rawFiles.length > 0 ? rawFiles : allSvgFiles).sort();
 
-  console.log(
-    `\n🔄 Processing ${files.length} SVG files from ${map} folder...\n`,
-  );
+  console.log(`\n🔄 Processing ${files.length} SVG files from ${map} folder...\n`);
 
   let successCount = 0;
   let errorCount = 0;
@@ -678,9 +652,7 @@ function processAllSVGs() {
     const newFilename = convertFilename(filename);
     const outputPath = path.join(outputDir, newFilename);
 
-    process.stdout.write(
-      `  ${filename.padEnd(30)} → ${newFilename.padEnd(30)} `,
-    );
+    process.stdout.write(`  ${filename.padEnd(30)} → ${newFilename.padEnd(30)} `);
 
     if (transformSVG(inputPath, outputPath)) {
       console.log("✅");
@@ -705,9 +677,7 @@ function processAllSVGs() {
 
     boundingFilesToCreate.forEach(({ hatches, bounding }) => {
       const filename = path.basename(hatches);
-      process.stdout.write(
-        `  ${filename.padEnd(30)} → ${path.basename(bounding).padEnd(30)} `,
-      );
+      process.stdout.write(`  ${filename.padEnd(30)} → ${path.basename(bounding).padEnd(30)} `);
 
       if (generateHatchesBounding(hatches, bounding)) {
         console.log("✅");
@@ -720,10 +690,7 @@ function processAllSVGs() {
   // Generate TSX component files
   console.log(`\n🎨 Generating TSX components...\n`);
 
-  const componentDir = path.join(
-    __dirname,
-    `../components/StratEditor/maps/${map}`,
-  );
+  const componentDir = path.join(__dirname, `../components/StratEditor/maps/${map}`);
   if (!fs.existsSync(componentDir)) {
     fs.mkdirSync(componentDir, { recursive: true });
   }
@@ -757,17 +724,15 @@ function processAllSVGs() {
     const svgLayers = {};
 
     // Read SVG content for each layer
-    ["doors", "hatches", "windows", "reinforcements", "walls"].forEach(
-      (type) => {
-        if (layers[type]) {
-          try {
-            svgLayers[type] = fs.readFileSync(layers[type], "utf8");
-          } catch (e) {
-            // Layer not available
-          }
+    ["doors", "hatches", "windows", "reinforcements", "walls"].forEach((type) => {
+      if (layers[type]) {
+        try {
+          svgLayers[type] = fs.readFileSync(layers[type], "utf8");
+        } catch (e) {
+          // Layer not available
         }
-      },
-    );
+      }
+    });
 
     // Generate component name
     const mapName = capitalize(map);

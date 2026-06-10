@@ -43,9 +43,7 @@ export interface StratEditorMetaSidebarProps {
   team: FullTeam;
 }
 
-export default function StratEditorMetaSidebar(
-  props: StratEditorMetaSidebarProps,
-) {
+export default function StratEditorMetaSidebar(props: StratEditorMetaSidebarProps) {
   const updateStrat = useMutation(api.strats.update);
   const archiveStrat = useMutation(api.strats.archive);
   const router = useRouter();
@@ -55,12 +53,8 @@ export default function StratEditorMetaSidebar(
 
   const [name, setName] = useState(props.strat.name);
   const [description, setDescription] = useState(props.strat.description);
-  const [showFloorNames, setShowFloorNames] = useState(
-    props.strat.showFloorNames ?? true,
-  );
-  const [hiddenFloors, setHiddenFloors] = useState(
-    props.strat.hiddenFloors || [],
-  );
+  const [showFloorNames, setShowFloorNames] = useState(props.strat.showFloorNames ?? true);
+  const [hiddenFloors, setHiddenFloors] = useState(props.strat.hiddenFloors || []);
 
   // update local state when strat prop changes
   useEffect(() => {
@@ -89,8 +83,7 @@ export default function StratEditorMetaSidebar(
   };
 
   // hidden floors logic
-  const selectedMapFloors =
-    MAPS.find((map) => map.name === props.strat.map)?.floors ?? [];
+  const selectedMapFloors = MAPS.find((map) => map.name === props.strat.map)?.floors ?? [];
 
   const toggleHiddenFloor = (floorIndex: number, shouldHide: boolean) => {
     const nextHidden = shouldHide
@@ -106,8 +99,7 @@ export default function StratEditorMetaSidebar(
 
   // dialog states
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
-  const [confirmGoogleDrawingOpen, setConfirmGoogleDrawingOpen] =
-    useState(false);
+  const [confirmGoogleDrawingOpen, setConfirmGoogleDrawingOpen] = useState(false);
   const [newDrawingID, setNewDrawingID] = useState("");
 
   return (
@@ -158,11 +150,7 @@ export default function StratEditorMetaSidebar(
             <FolderPen className="text-muted-foreground" />
             <Label className="text-muted-foreground">Name</Label>
           </div>
-          <Input
-            placeholder="Strat Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+          <Input placeholder="Strat Name" value={name} onChange={(e) => setName(e.target.value)} />
           <Textarea
             placeholder="Description"
             value={description}
@@ -251,27 +239,18 @@ export default function StratEditorMetaSidebar(
               </>
             )}
           </Button>
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => setConfirmDeleteOpen(true)}
-          >
+          <Button variant="outline" className="w-full" onClick={() => setConfirmDeleteOpen(true)}>
             <Trash className="mr-2" />
             Delete Strat
           </Button>
         </div>
       </ScrollArea>
 
-      <Dialog
-        open={confirmGoogleDrawingOpen}
-        onOpenChange={setConfirmGoogleDrawingOpen}
-      >
+      <Dialog open={confirmGoogleDrawingOpen} onOpenChange={setConfirmGoogleDrawingOpen}>
         <DialogContent className="w-auto">
           <DialogHeader>
             <DialogTitle>
-              {props.strat.drawingID
-                ? "Unlink Google Drawing"
-                : "Link Google Drawing"}
+              {props.strat.drawingID ? "Unlink Google Drawing" : "Link Google Drawing"}
             </DialogTitle>
             <DialogDescription>
               {props.strat.drawingID
@@ -290,17 +269,12 @@ export default function StratEditorMetaSidebar(
             />
           )}
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setConfirmGoogleDrawingOpen(false)}
-            >
+            <Button variant="outline" onClick={() => setConfirmGoogleDrawingOpen(false)}>
               Cancel
             </Button>
             <Button
               onClick={() => {
-                const newParsedID = props.strat.drawingID
-                  ? null
-                  : extractDrawingID(newDrawingID);
+                const newParsedID = props.strat.drawingID ? null : extractDrawingID(newDrawingID);
 
                 updateStrat({
                   _id: props.strat._id,
@@ -322,15 +296,11 @@ export default function StratEditorMetaSidebar(
           <DialogHeader>
             <DialogTitle>Delete Strat</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this strat? This action cannot be
-              undone.
+              Are you sure you want to delete this strat? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setConfirmDeleteOpen(false)}
-            >
+            <Button variant="outline" onClick={() => setConfirmDeleteOpen(false)}>
               Cancel
             </Button>
             <Button

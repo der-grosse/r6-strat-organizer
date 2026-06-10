@@ -127,9 +127,7 @@ export default function CreateTeam() {
             </div>
           </div>
 
-          {error && (
-            <div className="text-destructive text-sm text-center">{error}</div>
-          )}
+          {error && <div className="text-destructive text-sm text-center">{error}</div>}
 
           <div>
             <Button type="submit" className="w-full" disabled={loading}>

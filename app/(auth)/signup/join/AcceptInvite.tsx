@@ -1,13 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { useState } from "react";
 import { acceptInvite } from "@/server/auth";
@@ -56,8 +50,7 @@ export default function AcceptInvite(props: {
               {props.info && !props.info.used ? (
                 <>
                   {" "}
-                  Accept the invite to join{" "}
-                  <strong>{props.info.teamName}</strong>.
+                  Accept the invite to join <strong>{props.info.teamName}</strong>.
                 </>
               ) : (
                 " Enter an invite key to join an existing team."
@@ -66,14 +59,10 @@ export default function AcceptInvite(props: {
           </CardHeader>
           <CardContent className="space-y-4">
             {linkedInvalid && (
-              <p className="text-sm text-destructive">
-                This invite key is invalid.
-              </p>
+              <p className="text-sm text-destructive">This invite key is invalid.</p>
             )}
             {linkedUsed && (
-              <p className="text-sm text-destructive">
-                This invite has already been used.
-              </p>
+              <p className="text-sm text-destructive">This invite has already been used.</p>
             )}
 
             {!props.inviteKey && (

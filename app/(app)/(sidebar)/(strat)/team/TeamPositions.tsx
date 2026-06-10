@@ -1,11 +1,5 @@
 "use client";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import TeamPositionsList from "./TeamPositionsList";
 import { FullTeam } from "@/lib/types/team.types";
 
@@ -20,8 +14,8 @@ export default function TeamPositions(props: TeamPositionsProps) {
       <CardHeader>
         <CardTitle>Player Positions</CardTitle>
         <CardDescription>
-          Assign each player a position in your team. This is useful so you can
-          easily switch players for subs without sharing login data.
+          Assign each player a position in your team. This is useful so you can easily switch
+          players for subs without sharing login data.
         </CardDescription>
       </CardHeader>
       <CardContent>

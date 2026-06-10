@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  getGoogleDrawingsEditURL,
-  getGoogleDrawingsPreviewURL,
-} from "@/lib/googleDrawings";
+import { getGoogleDrawingsEditURL, getGoogleDrawingsPreviewURL } from "@/lib/googleDrawings";
 import { Ban, Crosshair, Pencil } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
@@ -32,25 +29,20 @@ export default function StratDisplay(props: StratDisplayProps) {
   const settings = useQuery(api.settings.get);
   const bannedOps = useQuery(api.bannedOps.get) ?? [];
   const user = useUser();
-  const teamMember = props.team.members.find(
-    (member) => member._id === user?.user?._id,
-  );
+  const teamMember = props.team.members.find((member) => member._id === user?.user?._id);
   const stratPosition = props.strat?.stratPositions.find(
     (op) => op.teamPositionID === teamMember?.teamPositionID,
   );
 
   const availableOperators = (() => {
-    const ops = stratPosition?.pickedOperators.filter(
-      (op) => !bannedOps.includes(op.operator),
-    );
+    const ops = stratPosition?.pickedOperators.filter((op) => !bannedOps.includes(op.operator));
     if (!ops?.length) return stratPosition?.pickedOperators ?? [];
     return ops;
   })();
 
   const teamLineUp = (
     props.strat?.stratPositions.filter(
-      (stratPositions) =>
-        stratPositions.teamPositionID !== teamMember?.teamPositionID,
+      (stratPositions) => stratPositions.teamPositionID !== teamMember?.teamPositionID,
     ) ?? []
   )
     .map((pos) => {
@@ -73,9 +65,9 @@ export default function StratDisplay(props: StratDisplayProps) {
     .filter((pos) => pos.op !== undefined)
     .sort((a, b) => a.index - b.index);
 
-  const [viewModifier, setViewModifier] = useState<
-    "none" | "hideForeign" | "grayscaleForeign"
-  >("none");
+  const [viewModifier, setViewModifier] = useState<"none" | "hideForeign" | "grayscaleForeign">(
+    "none",
+  );
 
   const Details = !props.hideDetails && props.strat && (
     <div
@@ -84,12 +76,8 @@ export default function StratDisplay(props: StratDisplayProps) {
         settings?.activeStratLayout === "top" ? "items-start" : "items-end ",
       )}
     >
-      <div
-        className={cn(settings?.activeStratLayout === "top" && "pl-6 -mt-1")}
-      >
-        {!props.strat.drawingID && (
-          <StratGadgetVisibiltyPicker onChange={setViewModifier} />
-        )}
+      <div className={cn(settings?.activeStratLayout === "top" && "pl-6 -mt-1")}>
+        {!props.strat.drawingID && <StratGadgetVisibiltyPicker onChange={setViewModifier} />}
       </div>
       <div
         className={cn(
@@ -117,9 +105,7 @@ export default function StratDisplay(props: StratDisplayProps) {
                   )}
                 </div>
                 {i === 0 ? (
-                  <p className="text-2xl font-bold text-center mr-1">
-                    {op.operator}
-                  </p>
+                  <p className="text-2xl font-bold text-center mr-1">{op.operator}</p>
                 ) : i !== Math.min(availableOperators.length, 2) ? (
                   <div className="w-1" />
                 ) : null}
@@ -132,8 +118,8 @@ export default function StratDisplay(props: StratDisplayProps) {
                 </TooltipTrigger>
                 <TooltipContent>
                   <p className="text-center">
-                    You make rotates or other site setup, where you need soft
-                    destruction, bring a shotgun.
+                    You make rotates or other site setup, where you need soft destruction, bring a
+                    shotgun.
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -145,8 +131,7 @@ export default function StratDisplay(props: StratDisplayProps) {
                 </TooltipTrigger>
                 <TooltipContent>
                   <p className="text-center">
-                    This position takes for long-range fights, pick an
-                    appropriate primary weapon
+                    This position takes for long-range fights, pick an appropriate primary weapon
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -157,10 +142,8 @@ export default function StratDisplay(props: StratDisplayProps) {
           <span className="ml-2">
             {[
               settings?.activeStratNameTemplate?.mapName && props.strat.map,
-              settings?.activeStratNameTemplate?.siteName !== false &&
-                props.strat.site,
-              settings?.activeStratNameTemplate?.stratName !== false &&
-                props.strat.name,
+              settings?.activeStratNameTemplate?.siteName !== false && props.strat.site,
+              settings?.activeStratNameTemplate?.stratName !== false && props.strat.name,
             ]
               .filter(Boolean)
               .join(" | ")}
@@ -169,11 +152,7 @@ export default function StratDisplay(props: StratDisplayProps) {
             href={`/editor/${props.strat._id}`}
             className="text-muted-foreground hover:text-primary"
           >
-            <Button
-              variant="ghost"
-              size="icon"
-              className="cursor-pointer -my-2 -mx-1"
-            >
+            <Button variant="ghost" size="icon" className="cursor-pointer -my-2 -mx-1">
               <Pencil className="h-4 w-4" />
             </Button>
           </Link>
@@ -183,10 +162,7 @@ export default function StratDisplay(props: StratDisplayProps) {
         {teamLineUp.map(({ op, color, playerName, positionName }, index) => (
           <Tooltip key={index}>
             <TooltipTrigger>
-              <div
-                className="relative rounded-sm scale-90"
-                style={{ backgroundColor: color }}
-              >
+              <div className="relative rounded-sm scale-90" style={{ backgroundColor: color }}>
                 <OperatorIcon op={op?.operator!} className="scale-125" />
                 {op?.secondaryGadget && (
                   <GadgetIcon
@@ -217,9 +193,7 @@ export default function StratDisplay(props: StratDisplayProps) {
     <div
       className={cn(
         "relative h-full w-full flex justify-center flex-col z-0",
-        props.strat &&
-          settings?.activeStratLayout === "top" &&
-          "flex-col-reverse",
+        props.strat && settings?.activeStratLayout === "top" && "flex-col-reverse",
       )}
     >
       {props.strat?.drawingID ? (
@@ -244,16 +218,12 @@ export default function StratDisplay(props: StratDisplayProps) {
                 assetModifier={
                   viewModifier === "hideForeign"
                     ? (assets) =>
-                        assets.filter(
-                          (asset) =>
-                            asset.stratPositionID === stratPosition?._id,
-                        )
+                        assets.filter((asset) => asset.stratPositionID === stratPosition?._id)
                     : viewModifier === "grayscaleForeign"
                       ? (assets) =>
                           assets.map((asset) => ({
                             ...asset,
-                            ...(asset.stratPositionID !==
-                              stratPosition?._id && {
+                            ...(asset.stratPositionID !== stratPosition?._id && {
                               stratPositionID: undefined,
                               customColor: undefined,
                             }),

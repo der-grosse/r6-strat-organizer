@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  useCallback,
-  useMemo,
-} from "react";
+import { createContext, useContext, useState, ReactNode, useCallback, useMemo } from "react";
 
 interface SlotContextType {
   slots: Record<string, ReactNode>;
@@ -42,12 +35,10 @@ export function SlotProvider({ children }: { children: ReactNode }) {
       getSlot,
       clearSlot,
     }),
-    [slots, setSlot, getSlot, clearSlot]
+    [slots, setSlot, getSlot, clearSlot],
   );
 
-  return (
-    <SlotContext.Provider value={contextValue}>{children}</SlotContext.Provider>
-  );
+  return <SlotContext.Provider value={contextValue}>{children}</SlotContext.Provider>;
 }
 
 export function useSlots() {

@@ -13,9 +13,7 @@ function isAuthRoute(pathname: string) {
 // already-logged-in users so they can join additional teams.
 const AUTHENTICATED_ALLOWED_AUTH_ROUTES = ["/signup/join"];
 function isAuthenticatedAllowed(pathname: string) {
-  return AUTHENTICATED_ALLOWED_AUTH_ROUTES.some((route) =>
-    pathname.startsWith(route),
-  );
+  return AUTHENTICATED_ALLOWED_AUTH_ROUTES.some((route) => pathname.startsWith(route));
 }
 
 export async function middleware(request: NextRequest) {

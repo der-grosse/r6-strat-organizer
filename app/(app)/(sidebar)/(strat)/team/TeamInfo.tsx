@@ -1,11 +1,5 @@
 "use client";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -24,19 +18,14 @@ export default function TeamInfo(props: TeamInfoProps) {
   const teamNameInputRef = useRef<HTMLInputElement | null>(null);
   const [newTeamName, setNewTeamName] = useState(props.team.name);
 
-  const { saveNow: saveTeamName } = useSaveDebounced(
-    newTeamName,
-    async (newTeamName) => {
-      try {
-        await updateTeam({ _id: props.team._id, name: newTeamName });
-        toast.success("Team name updated successfully");
-      } catch (err) {
-        toast.error(
-          err instanceof Error ? err.message : "Failed to update team name"
-        );
-      }
+  const { saveNow: saveTeamName } = useSaveDebounced(newTeamName, async (newTeamName) => {
+    try {
+      await updateTeam({ _id: props.team._id, name: newTeamName });
+      toast.success("Team name updated successfully");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to update team name");
     }
-  );
+  });
 
   return (
     <Card>
@@ -73,10 +62,7 @@ export default function TeamInfo(props: TeamInfoProps) {
         </div>
         <div className="space-y-1">
           <Label htmlFor="team-member-count">Team member count</Label>
-          <span
-            id="team-member-count"
-            className="text-sm text-muted-foreground"
-          >
+          <span id="team-member-count" className="text-sm text-muted-foreground">
             {props.team.members.length} member
             {props.team.members.length !== 1 ? "s" : ""}
           </span>

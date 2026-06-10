@@ -1,11 +1,5 @@
 "use client";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -98,9 +92,8 @@ export default function TeamDangerZone(props: TeamDangerZoneProps) {
               <DialogHeader>
                 <DialogTitle>Delete {team.name}?</DialogTitle>
                 <DialogDescription>
-                  This permanently deletes the team and all of its strats,
-                  positions and invites for everyone. This cannot be undone.
-                  Type <strong>{team.name}</strong> to confirm.
+                  This permanently deletes the team and all of its strats, positions and invites for
+                  everyone. This cannot be undone. Type <strong>{team.name}</strong> to confirm.
                 </DialogDescription>
               </DialogHeader>
               <Input
@@ -127,19 +120,14 @@ export default function TeamDangerZone(props: TeamDangerZoneProps) {
               <DialogHeader>
                 <DialogTitle>Leave {team.name}?</DialogTitle>
                 <DialogDescription>
-                  You'll lose access to this team's strats until someone invites
-                  you back.
+                  You'll lose access to this team's strats until someone invites you back.
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setOpen(false)}>
                   Cancel
                 </Button>
-                <Button
-                  variant="destructive"
-                  disabled={loading}
-                  onClick={handleLeave}
-                >
+                <Button variant="destructive" disabled={loading} onClick={handleLeave}>
                   {loading ? "Leaving..." : "Leave team"}
                 </Button>
               </DialogFooter>

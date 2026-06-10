@@ -18,12 +18,7 @@ export function deepEqual(a: any, b: any): boolean {
     return false;
   }
 
-  if (
-    typeof a !== "object" ||
-    typeof b !== "object" ||
-    a === null ||
-    b === null
-  ) {
+  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) {
     return false;
   }
 

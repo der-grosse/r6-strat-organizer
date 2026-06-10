@@ -22,9 +22,7 @@ export interface StratEditorGadgetsSidebarProps {
   assets: PlacedAsset[];
 }
 
-export default function StratEditorGadgetsSidebar(
-  props: Readonly<StratEditorGadgetsSidebarProps>,
-) {
+export default function StratEditorGadgetsSidebar(props: Readonly<StratEditorGadgetsSidebarProps>) {
   return (
     <div className="h-full absolute inset-0">
       <ScrollArea className="h-full p-2">
@@ -34,9 +32,7 @@ export default function StratEditorGadgetsSidebar(
             gridTemplateColumns: "repeat(auto-fit, minmax(42px, 1fr))",
           }}
         >
-          <Badge className="sticky top-0 w-full col-span-full">
-            Primary Gadgets
-          </Badge>
+          <Badge className="sticky top-0 w-full col-span-full">Primary Gadgets</Badge>
           {DEFENDER_PRIMARY_GADGETS.map((gadget) => (
             <DraggableAssetButton
               variant="outline"
@@ -57,9 +53,7 @@ export default function StratEditorGadgetsSidebar(
               <PrimaryGadgetIcon id={gadget.id} />
             </DraggableAssetButton>
           ))}
-          <Badge className="sticky top-0 w-full col-span-full">
-            Secondary Gadgets
-          </Badge>
+          <Badge className="sticky top-0 w-full col-span-full">Secondary Gadgets</Badge>
           {DEFENDER_SECONDARY_GADGETS.map((gadget) => (
             <DraggableAssetButton
               variant="outline"
@@ -104,9 +98,7 @@ function mapSecondaryGadgetsToStratPositions(
         ...("tertiaryGadget" in op ? [op.tertiaryGadget] : []),
       ]);
       return {
-        gadgets: DEFENDER_SECONDARY_GADGETS.filter((g) =>
-          gadgetIDs.includes(g.id),
-        )!,
+        gadgets: DEFENDER_SECONDARY_GADGETS.filter((g) => gadgetIDs.includes(g.id))!,
         position,
       };
     })
@@ -116,9 +108,7 @@ function mapSecondaryGadgetsToStratPositions(
         position,
         placed: assets.filter(
           (a) =>
-            a.stratPositionID === position._id &&
-            a.type === "gadget" &&
-            a.gadget === gadget.id,
+            a.stratPositionID === position._id && a.type === "gadget" && a.gadget === gadget.id,
         ).length,
       })),
     );
@@ -153,10 +143,8 @@ function mapSecondaryGadgetsToStratPositions(
     total: g.positions.length * g.gadget.count,
     nextStratPositionId:
       // active strat position that has this gadget with available count
-      g.positions.find(
-        (p) =>
-          p.placed < g.gadget.count && p.position._id === activeStratPositionID,
-      )?.position._id ??
+      g.positions.find((p) => p.placed < g.gadget.count && p.position._id === activeStratPositionID)
+        ?.position._id ??
       // any strat position that has this gadget with available count
       g.positions.find((p) => p.placed < g.gadget.count)?.position._id ??
       // active strat position that has this gadget

@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -62,8 +56,7 @@ export default function AppSettings() {
             { key: "siteName" as const, label: "Site Name" },
             { key: "stratName" as const, label: "Strat Name" },
           ].map(({ key, label }) => {
-            const isVisible =
-              settings?.activeStratNameTemplate?.[key] ?? key !== "mapName";
+            const isVisible = settings?.activeStratNameTemplate?.[key] ?? key !== "mapName";
             return (
               <Button
                 key={key}
@@ -72,12 +65,9 @@ export default function AppSettings() {
                 onClick={() =>
                   updateSettings({
                     activeStratNameTemplate: {
-                      stratName:
-                        settings?.activeStratNameTemplate?.stratName ?? true,
-                      mapName:
-                        settings?.activeStratNameTemplate?.mapName ?? false,
-                      siteName:
-                        settings?.activeStratNameTemplate?.siteName ?? true,
+                      stratName: settings?.activeStratNameTemplate?.stratName ?? true,
+                      mapName: settings?.activeStratNameTemplate?.mapName ?? false,
+                      siteName: settings?.activeStratNameTemplate?.siteName ?? true,
                       [key]: !isVisible,
                     },
                   })
@@ -88,9 +78,7 @@ export default function AppSettings() {
                 ) : (
                   <EyeOff className="size-4 text-muted-foreground" />
                 )}
-                <span className={!isVisible ? "text-muted-foreground" : ""}>
-                  {label}
-                </span>
+                <span className={!isVisible ? "text-muted-foreground" : ""}>{label}</span>
               </Button>
             );
           })}
@@ -107,18 +95,14 @@ export default function AppSettings() {
               <Button
                 variant="outline"
                 className="w-full justify-start gap-2"
-                onClick={() =>
-                  updateSettings({ hideEmptyFloors: !hideEmptyFloors })
-                }
+                onClick={() => updateSettings({ hideEmptyFloors: !hideEmptyFloors })}
               >
                 {hideEmptyFloors ? (
                   <EyeOff className="size-4" />
                 ) : (
                   <Eye className="size-4 text-muted-foreground" />
                 )}
-                <span
-                  className={!hideEmptyFloors ? "text-muted-foreground" : ""}
-                >
+                <span className={!hideEmptyFloors ? "text-muted-foreground" : ""}>
                   Hide empty floors
                 </span>
               </Button>

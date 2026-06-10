@@ -19,14 +19,11 @@ class KeyPressHandlerClass {
       this.listenerMounted = true;
     }
     const id = this.createID();
-    const shortcutKeys = Array.isArray(shortcut.shortcut)
-      ? shortcut.shortcut
-      : [shortcut.shortcut];
+    const shortcutKeys = Array.isArray(shortcut.shortcut) ? shortcut.shortcut : [shortcut.shortcut];
     for (const shortcutKey of shortcutKeys) {
       this.shortcuts.push({
         action: shortcut.action,
-        shortcut:
-          typeof shortcutKey === "string" ? { key: shortcutKey } : shortcutKey,
+        shortcut: typeof shortcutKey === "string" ? { key: shortcutKey } : shortcutKey,
         name: shortcut.name,
         id,
       });
@@ -50,8 +47,7 @@ class KeyPressHandlerClass {
     const fittingShortcuts = this.shortcuts.filter((shortcut) => {
       if (shortcut.shortcut.key !== event.key) return false;
       if ((shortcut.shortcut.ctrlKey ?? false) !== event.ctrlKey) return false;
-      if ((shortcut.shortcut.shiftKey ?? false) !== event.shiftKey)
-        return false;
+      if ((shortcut.shortcut.shiftKey ?? false) !== event.shiftKey) return false;
       if ((shortcut.shortcut.altKey ?? false) !== event.altKey) return false;
       return true;
     });
@@ -61,16 +57,14 @@ class KeyPressHandlerClass {
       } catch (e) {
         console.error(
           `Error while executing shortcut ${KeyPressHandlerClass.stringifyShortcut(
-            shortcut.shortcut
-          )} ${shortcut.name ?? "[UNNAMED]"}`
+            shortcut.shortcut,
+          )} ${shortcut.name ?? "[UNNAMED]"}`,
         );
       }
     }
   };
 
-  static readonly stringifyShortcut = (
-    shortcut: ShortCut["shortcut"]
-  ): string => {
+  static readonly stringifyShortcut = (shortcut: ShortCut["shortcut"]): string => {
     if (typeof shortcut === "string") return shortcut;
     if (Array.isArray(shortcut))
       return shortcut.map(KeyPressHandlerClass.stringifyShortcut).join(", ");
@@ -117,7 +111,7 @@ const useKey = (
   options?: {
     active?: boolean;
     name?: string;
-  }
+  },
 ) => {
   useEffect(() => {
     if (!action || options?.active === false) return;
@@ -127,7 +121,7 @@ const useKey = (
         shortcut: s,
         action,
         name: options?.name,
-      })
+      }),
     );
     return () => {
       for (const id of ids) {

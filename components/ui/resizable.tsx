@@ -1,10 +1,4 @@
-import React, {
-  useRef,
-  useCallback,
-  useState,
-  useMemo,
-  useEffect,
-} from "react";
+import React, { useRef, useCallback, useState, useMemo, useEffect } from "react";
 import { useResize } from "./resize-context";
 
 interface ResizableProps {
@@ -43,8 +37,7 @@ export default function Resizable({
     registerResizeHandlers,
     unregisterResizeHandlers,
   } = useResize();
-  const [resizeDirection, setResizeDirection] =
-    useState<ResizeDirection | null>(null);
+  const [resizeDirection, setResizeDirection] = useState<ResizeDirection | null>(null);
   const [startSize, setStartSize] = useState({ width: 0, height: 0 });
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
 
@@ -58,7 +51,7 @@ export default function Resizable({
         height: (height / bounding.height) * 100,
       };
     },
-    [boundingRef]
+    [boundingRef],
   );
 
   // Convert percentage to pixels
@@ -71,7 +64,7 @@ export default function Resizable({
         height: (height / 100) * bounding.height,
       };
     },
-    [boundingRef]
+    [boundingRef],
   );
 
   // Clamp size to bounds
@@ -80,7 +73,7 @@ export default function Resizable({
       width: Math.min(Math.max(width, minSize.width), maxSize.width),
       height: Math.min(Math.max(height, minSize.height), maxSize.height),
     }),
-    [minSize.width, minSize.height, maxSize.width, maxSize.height]
+    [minSize.width, minSize.height, maxSize.width, maxSize.height],
   );
 
   const handleMouseMove = useCallback(
@@ -127,7 +120,7 @@ export default function Resizable({
       clampSize,
       onSizeChange,
       boundingRef,
-    ]
+    ],
   );
 
   const handleMouseUp = useCallback(() => {

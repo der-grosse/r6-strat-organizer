@@ -66,21 +66,13 @@ export default function ConsulateB(props: MapFloorClickableProps) {
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M691.31,1190.25 L691.31,1232.46"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M691.31,1190.25 L691.31,1232.46" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M1166.28,1191.19 L1166.09,1290.18"
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M412.31,796.25 L412.31,838.46"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M412.31,796.25 L412.31,838.46" data-type="barricade" onClick={onClickHandler} />
         {/* doors end */}
         {/* reinforcements start */}
         <path

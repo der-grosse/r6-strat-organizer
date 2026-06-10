@@ -70,7 +70,7 @@ export const get = query({
       .withIndex("byTeam", (q) => q.eq("teamID", activeTeamID))
       .collect();
     const isSelfAdmin = memberships.some(
-      (membership) => membership.userID === _id && membership.isAdmin
+      (membership) => membership.userID === _id && membership.isAdmin,
     );
 
     const teamPositions = await ctx.db
@@ -87,13 +87,11 @@ export const get = query({
           _id: userDoc._id,
           name: userDoc.name,
           ubisoftID: userDoc.ubisoftID ?? null,
-          teamPositionID:
-            teamPositions.find((pos) => pos.playerID === userDoc._id)?._id ||
-            null,
+          teamPositionID: teamPositions.find((pos) => pos.playerID === userDoc._id)?._id || null,
           defaultColor: membership.defaultColor ?? null,
           memberSince: membership._creationTime,
         };
-      })
+      }),
     );
 
     return {
@@ -164,9 +162,7 @@ export const updateTeamMember = mutation({
     if (args.isAdmin !== undefined || args.defaultColor !== undefined) {
       const membership = await ctx.db
         .query("userTeams")
-        .withIndex("byUserAndTeam", (q) =>
-          q.eq("userID", userID).eq("teamID", args.teamID)
-        )
+        .withIndex("byUserAndTeam", (q) => q.eq("userID", userID).eq("teamID", args.teamID))
         .first();
 
       if (!membership) {
@@ -250,9 +246,7 @@ export const removeTeamMember = mutation({
 
     const membership = await ctx.db
       .query("userTeams")
-      .withIndex("byUserAndTeam", (q) =>
-        q.eq("userID", args.userID).eq("teamID", args.teamID)
-      )
+      .withIndex("byUserAndTeam", (q) => q.eq("userID", args.userID).eq("teamID", args.teamID))
       .first();
 
     if (!membership) {
@@ -303,9 +297,7 @@ export const leaveTeam = mutation({
     if (myMembership.isAdmin) {
       const adminCount = memberships.filter((m) => m.isAdmin).length;
       if (adminCount <= 1) {
-        throw new Error(
-          "You are the last admin of this team. Delete the team instead of leaving.",
-        );
+        throw new Error("You are the last admin of this team. Delete the team instead of leaving.");
       }
     }
 
@@ -330,9 +322,7 @@ export const deleteTeam = mutation({
 
     const membership = await ctx.db
       .query("userTeams")
-      .withIndex("byUserAndTeam", (q) =>
-        q.eq("userID", args.userID).eq("teamID", args.teamID),
-      )
+      .withIndex("byUserAndTeam", (q) => q.eq("userID", args.userID).eq("teamID", args.teamID))
       .first();
     if (!membership || !membership.isAdmin) {
       throw new Error("Only an admin can delete the team");
@@ -344,25 +334,24 @@ export const deleteTeam = mutation({
       .withIndex("byTeam", (q) => q.eq("teamID", args.teamID))
       .collect();
     for (const strat of strats) {
-      const [placedAssets, stratPositions, pickedOperators, selectedAssets] =
-        await Promise.all([
-          ctx.db
-            .query("placedAssets")
-            .withIndex("byStrat", (q) => q.eq("stratID", strat._id))
-            .collect(),
-          ctx.db
-            .query("stratPositions")
-            .withIndex("byStrat", (q) => q.eq("stratID", strat._id))
-            .collect(),
-          ctx.db
-            .query("pickedOperators")
-            .withIndex("byStrat", (q) => q.eq("stratID", strat._id))
-            .collect(),
-          ctx.db
-            .query("selectedAssets")
-            .withIndex("byStrat", (q) => q.eq("stratID", strat._id))
-            .collect(),
-        ]);
+      const [placedAssets, stratPositions, pickedOperators, selectedAssets] = await Promise.all([
+        ctx.db
+          .query("placedAssets")
+          .withIndex("byStrat", (q) => q.eq("stratID", strat._id))
+          .collect(),
+        ctx.db
+          .query("stratPositions")
+          .withIndex("byStrat", (q) => q.eq("stratID", strat._id))
+          .collect(),
+        ctx.db
+          .query("pickedOperators")
+          .withIndex("byStrat", (q) => q.eq("stratID", strat._id))
+          .collect(),
+        ctx.db
+          .query("selectedAssets")
+          .withIndex("byStrat", (q) => q.eq("stratID", strat._id))
+          .collect(),
+      ]);
       for (const record of [
         ...placedAssets,
         ...stratPositions,
@@ -444,15 +433,13 @@ export const updateTeamPosition = mutation({
     if (args.playerID) {
       const playerMembership = await ctx.db
         .query("userTeams")
-        .withIndex("byUserAndTeam", (q) =>
-          q.eq("userID", args.playerID!).eq("teamID", args.teamID)
-        )
+        .withIndex("byUserAndTeam", (q) => q.eq("userID", args.playerID!).eq("teamID", args.teamID))
         .first();
       if (!playerMembership) {
         throw new Error("Player is not a member of the team");
       }
       const assignedPosition = teamPositions.find(
-        (pos) => pos.playerID === args.playerID && pos._id !== args.positionID
+        (pos) => pos.playerID === args.playerID && pos._id !== args.positionID,
       );
       if (assignedPosition) {
         await ctx.db.patch(assignedPosition._id, { playerID: undefined });
@@ -461,10 +448,7 @@ export const updateTeamPosition = mutation({
 
     await ctx.db.patch(args.positionID, {
       positionName: args.positionName ?? position.positionName,
-      playerID:
-        args.playerID === null
-          ? undefined
-          : (args.playerID ?? position.playerID),
+      playerID: args.playerID === null ? undefined : (args.playerID ?? position.playerID),
       index: args.index ?? position.index,
     });
 

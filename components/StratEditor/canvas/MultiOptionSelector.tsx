@@ -5,7 +5,7 @@ import { Dot } from "lucide-react";
 
 export interface MultiOptionSelectorProps<
   ID extends string | number,
-  Item extends { id: ID; icon: React.ReactNode; label: string }
+  Item extends { id: ID; icon: React.ReactNode; label: string },
 > {
   options: Item[];
   selected: ID | null;
@@ -16,7 +16,7 @@ export interface MultiOptionSelectorProps<
 
 export default function MultiOptionSelector<
   ID extends string | number,
-  Item extends { id: ID; icon: React.ReactNode; label: string }
+  Item extends { id: ID; icon: React.ReactNode; label: string },
 >({
   options,
   selected,
@@ -30,11 +30,11 @@ export default function MultiOptionSelector<
 
   const selectedOption = useMemo(
     () => options.find((option) => option.id === selected),
-    [options, selected]
+    [options, selected],
   );
   const selectedIndex = useMemo(
     () => options.findIndex((option) => option.id === selected),
-    [options, selected]
+    [options, selected],
   );
 
   const offset = (() => {
@@ -47,10 +47,7 @@ export default function MultiOptionSelector<
     if (!open) return;
 
     function handleTouchOutside(e: TouchEvent) {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setOpen(false);
       }
     }
@@ -106,11 +103,7 @@ export default function MultiOptionSelector<
         style={{ top: -offset }}
       >
         {!selectedOption && (
-          <ItemButton
-            isActive={open}
-            label="No option selected"
-            onClick={handleToggleClick}
-          >
+          <ItemButton isActive={open} label="No option selected" onClick={handleToggleClick}>
             {emptyIcon ?? <Dot />}
           </ItemButton>
         )}
@@ -129,9 +122,7 @@ export default function MultiOptionSelector<
               setOpen(false);
             }}
           >
-            {!open &&
-            fixedSelectedIcon &&
-            option.id === selectedOption?.id
+            {!open && fixedSelectedIcon && option.id === selectedOption?.id
               ? fixedSelectedIcon
               : option.icon}
           </ItemButton>
@@ -153,13 +144,7 @@ function ItemButton({
   isActive: boolean;
 }) {
   return (
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon"
-      onClick={onClick}
-      aria-pressed={isActive}
-    >
+    <Button type="button" variant="ghost" size="icon" onClick={onClick} aria-pressed={isActive}>
       <span className="sr-only">{label}</span>
       {children}
     </Button>

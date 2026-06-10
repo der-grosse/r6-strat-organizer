@@ -6,6 +6,6 @@ interface MapFloorClickableProps {
     y: number,
     width: number,
     height: number,
-    rotation: number
+    rotation: number,
   ) => void;
 }

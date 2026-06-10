@@ -14,7 +14,5 @@ export const LEADING_COOKIE_KEY = "strat_leading";
 
 export function parseCookies(cookies: ReadonlyRequestCookies) {
   const storedFilter = cookies.get(FILTER_COOKIE_KEY)?.value;
-  return storedFilter
-    ? { ...EMPTY_FILTER, ...JSON.parse(storedFilter) }
-    : EMPTY_FILTER;
+  return storedFilter ? { ...EMPTY_FILTER, ...JSON.parse(storedFilter) } : EMPTY_FILTER;
 }

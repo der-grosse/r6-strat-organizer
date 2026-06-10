@@ -40,9 +40,7 @@ export default function ResetPassword(props: ResetPasswordProps) {
       <h1 className="text-3xl font-extrabold text-foreground text-center">
         Reset Password
         <br />
-        <span className="text-muted-foreground text-lg font-normal">
-          R6 Strats Management
-        </span>
+        <span className="text-muted-foreground text-lg font-normal">R6 Strats Management</span>
       </h1>
       <Input
         type="text"
@@ -53,19 +51,11 @@ export default function ResetPassword(props: ResetPasswordProps) {
         value={email}
         onInput={(e) => setEmail((e.target as HTMLInputElement).value)}
       />
-      <Button
-        type="submit"
-        variant="default"
-        className="w-full max-w-[20rem]"
-        disabled={!email}
-      >
+      <Button type="submit" variant="default" className="w-full max-w-[20rem]" disabled={!email}>
         Reset Password
       </Button>
       <p className="text-sm text-muted-foreground">
-        <Link
-          href="/login"
-          className="text-primary hover:text-primary/90 hover:underline"
-        >
+        <Link href="/login" className="text-primary hover:text-primary/90 hover:underline">
           Back to login
         </Link>
       </p>

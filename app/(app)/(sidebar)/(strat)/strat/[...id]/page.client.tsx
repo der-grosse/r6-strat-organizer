@@ -20,9 +20,7 @@ export default function StratViewClient(props: StratViewClientProps) {
   if (strat === null) {
     return (
       <div className="flex flex-col items-center justify-center h-full">
-        <p className="text-2xl font-bold text-center">
-          Strat not found (id: {props.id})
-        </p>
+        <p className="text-2xl font-bold text-center">Strat not found (id: {props.id})</p>
       </div>
     );
   }

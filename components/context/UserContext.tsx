@@ -13,9 +13,7 @@ export const UserProvider: React.FC<{
   children: React.ReactNode;
   jwt?: string;
 }> = ({ children, jwt }) => {
-  const [user, setUser] = useState<JWTPayload | null>(
-    jwt ? decodeToken(jwt) : null
-  );
+  const [user, setUser] = useState<JWTPayload | null>(jwt ? decodeToken(jwt) : null);
 
   useEffect(() => {
     if (jwt) {
@@ -26,9 +24,7 @@ export const UserProvider: React.FC<{
     }
   }, [jwt]);
 
-  return (
-    <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>
-  );
+  return <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>;
 };
 
 export const useUser = (): UserContextType => {

@@ -20,38 +20,18 @@ export default function LairB(props: MapFloorClickableProps) {
         className="*:cursor-pointer"
       >
         {/* windows start */}
-        <path
-          d="M982.19,603.25 L982.19,659.97"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M2623.75,691.19 L2567.03,691.19"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M982.19,603.25 L982.19,659.97" data-type="barricade" onClick={onClickHandler} />
+        <path d="M2623.75,691.19 L2567.03,691.19" data-type="barricade" onClick={onClickHandler} />
         {/* windows end */}
         {/* doors start */}
-        <path
-          d="M869.25,1012.69 L921.72,1012.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M869.25,1012.69 L921.72,1012.69" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M1165.25,1012.69 L1217.72,1012.69"
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M907.25,1560.69 L959.72,1560.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M684.25,1796.69 L736.72,1796.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M907.25,1560.69 L959.72,1560.69" data-type="barricade" onClick={onClickHandler} />
+        <path d="M684.25,1796.69 L736.72,1796.69" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M1121.31,1720.25 L1121.31,1772.72"
           data-type="barricade"
@@ -62,11 +42,7 @@ export default function LairB(props: MapFloorClickableProps) {
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M2220.25,968.81 L2167.78,968.81"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M2220.25,968.81 L2167.78,968.81" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M2024.25,1392.81 L1971.78,1392.81"
           data-type="barricade"
@@ -97,21 +73,9 @@ export default function LairB(props: MapFloorClickableProps) {
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M2114.69,793.75 L2114.69,741.28"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1747.69,920.75 L1747.69,868.28"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M653.25,1012.69 L705.72,1012.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M2114.69,793.75 L2114.69,741.28" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1747.69,920.75 L1747.69,868.28" data-type="barricade" onClick={onClickHandler} />
+        <path d="M653.25,1012.69 L705.72,1012.69" data-type="barricade" onClick={onClickHandler} />
         {/* doors end */}
         {/* reinforcements start */}
         <path

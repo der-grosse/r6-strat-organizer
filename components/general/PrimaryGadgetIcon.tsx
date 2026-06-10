@@ -18,9 +18,7 @@ export default function PrimaryGadgetIcon(props: PrimaryGadgetIconProps) {
     const SpecialIcon = SPECIAL_ICONS[props.id as keyof typeof SPECIAL_ICONS];
     return (
       <>
-        <SpecialIcon
-          className={cn("w-8 h-8 object-contain", props.className)}
-        />
+        <SpecialIcon className={cn("w-8 h-8 object-contain", props.className)} />
         {props.showName && <span className="text-sm">{props.id}</span>}
       </>
     );
@@ -39,16 +37,9 @@ export default function PrimaryGadgetIcon(props: PrimaryGadgetIconProps) {
           draggable={false}
         />
       ) : (
-        <div
-          className={cn(
-            "w-8 h-8 bg-gray-500 rounded object-contain",
-            props.className,
-          )}
-        />
+        <div className={cn("w-8 h-8 bg-gray-500 rounded object-contain", props.className)} />
       )}
-      {props.showName && (
-        <span className="text-sm">{gadget?.name ?? props.id}</span>
-      )}
+      {props.showName && <span className="text-sm">{gadget?.name ?? props.id}</span>}
     </>
   );
 }

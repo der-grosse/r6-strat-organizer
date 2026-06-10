@@ -21,16 +21,8 @@ export default function Bank1F(props: MapFloorClickableProps) {
         className="*:cursor-pointer"
       >
         {/* windows start */}
-        <path
-          d="M474.34,1959.06 L515.01,1959.06"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M730.34,1959.06 L771.01,1959.06"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M474.34,1959.06 L515.01,1959.06" data-type="barricade" onClick={onClickHandler} />
+        <path d="M730.34,1959.06 L771.01,1959.06" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M2329.44,1270.84 L2329.44,1311.51"
           data-type="barricade"
@@ -43,26 +35,10 @@ export default function Bank1F(props: MapFloorClickableProps) {
         />
         {/* windows end */}
         {/* doors start */}
-        <path
-          d="M672.69,561.22 L771.68,561.41"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1078.25,561.69 L1120.46,561.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M573.69,1646.22 L672.68,1646.41"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1519.31,874.25 L1519.31,916.46"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M672.69,561.22 L771.68,561.41" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1078.25,561.69 L1120.46,561.69" data-type="barricade" onClick={onClickHandler} />
+        <path d="M573.69,1646.22 L672.68,1646.41" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1519.31,874.25 L1519.31,916.46" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M1323.31,1557.25 L1323.31,1599.46"
           data-type="barricade"
@@ -73,21 +49,13 @@ export default function Bank1F(props: MapFloorClickableProps) {
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M2329.31,967.25 L2329.31,1009.46"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M2329.31,967.25 L2329.31,1009.46" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M2010.25,1704.69 L2052.46,1704.69"
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M2805.25,960.69 L2847.46,960.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M2805.25,960.69 L2847.46,960.69" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M2920.31,1294.25 L2920.31,1336.46"
           data-type="barricade"
@@ -118,26 +86,10 @@ export default function Bank1F(props: MapFloorClickableProps) {
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M896.25,288.69 L938.46,288.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M826.25,288.69 L868.46,288.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M965.25,288.69 L1007.46,288.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M975.69,1527.22 L1074.68,1527.41"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M896.25,288.69 L938.46,288.69" data-type="barricade" onClick={onClickHandler} />
+        <path d="M826.25,288.69 L868.46,288.69" data-type="barricade" onClick={onClickHandler} />
+        <path d="M965.25,288.69 L1007.46,288.69" data-type="barricade" onClick={onClickHandler} />
+        <path d="M975.69,1527.22 L1074.68,1527.41" data-type="barricade" onClick={onClickHandler} />
         {/* doors end */}
         {/* reinforcements start */}
         <path

@@ -4,11 +4,7 @@ import TeamPositionPicker from "@/components/general/PlayerPositionPicker";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { Crosshair, GripVertical, Plus, X, Zap, ZapOff } from "lucide-react";
 import {
@@ -54,15 +50,11 @@ export default function StratPositionItem({
 }: StratPositionItemProps) {
   const updateStratPosition = useMutation(api.strats.updateStratPosition);
   const updatePickedOperator = useMutation(api.strats.updatePickedOperator);
-  const updatePickedOperatorIndex = useMutation(
-    api.strats.updatePickedOperatorIndex,
-  );
+  const updatePickedOperatorIndex = useMutation(api.strats.updatePickedOperatorIndex);
   const deletePickedOperator = useMutation(api.strats.deletePickedOperator);
   const createPickedOperator = useMutation(api.strats.createPickedOperator);
 
-  const [optimisticOps, setOptimisticOps] = useState(
-    stratPosition.pickedOperators,
-  );
+  const [optimisticOps, setOptimisticOps] = useState(stratPosition.pickedOperators);
   useEffect(() => {
     setOptimisticOps(stratPosition.pickedOperators);
   }, [stratPosition.pickedOperators]);
@@ -82,12 +74,10 @@ export default function StratPositionItem({
       const newIndex = optimisticOps.findIndex((op) => op._id === over?.id);
 
       // Optimistically update the UI
-      const newPositions = arrayMove(optimisticOps, oldIndex, newIndex).map(
-        (item, index) => ({
-          ...item,
-          index,
-        }),
-      );
+      const newPositions = arrayMove(optimisticOps, oldIndex, newIndex).map((item, index) => ({
+        ...item,
+        index,
+      }));
       setOptimisticOps(newPositions);
 
       try {
@@ -125,10 +115,7 @@ export default function StratPositionItem({
               });
             }}
           />
-          <Separator
-            orientation="vertical"
-            className="h-full !h-6 bg-muted-foreground"
-          />
+          <Separator orientation="vertical" className="h-full !h-6 bg-muted-foreground" />
           <Tooltip delayDuration={750}>
             <TooltipTrigger asChild>
               <Button
@@ -136,9 +123,7 @@ export default function StratPositionItem({
                 variant="ghost"
                 className={cn(
                   "px-2 -mr-1 !w-auto",
-                  stratPosition.fightsLongRange
-                    ? "text-primary"
-                    : "text-muted-foreground/50",
+                  stratPosition.fightsLongRange ? "text-primary" : "text-muted-foreground/50",
                 )}
                 onClick={() =>
                   updateStratPosition({
@@ -153,11 +138,10 @@ export default function StratPositionItem({
             <TooltipContent side="bottom">
               <p className="text-sm">Fights long angles</p>
               <p className="text-xs text-muted-foreground">
-                Indicate wether this role fights long angles and should probably
-                pick a DMR or at least not a primary shotgun.
+                Indicate wether this role fights long angles and should probably pick a DMR or at
+                least not a primary shotgun.
                 <br />
-                This is just a hint to help with operator selection and does not
-                enforce any rules.
+                This is just a hint to help with operator selection and does not enforce any rules.
               </p>
             </TooltipContent>
           </Tooltip>
@@ -173,8 +157,8 @@ export default function StratPositionItem({
             <TooltipContent side="bottom">
               <p className="text-sm">Shotgun for rotates</p>
               <p className="text-xs text-muted-foreground">
-                Indicate wether this role needs to bring a shotgun to make
-                rotates, headholes or similar.
+                Indicate wether this role needs to bring a shotgun to make rotates, headholes or
+                similar.
               </p>
             </TooltipContent>
           </Tooltip>
@@ -186,9 +170,7 @@ export default function StratPositionItem({
                 variant="ghost"
                 className={cn(
                   "pl-2 pr-1 -ml-1 !w-auto",
-                  stratPosition.isPowerPosition
-                    ? "text-primary"
-                    : "text-muted-foreground/50",
+                  stratPosition.isPowerPosition ? "text-primary" : "text-muted-foreground/50",
                 )}
                 onClick={() =>
                   updateStratPosition({
@@ -207,9 +189,8 @@ export default function StratPositionItem({
                   : "Set as power position"}
               </p>
               <p className="text-xs text-muted-foreground">
-                Power positions are essential to a strat. If this position is
-                not playable due to operator bans, the strat is not viable
-                anymore.
+                Power positions are essential to a strat. If this position is not playable due to
+                operator bans, the strat is not viable anymore.
               </p>
             </TooltipContent>
           </Tooltip>
@@ -217,11 +198,7 @@ export default function StratPositionItem({
       </CardHeader>
       <Separator />
       <CardContent className="px-0 mt-1 -mb-1">
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext
             items={optimisticOps.map((item) => item._id)}
             strategy={verticalListSortingStrategy}
@@ -306,8 +283,7 @@ function OperatorItem({
   onChange: (pickedOperator: PickedOperator) => void;
   otherOps: string[];
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: op._id });
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: op._id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -315,16 +291,11 @@ function OperatorItem({
   };
 
   const hasTertiaryGadget =
-    "tertiaryGadgets" in
-    (DEFENDERS.find((def) => def.name === op.operator) || {});
+    "tertiaryGadgets" in (DEFENDERS.find((def) => def.name === op.operator) || {});
 
   return (
     <div ref={setNodeRef} style={style} className="flex -mr-2">
-      <div
-        {...attributes}
-        {...listeners}
-        className="cursor-grab hover:cursor-grabbing"
-      >
+      <div {...attributes} {...listeners} className="cursor-grab hover:cursor-grabbing">
         <GripVertical className="h-4 w-4 text-gray-400 py-2 box-content" />
       </div>
       <OperatorPicker
@@ -336,8 +307,7 @@ function OperatorItem({
           if (!newOp) onDelete();
           else {
             const hasNewOpTertiary =
-              "tertiaryGadgets" in
-              (DEFENDERS.find((def) => def.name === newOp) || {});
+              "tertiaryGadgets" in (DEFENDERS.find((def) => def.name === newOp) || {});
             onChange({
               operator: newOp,
               secondaryGadget: op.secondaryGadget,
@@ -349,11 +319,7 @@ function OperatorItem({
           }
         }}
         trigger={({ children, ...props }) => (
-          <Button
-            {...props}
-            variant="ghost"
-            className="px-1 flex-1 text-left justify-start"
-          >
+          <Button {...props} variant="ghost" className="px-1 flex-1 text-left justify-start">
             <OperatorIcon op={op.operator} />
             {op.operator}
             <div className="flex-1" />
@@ -462,10 +428,7 @@ const ShotgunToggle = forwardRef<
     >
       <span>
         <Shotgun
-          className={cn(
-            "size-8 -mx-1 -my-2",
-            !shouldBringShotgun && "text-muted-foreground/50",
-          )}
+          className={cn("size-8 -mx-1 -my-2", !shouldBringShotgun && "text-muted-foreground/50")}
         />
       </span>
     </Button>

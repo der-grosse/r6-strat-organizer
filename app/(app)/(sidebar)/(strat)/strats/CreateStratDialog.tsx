@@ -32,11 +32,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { toast } from "sonner";
 import MAPS from "@/lib/static/maps";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { extractDrawingID } from "@/lib/googleDrawings";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -67,8 +63,7 @@ export function CreateStratDialog() {
   });
 
   const selectedMap = form.watch("map");
-  const selectedSites =
-    MAPS.find((map) => map.name === selectedMap)?.sites ?? [];
+  const selectedSites = MAPS.find((map) => map.name === selectedMap)?.sites ?? [];
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
@@ -113,10 +108,7 @@ export function CreateStratDialog() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Map</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select a map" />
@@ -148,9 +140,7 @@ export function CreateStratDialog() {
                     <FormControl>
                       <SelectTrigger className="w-full">
                         <SelectValue
-                          placeholder={
-                            selectedMap ? "Select a site" : "Select a map first"
-                          }
+                          placeholder={selectedMap ? "Select a site" : "Select a map first"}
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -186,10 +176,7 @@ export function CreateStratDialog() {
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea
-                      placeholder="Enter strat description"
-                      {...field}
-                    />
+                    <Textarea placeholder="Enter strat description" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -208,12 +195,11 @@ export function CreateStratDialog() {
                       </TooltipTrigger>
                       <TooltipContent side="top">
                         <p className="text-sm">
-                          When you supply a drawing ID, the strat will load from
-                          Google Drawings. If not, you can use the Beta built in
-                          strat editor.
+                          When you supply a drawing ID, the strat will load from Google Drawings. If
+                          not, you can use the Beta built in strat editor.
                           <br />
-                          You can paste the whole link to your Google Drawing
-                          Link or the extracted ID from the link.
+                          You can paste the whole link to your Google Drawing Link or the extracted
+                          ID from the link.
                         </p>
                       </TooltipContent>
                     </Tooltip>

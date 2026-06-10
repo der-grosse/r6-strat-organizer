@@ -56,11 +56,7 @@ export default function ClubhouseB(props: MapFloorClickableProps) {
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M1914.19,882.21 L1955.65,890.12"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M1914.19,882.21 L1955.65,890.12" data-type="barricade" onClick={onClickHandler} />
         {/* doors end */}
         {/* reinforcements start */}
         <path

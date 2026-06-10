@@ -22,12 +22,7 @@ export interface StratViewerProps {
   onLoaded?: () => void;
 }
 
-export default function StratViewer({
-  team,
-  strat,
-  assetModifier,
-  onLoaded,
-}: StratViewerProps) {
+export default function StratViewer({ team, strat, assetModifier, onLoaded }: StratViewerProps) {
   const { user } = useUser();
   const bannedOperators = useQuery(api.bannedOps.get);
   const settings = useQuery(api.settings.get);
@@ -35,12 +30,8 @@ export default function StratViewer({
 
   const ownStratPositionId = useMemo(() => {
     if (!user) return null;
-    const teamPosition = team.teamPositions.find(
-      (tp) => tp.playerID === user._id,
-    );
-    const position = strat.stratPositions.find(
-      (sp) => sp.teamPositionID === teamPosition?._id,
-    );
+    const teamPosition = team.teamPositions.find((tp) => tp.playerID === user._id);
+    const position = strat.stratPositions.find((sp) => sp.teamPositionID === teamPosition?._id);
     return position?._id ?? null;
   }, [strat.stratPositions, team.teamPositions, user]);
 
@@ -52,10 +43,7 @@ export default function StratViewer({
     },
   );
 
-  const map = useMemo(
-    () => MAPS.find((map) => map.name === strat.map) ?? null,
-    [strat.map],
-  );
+  const map = useMemo(() => MAPS.find((map) => map.name === strat.map) ?? null, [strat.map]);
 
   const allAssets = useQuery(api.strats.getAssets, { stratID: strat._id });
 
@@ -69,25 +57,9 @@ export default function StratViewer({
 
   const { assets: clampedAssets, map: clampedMap } = useMemo(() => {
     if (!map) return { assets, map };
-    const modifiedAssets = applyOperatorBans(
-      assets,
-      bannedOperators ?? [],
-      strat,
-    );
-    return removeUnusedFloors(
-      modifiedAssets,
-      map,
-      hideEmptyFloors,
-      ownStratPositionId,
-    );
-  }, [
-    assets,
-    map,
-    bannedOperators,
-    strat,
-    hideEmptyFloors,
-    ownStratPositionId,
-  ]);
+    const modifiedAssets = applyOperatorBans(assets, bannedOperators ?? [], strat);
+    return removeUnusedFloors(modifiedAssets, map, hideEmptyFloors, ownStratPositionId);
+  }, [assets, map, bannedOperators, strat, hideEmptyFloors, ownStratPositionId]);
 
   const loaded = !!allAssets && !!map;
   useEffect(() => {
@@ -132,11 +104,7 @@ function removeUnusedFloors(
   const origViewBox = getViewBoxDimensions(map.floors.length, baseWidth);
 
   const floors = map.floors.map((f, i) => {
-    const { x, y, width, height } = getBoundingBox(
-      i,
-      map.floors.length,
-      origViewBox,
-    );
+    const { x, y, width, height } = getBoundingBox(i, map.floors.length, origViewBox);
     return {
       assets: [] as PlacedAsset[],
       boundingBox: {
@@ -172,17 +140,13 @@ function removeUnusedFloors(
   }
 
   const ownUsedFloors = floors.filter(
-    (f) =>
-      f.assets.filter((a) => a.stratPositionID === ownStratPositionId).length >
-      0,
+    (f) => f.assets.filter((a) => a.stratPositionID === ownStratPositionId).length > 0,
   );
 
   const generalUsedFloors = floors.filter((f) => f.assets.length > 0);
 
   const usedFloors =
-    hideEmptyFloors && ownUsedFloors.length > 0
-      ? ownUsedFloors
-      : generalUsedFloors;
+    hideEmptyFloors && ownUsedFloors.length > 0 ? ownUsedFloors : generalUsedFloors;
 
   if (usedFloors.length === 0) {
     return { assets, map };
@@ -192,11 +156,7 @@ function removeUnusedFloors(
   const newViewBox = getViewBoxDimensions(usedFloors.length, baseWidth);
 
   for (const [i, floor] of usedFloors.entries()) {
-    const { x, y, width, height } = getBoundingBox(
-      i,
-      usedFloors.length,
-      newViewBox,
-    );
+    const { x, y, width, height } = getBoundingBox(i, usedFloors.length, newViewBox);
 
     if (
       floor.boundingBox.x === x &&
@@ -254,9 +214,7 @@ function applyOperatorBans(
       switch (asset.type) {
         case "operator": {
           if (!bannedOperators.includes(asset.operator)) return asset;
-          const stratPosition = strat.stratPositions.find(
-            (sp) => sp._id === asset.stratPositionID,
-          );
+          const stratPosition = strat.stratPositions.find((sp) => sp._id === asset.stratPositionID);
           if (!stratPosition) return asset;
           const op = stratPosition.pickedOperators.find(
             (o) => !bannedOperators.includes(o.operator),
@@ -269,9 +227,7 @@ function applyOperatorBans(
             (op) => "gadget" in op && op.gadget === asset.gadget,
           )?.name;
           if (!operator || !bannedOperators.includes(operator)) return asset;
-          const stratPosition = strat.stratPositions.find(
-            (sp) => sp._id === asset.stratPositionID,
-          );
+          const stratPosition = strat.stratPositions.find((sp) => sp._id === asset.stratPositionID);
           if (!stratPosition) return asset;
           const hasValidOperator = stratPosition.pickedOperators.some(
             (o) => !bannedOperators.includes(o.operator),

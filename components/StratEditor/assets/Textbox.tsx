@@ -3,10 +3,7 @@ import { getAssetColor } from "../canvas/useMountedAssets";
 import { StratPositions } from "@/lib/types/strat.types";
 import { FullTeam } from "@/lib/types/team.types";
 
-const BACKGROUND_STYLES: Record<
-  TextboxAsset["background"],
-  React.CSSProperties
-> = {
+const BACKGROUND_STYLES: Record<TextboxAsset["background"], React.CSSProperties> = {
   none: {},
   light: { backgroundColor: "rgba(255, 255, 255, 0.7)" },
   dark: { backgroundColor: "rgba(0, 0, 0, 0.7)" },

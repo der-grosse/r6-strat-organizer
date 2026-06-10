@@ -8,7 +8,7 @@ export const importTeams = mutation({
       v.object({
         originalId: v.number(),
         name: v.string(),
-      })
+      }),
     ),
   },
   handler: async (ctx, args) => {
@@ -30,7 +30,7 @@ export const importUsers = mutation({
         email: v.optional(v.string()),
         password: v.string(),
         ubisoftID: v.optional(v.string()),
-      })
+      }),
     ),
   },
   handler: async (ctx, args) => {
@@ -56,7 +56,7 @@ export const importUserTeams = mutation({
         teamID: v.id("teams"),
         isAdmin: v.boolean(),
         defaultColor: v.optional(v.string()),
-      })
+      }),
     ),
   },
   handler: async (ctx, args) => {
@@ -74,7 +74,7 @@ export const importTeamInvites = mutation({
         teamID: v.id("teams"),
         usedBy: v.optional(v.id("users")),
         usedAt: v.optional(v.string()),
-      })
+      }),
     ),
   },
   handler: async (ctx, args) => {
@@ -93,7 +93,7 @@ export const importPasswordResetTokens = mutation({
         userID: v.id("users"),
         expiresAt: v.string(),
         invalidTokenInsertionCounts: v.number(),
-      })
+      }),
     ),
   },
   handler: async (ctx, args) => {
@@ -113,7 +113,7 @@ export const importTeamPositions = mutation({
         positionName: v.string(),
         teamID: v.id("teams"),
         index: v.number(),
-      })
+      }),
     ),
   },
   handler: async (ctx, args) => {
@@ -144,7 +144,7 @@ export const importStrats = mutation({
         teamID: v.id("teams"),
         archived: v.boolean(),
         mapIndex: v.number(),
-      })
+      }),
     ),
   },
   handler: async (ctx, args) => {
@@ -177,7 +177,7 @@ export const importStratPositions = mutation({
         isPowerPosition: v.boolean(),
         shouldBringShotgun: v.boolean(),
         index: v.number(), // Added index as it is in schema.ts
-      })
+      }),
     ),
   },
   handler: async (ctx, args) => {
@@ -221,7 +221,7 @@ export const importPickedOperators = mutation({
         secondaryGadget: v.optional(v.string()),
         tertiaryGadget: v.optional(v.string()),
         index: v.number(),
-      })
+      }),
     ),
   },
   handler: async (ctx, args) => {
@@ -262,7 +262,7 @@ export const importPlacedAssets = mutation({
         iconType: v.optional(v.string()),
         gadget: v.optional(v.string()),
         variant: v.optional(v.string()),
-      })
+      }),
     ),
   },
   handler: async (ctx, args) => {

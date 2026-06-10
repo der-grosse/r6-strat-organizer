@@ -42,9 +42,7 @@ async function setupAuth() {
       .setAudience("r6-strats")
       .setIssuer("https://r6-strats.com")
       .setIssuedAt()
-      .setExpirationTime(
-        new Date(new Date().setFullYear(new Date().getFullYear() + 100)),
-      )
+      .setExpirationTime(new Date(new Date().setFullYear(new Date().getFullYear() + 100)))
       .sign(privateKey);
 
     // 3. Generate JWKS
@@ -92,17 +90,12 @@ async function setupAuth() {
 
     // Escape newlines for PEM keys to keep them on one line in .env
     const publicKeyEscaped = '"' + publicKeyPem.replace(/\r?\n/g, "\\n") + '"';
-    const privateKeyEscaped =
-      '"' + privateKeyPem.replace(/\r?\n/g, "\\n") + '"';
+    const privateKeyEscaped = '"' + privateKeyPem.replace(/\r?\n/g, "\\n") + '"';
     const serverJwtValue = `"${serverToken}"`;
     const jwksValue = `"${jwksDataUri}"`;
 
     envContents = setEnvValue(envContents, "JWT_PUBLIC_KEY", publicKeyEscaped);
-    envContents = setEnvValue(
-      envContents,
-      "JWT_PRIVATE_KEY",
-      privateKeyEscaped,
-    );
+    envContents = setEnvValue(envContents, "JWT_PRIVATE_KEY", privateKeyEscaped);
     envContents = setEnvValue(envContents, "JWT_PUBLIC_JWKS", jwksValue);
     envContents = setEnvValue(envContents, "SERVER_JWT", serverJwtValue);
 

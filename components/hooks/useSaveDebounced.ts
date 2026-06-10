@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef } from "react";
 export default function useSaveDebounced<T>(
   value: T,
   save: (value: T) => unknown | Promise<unknown>,
-  options?: { delay?: number; onError?: (error: unknown) => void }
+  options?: { delay?: number; onError?: (error: unknown) => void },
 ): {
   saveNow: (value?: T) => void;
 } {
@@ -22,7 +22,7 @@ export default function useSaveDebounced<T>(
         });
       }
     },
-    [save]
+    [save],
   );
 
   useEffect(() => {

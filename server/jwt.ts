@@ -71,9 +71,7 @@ export async function generateJWT(user: Omit<JWTPayload, "v">) {
     .setAudience("r6-strats")
     .setIssuer("https://r6-strats.com")
     .setIssuedAt(new Date(Date.now() - 60 * 1000)) // Set issued at 1 minute in the past to account for clock skew between convex and server
-    .setExpirationTime(
-      new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
-    )
+    .setExpirationTime(new Date(new Date().setFullYear(new Date().getFullYear() + 1)))
     .sign(privateKey);
   return token;
 }

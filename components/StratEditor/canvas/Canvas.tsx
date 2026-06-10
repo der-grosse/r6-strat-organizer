@@ -66,10 +66,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
   const { user } = useUser();
 
   const userSelectedAssets = useMemo(
-    () =>
-      selectedAssets
-        .filter((s) => s.userID === user?._id)
-        .map((s) => s.assetID),
+    () => selectedAssets.filter((s) => s.userID === user?._id).map((s) => s.assetID),
     [selectedAssets, user?._id],
   );
 
@@ -77,9 +74,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
   // update assets when prop changes
   useEffect(() => {
     setAssets((assets) => {
-      const newAssets = propAssets.filter(
-        (a) => !assets.some((b) => b._id === a._id),
-      );
+      const newAssets = propAssets.filter((a) => !assets.some((b) => b._id === a._id));
       // prevent update for assets that are actively being edited by the user
       const filteredAssets = assets
         .filter((a) => propAssets.some((b) => b._id === a._id))
@@ -97,21 +92,14 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
   const sortedAssets = useMemo(() => {
     return [
       ...assets.filter((a) => !userSelectedAssets.includes(a._id)),
-      ...(userSelectedAssets
-        .map((s) => assets.find((a) => a._id === s))
-        .filter(Boolean) as A[]),
+      ...(userSelectedAssets.map((s) => assets.find((a) => a._id === s)).filter(Boolean) as A[]),
     ];
   }, [assets, userSelectedAssets]);
 
   const svgRef = useRef<SVGSVGElement>(null!);
 
   const [activeAction, setActiveAction] = useState<
-    | "none"
-    | "dragging"
-    | "resizing"
-    | "rotating"
-    | "moving-arrow-start"
-    | "moving-arrow-end"
+    "none" | "dragging" | "resizing" | "rotating" | "moving-arrow-start" | "moving-arrow-end"
   >("none");
   // store time from last action end to prevent deselect on click right after rotating
   const actionEndTime = useRef(0);
@@ -130,19 +118,13 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
   });
 
   // viewport management with zoom and pan event listeners
-  const {
-    viewBox,
-    zoomedViewBox,
-    zoomFactor,
-    canDragViewport,
-    isDraggingViewport,
-    handleWheel,
-  } = useViewport({
-    map,
-    svgRef,
-    baseWidth: CANVAS_BASE_SIZE,
-    isViewportMovable: activeAction === "none",
-  });
+  const { viewBox, zoomedViewBox, zoomFactor, canDragViewport, isDraggingViewport, handleWheel } =
+    useViewport({
+      map,
+      svgRef,
+      baseWidth: CANVAS_BASE_SIZE,
+      isViewportMovable: activeAction === "none",
+    });
 
   // mouse down on asset
   const handleMouseDown = useCallback(
@@ -154,9 +136,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       const pt = svg.createSVGPoint();
       pt.x = e.clientX;
       pt.y = e.clientY;
-      const svgP = pt.matrixTransform(
-        svg.getScreenCTM()?.inverse() || new DOMMatrix(),
-      );
+      const svgP = pt.matrixTransform(svg.getScreenCTM()?.inverse() || new DOMMatrix());
 
       if (handle === "none") {
         if (e.shiftKey) {
@@ -193,13 +173,9 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       setActionStart({
         x: svgP.x,
         y: svgP.y,
-        asset: deepCopy(
-          assetsRef.current.find((a) => a._id === assetId) || null,
-        ),
+        asset: deepCopy(assetsRef.current.find((a) => a._id === assetId) || null),
         startPositions: assetsRef.current
-          .filter(
-            (a) => userSelectedAssets.includes(a._id) || a._id === assetId,
-          )
+          .filter((a) => userSelectedAssets.includes(a._id) || a._id === assetId)
           .map((a) => ({
             ...a.position,
             ...a.size,
@@ -227,9 +203,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       const pt = svg.createSVGPoint();
       pt.x = touch.clientX;
       pt.y = touch.clientY;
-      const svgP = pt.matrixTransform(
-        svg.getScreenCTM()?.inverse() || new DOMMatrix(),
-      );
+      const svgP = pt.matrixTransform(svg.getScreenCTM()?.inverse() || new DOMMatrix());
 
       if (handle === "none") {
         // For touch, we don't have shift key, so behavior is similar to click without shift
@@ -262,13 +236,9 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       setActionStart({
         x: svgP.x,
         y: svgP.y,
-        asset: deepCopy(
-          assetsRef.current.find((a) => a._id === assetId) || null,
-        ),
+        asset: deepCopy(assetsRef.current.find((a) => a._id === assetId) || null),
         startPositions: assetsRef.current
-          .filter(
-            (a) => userSelectedAssets.includes(a._id) || a._id === assetId,
-          )
+          .filter((a) => userSelectedAssets.includes(a._id) || a._id === assetId)
           .map((a) => ({
             ...a.position,
             ...a.size,
@@ -286,13 +256,8 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       const arrow = actionStart.asset;
       if (!arrow) return assets;
       const startCorner =
-        (arrow as CanvasAsset & { startCorner?: ArrowCorner }).startCorner ??
-        "tl";
-      const { start, end } = getArrowEndpoints(
-        arrow.position,
-        arrow.size,
-        startCorner,
-      );
+        (arrow as CanvasAsset & { startCorner?: ArrowCorner }).startCorner ?? "tl";
+      const { start, end } = getArrowEndpoints(arrow.position, arrow.size, startCorner);
       // the endpoint not being dragged stays fixed
       const fixed = activeAction === "moving-arrow-start" ? end : start;
       const moving = {
@@ -330,14 +295,9 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       const pt = svg.createSVGPoint();
       pt.x = e.clientX;
       pt.y = e.clientY;
-      const svgP = pt.matrixTransform(
-        svg.getScreenCTM()?.inverse() || new DOMMatrix(),
-      );
+      const svgP = pt.matrixTransform(svg.getScreenCTM()?.inverse() || new DOMMatrix());
 
-      if (
-        activeAction === "moving-arrow-start" ||
-        activeAction === "moving-arrow-end"
-      ) {
+      if (activeAction === "moving-arrow-start" || activeAction === "moving-arrow-end") {
         setAssets((assets) => moveArrowEndpoint(assets, svgP));
       } else if (activeAction === "dragging") {
         const dx = svgP.x - actionStart.x;
@@ -348,9 +308,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
         setAssets((assets) =>
           assets.map((asset) => {
             if (!userSelectedAssets.includes(asset._id)) return asset;
-            const startPos = actionStart.startPositions.find(
-              (pos) => pos._id === asset._id,
-            );
+            const startPos = actionStart.startPositions.find((pos) => pos._id === asset._id);
             if (!startPos) return asset;
 
             // clamp to not go out of bounds of the canvas
@@ -369,9 +327,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
           }),
         );
       } else if (activeAction === "resizing" || activeAction === "rotating") {
-        const selected = assets.filter((a) =>
-          userSelectedAssets.includes(a._id),
-        );
+        const selected = assets.filter((a) => userSelectedAssets.includes(a._id));
         if (selected.length === 0) return;
 
         if (activeAction === "rotating" || e.ctrlKey) {
@@ -392,17 +348,10 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
           setAssets((assets) =>
             assets.map((a) => {
               if (!userSelectedAssets.includes(a._id)) return a;
-              const startPos = actionStart.startPositions.find(
-                (pos) => pos._id === a._id,
-              );
+              const startPos = actionStart.startPositions.find((pos) => pos._id === a._id);
               if (!startPos) return a;
               const angle = Math.atan2(deltaY, deltaX);
-              let rotation =
-                (startPos.rotation +
-                  angle * (180 / Math.PI) +
-                  720 -
-                  baseAngle) %
-                360;
+              let rotation = (startPos.rotation + angle * (180 / Math.PI) + 720 - baseAngle) % 360;
               // snap to 45° increments if shift is held
               if (e.shiftKey) {
                 rotation = Math.round(rotation / 45) * 45;
@@ -417,10 +366,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
           // Calculate delta in screen coordinates
           const rawX = svgP.x - actionStart.x;
           const rawY = svgP.y - actionStart.y;
-          const delta = rotateVector(
-            { x: rawX, y: rawY },
-            -(actionStart.asset?.rotation || 0),
-          );
+          const delta = rotateVector({ x: rawX, y: rawY }, -(actionStart.asset?.rotation || 0));
 
           // resizing asset
           const makeSquare = e.shiftKey;
@@ -428,9 +374,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
           setAssets((assets) =>
             assets.map((a) => {
               if (!userSelectedAssets.includes(a._id)) return a;
-              const startPos = actionStart.startPositions.find(
-                (pos) => pos._id === a._id,
-              );
+              const startPos = actionStart.startPositions.find((pos) => pos._id === a._id);
               if (!startPos) return a;
               const newProperties = resizeAsset(
                 {
@@ -489,14 +433,9 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       const pt = svg.createSVGPoint();
       pt.x = touch.clientX;
       pt.y = touch.clientY;
-      const svgP = pt.matrixTransform(
-        svg.getScreenCTM()?.inverse() || new DOMMatrix(),
-      );
+      const svgP = pt.matrixTransform(svg.getScreenCTM()?.inverse() || new DOMMatrix());
 
-      if (
-        activeAction === "moving-arrow-start" ||
-        activeAction === "moving-arrow-end"
-      ) {
+      if (activeAction === "moving-arrow-start" || activeAction === "moving-arrow-end") {
         setAssets((assets) => moveArrowEndpoint(assets, svgP));
       } else if (activeAction === "dragging") {
         const dx = svgP.x - actionStart.x;
@@ -507,9 +446,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
         setAssets((assets) =>
           assets.map((asset) => {
             if (!userSelectedAssets.includes(asset._id)) return asset;
-            const startPos = actionStart.startPositions.find(
-              (pos) => pos._id === asset._id,
-            );
+            const startPos = actionStart.startPositions.find((pos) => pos._id === asset._id);
             if (!startPos) return asset;
 
             // clamp to not go out of bounds of the canvas
@@ -528,9 +465,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
           }),
         );
       } else if (activeAction === "resizing" || activeAction === "rotating") {
-        const selected = assets.filter((a) =>
-          userSelectedAssets.includes(a._id),
-        );
+        const selected = assets.filter((a) => userSelectedAssets.includes(a._id));
         if (selected.length === 0) return;
 
         if (activeAction === "rotating") {
@@ -551,17 +486,10 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
           setAssets((assets) =>
             assets.map((a) => {
               if (!userSelectedAssets.includes(a._id)) return a;
-              const startPos = actionStart.startPositions.find(
-                (pos) => pos._id === a._id,
-              );
+              const startPos = actionStart.startPositions.find((pos) => pos._id === a._id);
               if (!startPos) return a;
               const angle = Math.atan2(deltaY, deltaX);
-              let rotation =
-                (startPos.rotation +
-                  angle * (180 / Math.PI) +
-                  720 -
-                  baseAngle) %
-                360;
+              let rotation = (startPos.rotation + angle * (180 / Math.PI) + 720 - baseAngle) % 360;
               return {
                 ...a,
                 rotation,
@@ -572,10 +500,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
           // Calculate delta in screen coordinates
           const rawX = svgP.x - actionStart.x;
           const rawY = svgP.y - actionStart.y;
-          const delta = rotateVector(
-            { x: rawX, y: rawY },
-            -(actionStart.asset?.rotation || 0),
-          );
+          const delta = rotateVector({ x: rawX, y: rawY }, -(actionStart.asset?.rotation || 0));
 
           // resizing asset
           const makeSquare = false; // no shift key on touch
@@ -583,9 +508,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
           setAssets((assets) =>
             assets.map((a) => {
               if (!userSelectedAssets.includes(a._id)) return a;
-              const startPos = actionStart.startPositions.find(
-                (pos) => pos._id === a._id,
-              );
+              const startPos = actionStart.startPositions.find((pos) => pos._id === a._id);
               if (!startPos) return a;
               const newProperties = resizeAsset(
                 {
@@ -638,13 +561,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [
-    activeAction,
-    handleMouseUp,
-    handleMouseMove,
-    handleTouchMove,
-    handleTouchEnd,
-  ]);
+  }, [activeAction, handleMouseUp, handleMouseMove, handleTouchMove, handleTouchEnd]);
 
   // add non-passive handleWheel event listener to svg
   useEffect(() => {
@@ -683,11 +600,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       },
       action(e) {
         if (document.activeElement !== svgRef.current) return;
-        onSelect(
-          assets
-            .map((a) => a._id)
-            .filter((id) => !userSelectedAssets.includes(id)),
-        );
+        onSelect(assets.map((a) => a._id).filter((id) => !userSelectedAssets.includes(id)));
         e.preventDefault();
       },
       active: !readonly,
@@ -704,8 +617,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
         viewBox={`${zoomedViewBox.x} ${zoomedViewBox.y} ${zoomedViewBox.width} ${zoomedViewBox.height}`}
         className={cn(
           "w-full h-full",
-          canDragViewport &&
-            (isDraggingViewport ? "cursor-grabbing" : "cursor-grab"),
+          canDragViewport && (isDraggingViewport ? "cursor-grabbing" : "cursor-grab"),
         )}
         style={{
           touchAction: activeAction !== "none" ? "none" : "auto",
@@ -727,9 +639,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
           const pt = svg.createSVGPoint();
           pt.x = e.clientX;
           pt.y = e.clientY;
-          const svgP = pt.matrixTransform(
-            svg.getScreenCTM()?.inverse() || new DOMMatrix(),
-          );
+          const svgP = pt.matrixTransform(svg.getScreenCTM()?.inverse() || new DOMMatrix());
 
           const width = asset.size?.width || ASSET_BASE_SIZE;
           const height = asset.size?.height || ASSET_BASE_SIZE;
@@ -757,20 +667,8 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
       >
         {/* Global filter definitions */}
         <defs>
-          <filter
-            id="globalDropShadow"
-            x="-50%"
-            y="-50%"
-            width="200%"
-            height="200%"
-          >
-            <feDropShadow
-              dx="0"
-              dy="0"
-              stdDeviation="1"
-              floodOpacity="0.9"
-              floodColor="#000000"
-            />
+          <filter id="globalDropShadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="0" stdDeviation="1" floodOpacity="0.9" floodColor="#000000" />
           </filter>
         </defs>
 
@@ -790,9 +688,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
             userSelectedAssets
               .map((id) => assets.find((asset) => id === asset._id)!)
               .filter(Boolean),
-            selectedAssets
-              .filter((s) => s.assetID === asset._id)
-              .map((s) => s.userID),
+            selectedAssets.filter((s) => s.assetID === asset._id).map((s) => s.userID),
             userSelectedAssets.at(-1) === asset._id,
           );
           return (
@@ -802,9 +698,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
               size={asset.size}
               rotation={asset.rotation || 0}
               onMouseDown={(e, handle) => handleMouseDown(e, asset._id, handle)}
-              onTouchStart={(e, handle) =>
-                handleTouchStart(e, asset._id, handle)
-              }
+              onTouchStart={(e, handle) => handleTouchStart(e, asset._id, handle)}
               onDoubleClick={() => onAssetDoubleClick?.(asset)}
               selected={userSelectedAssets.includes(asset._id)}
               ctrlKeyDown={ctrlKeyDown}
@@ -814,8 +708,7 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
               nativeSvg={asset.type === "operator"}
               arrowStartCorner={
                 asset.type === "arrow"
-                  ? ((asset as CanvasAsset & { startCorner?: ArrowCorner })
-                      .startCorner ?? "tl")
+                  ? ((asset as CanvasAsset & { startCorner?: ArrowCorner }).startCorner ?? "tl")
                   : undefined
               }
             >

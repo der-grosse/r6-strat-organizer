@@ -24,11 +24,7 @@ export default function Clubhouse1F(props: MapFloorClickableProps) {
         {/* no windows */}
         {/* windows end */}
         {/* doors start */}
-        <path
-          d="M2159.25,960.69 L2201.46,960.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M2159.25,960.69 L2201.46,960.69" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M2272.25,1271.69 L2314.46,1271.69"
           data-type="barricade"
@@ -39,76 +35,28 @@ export default function Clubhouse1F(props: MapFloorClickableProps) {
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M1712.25,795.69 L1754.46,795.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1742.25,464.69 L1784.46,464.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1610.25,311.69 L1652.46,311.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1095.25,925.69 L1137.46,925.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M1712.25,795.69 L1754.46,795.69" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1742.25,464.69 L1784.46,464.69" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1610.25,311.69 L1652.46,311.69" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1095.25,925.69 L1137.46,925.69" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M1093.25,1133.69 L1135.46,1133.69"
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M917.25,1248.69 L959.46,1248.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M917.25,1248.69 L959.46,1248.69" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M1052.25,1762.69 L1094.46,1762.69"
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M520.25,1992.69 L562.46,1992.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M548.31,1466.25 L548.31,1508.46"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M349.31,1294.25 L349.31,1336.46"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M782.31,1857.25 L782.31,1899.46"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M873.31,761.25 L873.31,803.46"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1367.31,840.25 L1367.31,882.46"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1734.31,955.25 L1734.31,997.46"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M520.25,1992.69 L562.46,1992.69" data-type="barricade" onClick={onClickHandler} />
+        <path d="M548.31,1466.25 L548.31,1508.46" data-type="barricade" onClick={onClickHandler} />
+        <path d="M349.31,1294.25 L349.31,1336.46" data-type="barricade" onClick={onClickHandler} />
+        <path d="M782.31,1857.25 L782.31,1899.46" data-type="barricade" onClick={onClickHandler} />
+        <path d="M873.31,761.25 L873.31,803.46" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1367.31,840.25 L1367.31,882.46" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1734.31,955.25 L1734.31,997.46" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M2111.31,1444.25 L2111.31,1486.46"
           data-type="barricade"
@@ -129,16 +77,8 @@ export default function Clubhouse1F(props: MapFloorClickableProps) {
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M2054.31,839.25 L2054.31,881.46"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1386.69,925.22 L1485.68,925.41"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M2054.31,839.25 L2054.31,881.46" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1386.69,925.22 L1485.68,925.41" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M1734.28,1199.19 L1734.09,1298.18"
           data-type="barricade"

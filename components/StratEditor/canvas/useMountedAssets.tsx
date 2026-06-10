@@ -11,13 +11,7 @@ import Explosion from "../assets/Explosion";
 import WoodenBarricade from "../../icons/woodenBarricade";
 import { useUser } from "../../context/UserContext";
 import ColorPickerDialog from "../../general/ColorPickerDialog";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "../../ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../ui/dialog";
 import { Button } from "../../ui/button";
 import { Textarea } from "../../ui/textarea";
 import { FullTeam, TeamMember } from "@/lib/types/team.types";
@@ -45,17 +39,12 @@ export default function useMountAssets(
 ) {
   const { user } = useUser();
   const [colorPickerOpen, setColorPickerOpen] = useState(false);
-  const [colorPickerAssets, setColorPickerAssets] = useState<
-    PlacedAsset[] | null
-  >(null);
+  const [colorPickerAssets, setColorPickerAssets] = useState<PlacedAsset[] | null>(null);
   const [textEditorOpen, setTextEditorOpen] = useState(false);
-  const [textEditorAsset, setTextEditorAsset] = useState<PlacedAsset | null>(
-    null,
-  );
+  const [textEditorAsset, setTextEditorAsset] = useState<PlacedAsset | null>(null);
   const [textEditorValue, setTextEditorValue] = useState("");
   const [imageUrlEditorOpen, setImageUrlEditorOpen] = useState(false);
-  const [imageUrlEditorAsset, setImageUrlEditorAsset] =
-    useState<PlacedAsset | null>(null);
+  const [imageUrlEditorAsset, setImageUrlEditorAsset] = useState<PlacedAsset | null>(null);
   const [imageUrlEditorValue, setImageUrlEditorValue] = useState("");
 
   const colorPickerDialog = useMemo(
@@ -98,9 +87,7 @@ export default function useMountAssets(
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey && textEditorAsset) {
                 e.preventDefault();
-                updateAssets([
-                  { ...textEditorAsset, text: textEditorValue } as PlacedAsset,
-                ]);
+                updateAssets([{ ...textEditorAsset, text: textEditorValue } as PlacedAsset]);
                 setTextEditorOpen(false);
               }
             }}
@@ -141,8 +128,8 @@ export default function useMountAssets(
             <DialogTitle>Image URL</DialogTitle>
           </DialogHeader>
           <span className="text-sm text-muted-foreground mb-1 block">
-            The link must be publicly accessible and directly point to an image
-            file (e.g. ending in .png or .jpg). <br />
+            The link must be publicly accessible and directly point to an image file (e.g. ending in
+            .png or .jpg). <br />
             If the image fails to load, check the URL.
           </span>
           <Input
@@ -165,10 +152,7 @@ export default function useMountAssets(
             autoFocus
           />
           <DialogFooter>
-            <Button
-              variant="ghost"
-              onClick={() => setImageUrlEditorOpen(false)}
-            >
+            <Button variant="ghost" onClick={() => setImageUrlEditorOpen(false)}>
               Cancel
             </Button>
             <Button
@@ -190,12 +174,7 @@ export default function useMountAssets(
         </DialogContent>
       </Dialog>
     ),
-    [
-      imageUrlEditorOpen,
-      imageUrlEditorValue,
-      imageUrlEditorAsset,
-      updateAssets,
-    ],
+    [imageUrlEditorOpen, imageUrlEditorValue, imageUrlEditorAsset, updateAssets],
   );
 
   const renderAsset = useCallback(
@@ -208,31 +187,15 @@ export default function useMountAssets(
       const assetElement = (() => {
         switch (asset.type) {
           case "operator":
-            return (
-              <SVGOperator
-                asset={asset}
-                team={team}
-                stratPositions={stratPositions}
-              />
-            );
+            return <SVGOperator asset={asset} team={team} stratPositions={stratPositions} />;
           case "gadget":
             return (
-              <AssetOutline
-                asset={asset}
-                team={team}
-                stratPositions={stratPositions}
-              >
+              <AssetOutline asset={asset} team={team} stratPositions={stratPositions}>
                 <GadgetIcon id={asset.gadget} className="h-full w-full" />
               </AssetOutline>
             );
           case "textbox":
-            return (
-              <Textbox
-                asset={asset}
-                team={team}
-                stratPositions={stratPositions}
-              />
-            );
+            return <Textbox asset={asset} team={team} stratPositions={stratPositions} />;
           case "arrow":
             return (
               <Arrow
@@ -243,13 +206,7 @@ export default function useMountAssets(
               />
             );
           case "image":
-            return (
-              <Image
-                asset={asset}
-                team={team}
-                stratPositions={stratPositions}
-              />
-            );
+            return <Image asset={asset} team={team} stratPositions={stratPositions} />;
           //@ts-expect-error -- for legacy types, should not occur after migration
           case "reinforcement":
           //@ts-expect-error
@@ -257,11 +214,7 @@ export default function useMountAssets(
           case "layout":
             if (asset.variant === "barricade") {
               return (
-                <AssetOutline
-                  asset={asset}
-                  team={team}
-                  stratPositions={stratPositions}
-                >
+                <AssetOutline asset={asset} team={team} stratPositions={stratPositions}>
                   <WoodenBarricade />
                 </AssetOutline>
               );
@@ -274,9 +227,7 @@ export default function useMountAssets(
                 />
               );
             } else if (asset.variant === "explosion") {
-              return (
-                <Explosion color={getAssetColor(asset, stratPositions, team)} />
-              );
+              return <Explosion color={getAssetColor(asset, stratPositions, team)} />;
             } else {
               return (
                 <Rotation
@@ -325,9 +276,7 @@ export default function useMountAssets(
       })();
       return {
         menu:
-          user &&
-          latestSelected &&
-          selectedBy.includes(user._id as Id<"users">) ? (
+          user && latestSelected && selectedBy.includes(user._id as Id<"users">) ? (
             <AssetMenu
               deleteAssets={deleteAssets}
               updateAssets={updateAssets}
@@ -388,16 +337,10 @@ export function getAssetColor(
 ): string | undefined {
   if (asset.customColor) return asset.customColor;
   if (!asset.stratPositionID) return undefined;
-  const pickedOP = stratPositions.find(
-    (op) => op._id === asset.stratPositionID,
-  );
+  const pickedOP = stratPositions.find((op) => op._id === asset.stratPositionID);
   if (!pickedOP) return undefined;
-  const postion = team.teamPositions.find(
-    (pos) => pos._id === pickedOP.teamPositionID,
-  );
+  const postion = team.teamPositions.find((pos) => pos._id === pickedOP.teamPositionID);
   if (!postion) return undefined;
-  const teamMember = team.members.find(
-    (member) => member._id === postion.playerID,
-  );
+  const teamMember = team.members.find((member) => member._id === postion.playerID);
   return teamMember?.defaultColor ?? undefined;
 }

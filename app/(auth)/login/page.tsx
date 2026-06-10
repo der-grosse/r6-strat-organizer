@@ -56,9 +56,7 @@ export default function Login() {
       <h1 className="text-3xl font-extrabold text-foreground text-center">
         Login
         <br />
-        <span className="text-muted-foreground text-lg font-normal">
-          R6 Strats Management
-        </span>
+        <span className="text-muted-foreground text-lg font-normal">R6 Strats Management</span>
       </h1>
       <Input
         type="text"
@@ -77,29 +75,18 @@ export default function Login() {
         value={password}
         onInput={(e) => setPassword((e.target as HTMLInputElement).value)}
       />
-      <Button
-        type="submit"
-        variant="default"
-        className="w-full max-w-[20rem]"
-        disabled={loading}
-      >
+      <Button type="submit" variant="default" className="w-full max-w-[20rem]" disabled={loading}>
         {loading ? <Spinner /> : "Login"}
       </Button>
       <p className="text-sm text-muted-foreground">
         Don't have an account?{" "}
-        <Link
-          href="/signup"
-          className="text-primary hover:text-primary/90 hover:underline"
-        >
+        <Link href="/signup" className="text-primary hover:text-primary/90 hover:underline">
           Create a team or join existing team
         </Link>
       </p>
       <p className="text-sm text-muted-foreground -mt-3">
         Forgot your password?{" "}
-        <Link
-          href="/reset-password"
-          className="text-primary hover:text-primary/90 hover:underline"
-        >
+        <Link href="/reset-password" className="text-primary hover:text-primary/90 hover:underline">
           Reset it here
         </Link>
       </p>

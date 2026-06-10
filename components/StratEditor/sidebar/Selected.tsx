@@ -89,9 +89,7 @@ export default function StratEditorSelectedElementsSidebar(
         >
           {selectedPrimaryGadetIDs.length > 0 && (
             <>
-              <Badge className="sticky top-0 w-full col-span-full">
-                Selected primary gadgets
-              </Badge>
+              <Badge className="sticky top-0 w-full col-span-full">Selected primary gadgets</Badge>
               {selectedPrimaryGadetIDs.map((gadget) => (
                 <DraggableAssetButton
                   variant="outline"
@@ -105,8 +103,7 @@ export default function StratEditorSelectedElementsSidebar(
                       stratPositionID: gadget.stratPositionID,
                       size: {
                         width: ASSET_BASE_SIZE,
-                        height:
-                          ASSET_BASE_SIZE * (gadget.gadget?.aspectRatio ?? 1),
+                        height: ASSET_BASE_SIZE * (gadget.gadget?.aspectRatio ?? 1),
                       },
                     } as Omit<GadgetAsset, "_id">
                   }
@@ -124,39 +121,35 @@ export default function StratEditorSelectedElementsSidebar(
               <Badge className="sticky top-0 w-full col-span-full">
                 Selected secondary gadgets
               </Badge>
-              {selectedSecondaryGadgets.map(
-                ({ gadget, nextStratPositionId, total, placed }) => (
-                  <DraggableAssetButton
-                    key={gadget.id}
-                    variant="outline"
-                    className="p-1 h-auto relative"
-                    onAssetAdd={props.onAssetAdd}
-                    asset={
-                      {
-                        type: "gadget",
-                        gadget: gadget.id,
-                        stratPositionID: nextStratPositionId ?? undefined,
-                        size: {
-                          width: ASSET_BASE_SIZE,
-                          height: ASSET_BASE_SIZE * (gadget.aspectRatio ?? 1),
-                        },
-                      } as Omit<GadgetAsset, "_id">
-                    }
-                  >
-                    <SecondaryGadgetIcon id={gadget.id} />
-                    <div className="absolute -top-1 -right-1 bg-accent text-accent-foreground rounded-full w-4 h-4 flex items-center justify-center text-xs">
-                      {total - placed}
-                    </div>
-                  </DraggableAssetButton>
-                ),
-              )}
+              {selectedSecondaryGadgets.map(({ gadget, nextStratPositionId, total, placed }) => (
+                <DraggableAssetButton
+                  key={gadget.id}
+                  variant="outline"
+                  className="p-1 h-auto relative"
+                  onAssetAdd={props.onAssetAdd}
+                  asset={
+                    {
+                      type: "gadget",
+                      gadget: gadget.id,
+                      stratPositionID: nextStratPositionId ?? undefined,
+                      size: {
+                        width: ASSET_BASE_SIZE,
+                        height: ASSET_BASE_SIZE * (gadget.aspectRatio ?? 1),
+                      },
+                    } as Omit<GadgetAsset, "_id">
+                  }
+                >
+                  <SecondaryGadgetIcon id={gadget.id} />
+                  <div className="absolute -top-1 -right-1 bg-accent text-accent-foreground rounded-full w-4 h-4 flex items-center justify-center text-xs">
+                    {total - placed}
+                  </div>
+                </DraggableAssetButton>
+              ))}
             </>
           )}
           {selectedOperators.length > 0 && (
             <>
-              <Badge className="sticky top-0 w-full col-span-full">
-                Selected OPs
-              </Badge>
+              <Badge className="sticky top-0 w-full col-span-full">Selected OPs</Badge>
               {selectedOperators.map((op) => (
                 <DraggableAssetButton
                   variant="outline"
@@ -185,9 +178,7 @@ export default function StratEditorSelectedElementsSidebar(
             gridTemplateColumns: "repeat(auto-fit, minmax(32px, 1fr))",
           }}
         >
-          <Badge className="sticky top-0 w-full col-span-full">
-            Reinforcements
-          </Badge>
+          <Badge className="sticky top-0 w-full col-span-full">Reinforcements</Badge>
           <DraggableAssetButton
             variant="outline"
             size="unset"
@@ -218,35 +209,26 @@ export default function StratEditorSelectedElementsSidebar(
           >
             <WoodenBarricade className="size-4" />
           </DraggableAssetButton>
-          <Badge className="sticky top-0 w-full col-span-full">
-            Rotate and Headholes
-          </Badge>
-          {(
-            [
-              "full",
-              "crouch",
-              "jump",
-              "headholes",
-              "floorholes",
-              "ceilingholes",
-            ] as const
-          ).map((variant) => (
-            <DraggableAssetButton
-              variant="outline"
-              size="unset"
-              key={`rotate-${variant}`}
-              className="p-1 h-auto aspect-square"
-              onAssetAdd={props.onAssetAdd}
-              asset={
-                {
-                  type: "layout",
-                  variant,
-                } as Omit<LayoutAsset, "_id">
-              }
-            >
-              <Rotation variant={variant} className="size-full" />
-            </DraggableAssetButton>
-          ))}
+          <Badge className="sticky top-0 w-full col-span-full">Rotate and Headholes</Badge>
+          {(["full", "crouch", "jump", "headholes", "floorholes", "ceilingholes"] as const).map(
+            (variant) => (
+              <DraggableAssetButton
+                variant="outline"
+                size="unset"
+                key={`rotate-${variant}`}
+                className="p-1 h-auto aspect-square"
+                onAssetAdd={props.onAssetAdd}
+                asset={
+                  {
+                    type: "layout",
+                    variant,
+                  } as Omit<LayoutAsset, "_id">
+                }
+              >
+                <Rotation variant={variant} className="size-full" />
+              </DraggableAssetButton>
+            ),
+          )}
           <DraggableAssetButton
             variant="outline"
             size="unset"
@@ -262,9 +244,7 @@ export default function StratEditorSelectedElementsSidebar(
           >
             <Explosion />
           </DraggableAssetButton>
-          <Badge className="sticky top-0 w-full col-span-full">
-            Annotations
-          </Badge>
+          <Badge className="sticky top-0 w-full col-span-full">Annotations</Badge>
           <DraggableAssetButton
             variant="outline"
             size="unset"
@@ -341,9 +321,7 @@ function mapSecondaryGadgetsToStratPositions(
         ...("tertiaryGadget" in op ? [op.tertiaryGadget] : []),
       ]);
       return {
-        gadgets: DEFENDER_SECONDARY_GADGETS.filter((g) =>
-          gadgetIDs.includes(g.id),
-        )!,
+        gadgets: DEFENDER_SECONDARY_GADGETS.filter((g) => gadgetIDs.includes(g.id))!,
         position,
       };
     })
@@ -353,9 +331,7 @@ function mapSecondaryGadgetsToStratPositions(
         position,
         placed: assets.filter(
           (a) =>
-            a.stratPositionID === position._id &&
-            a.type === "gadget" &&
-            a.gadget === gadget.id,
+            a.stratPositionID === position._id && a.type === "gadget" && a.gadget === gadget.id,
         ).length,
       })),
     );
@@ -390,10 +366,8 @@ function mapSecondaryGadgetsToStratPositions(
     total: g.positions.length * g.gadget.count,
     nextStratPositionId:
       // active strat position that has this gadget with available count
-      g.positions.find(
-        (p) =>
-          p.placed < g.gadget.count && p.position._id === activeStratPositionID,
-      )?.position._id ??
+      g.positions.find((p) => p.placed < g.gadget.count && p.position._id === activeStratPositionID)
+        ?.position._id ??
       // any strat position that has this gadget with available count
       g.positions.find((p) => p.placed < g.gadget.count)?.position._id ??
       // active strat position that has this gadget

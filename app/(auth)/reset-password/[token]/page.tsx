@@ -44,9 +44,7 @@ export default function ConfirmPasswordReset() {
       <h1 className="text-3xl font-extrabold text-foreground text-center">
         Reset Password
         <br />
-        <span className="text-muted-foreground text-lg font-normal">
-          R6 Strats Management
-        </span>
+        <span className="text-muted-foreground text-lg font-normal">R6 Strats Management</span>
       </h1>
       <Input
         type="password"
@@ -64,9 +62,7 @@ export default function ConfirmPasswordReset() {
         autoFocus
         className="w-full max-w-[20rem]"
         value={confirmPassword}
-        onInput={(e) =>
-          setConfirmPassword((e.target as HTMLInputElement).value)
-        }
+        onInput={(e) => setConfirmPassword((e.target as HTMLInputElement).value)}
       />
       <Button
         type="submit"
@@ -77,10 +73,7 @@ export default function ConfirmPasswordReset() {
         Reset Password
       </Button>
       <p className="text-sm text-muted-foreground">
-        <Link
-          href="/login"
-          className="text-primary hover:text-primary/90 hover:underline"
-        >
+        <Link href="/login" className="text-primary hover:text-primary/90 hover:underline">
           Back to login
         </Link>
       </p>

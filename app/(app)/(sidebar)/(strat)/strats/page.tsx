@@ -47,18 +47,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useStratExport } from "@/components/StratEditor/ExportRenderer";
 import { PromiseButton } from "@/components/ui/promise-button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const TABLE_SIZES = {
   handle: "5%",
@@ -112,9 +104,7 @@ export default function AllStratsPage() {
             </TooltipContent>
           </Tooltip>
           <br />
-          <span className="text-xs leading-none">
-            (total {strats?.length ?? 0})
-          </span>
+          <span className="text-xs leading-none">(total {strats?.length ?? 0})</span>
         </p>
         <div className="flex justify-end">
           <CreateStratDialog />
@@ -136,17 +126,11 @@ export default function AllStratsPage() {
           <div className="font-bold" style={{ width: TABLE_SIZES.name }}>
             Name
           </div>
-          <div
-            className="font-bold"
-            style={{ width: TABLE_SIZES.filters }}
-          ></div>
+          <div className="font-bold" style={{ width: TABLE_SIZES.filters }}></div>
           <div className="font-bold pl-1" style={{ width: TABLE_SIZES.ops }}>
             Operators
           </div>
-          <div
-            className="font-bold pl-2"
-            style={{ width: TABLE_SIZES.actions }}
-          ></div>
+          <div className="font-bold pl-2" style={{ width: TABLE_SIZES.actions }}></div>
         </div>
         {!strats || !team ? (
           <Skeleton className="col-span-full h-8 mb-2" amount={12} />
@@ -197,12 +181,8 @@ function MapStrats({
     const { active, over } = event;
 
     if (active.id !== over?.id) {
-      const oldIndex = optimisticStrats.findIndex(
-        (item) => item.strat._id === active.id,
-      );
-      const newIndex = optimisticStrats.findIndex(
-        (item) => item.strat._id === over?.id,
-      );
+      const oldIndex = optimisticStrats.findIndex((item) => item.strat._id === active.id);
+      const newIndex = optimisticStrats.findIndex((item) => item.strat._id === over?.id);
 
       // Optimistically update the UI
       const newStrats = arrayMove(optimisticStrats, oldIndex, newIndex);
@@ -275,8 +255,9 @@ function StratItem({
 
   const setActiveStrat = useMutation(api.activeStrat.set);
 
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: strat._id });
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+    id: strat._id,
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -288,9 +269,7 @@ function StratItem({
   const rowClickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // edit strat name when double clicking
-  const [editNameOfStrat, setEditNameOfStrat] = useState<Id<"strats"> | null>(
-    null,
-  );
+  const [editNameOfStrat, setEditNameOfStrat] = useState<Id<"strats"> | null>(null);
   const [editNameValue, setEditNameValue] = useState("");
   const updateStrat = useMutation(api.strats.update);
 
@@ -384,10 +363,7 @@ function StratItem({
           strat.name
         )}
       </div>
-      <div
-        className="flex justify-end pr-4"
-        style={{ width: TABLE_SIZES.filters }}
-      >
+      <div className="flex justify-end pr-4" style={{ width: TABLE_SIZES.filters }}>
         {[
           ...(strat.filters?.attackers?.operators?.map((a) => ({
             type: "attackers" as const,
@@ -409,10 +385,7 @@ function StratItem({
           </div>
         ))}
       </div>
-      <div
-        style={{ width: TABLE_SIZES.ops }}
-        className="flex gap-1 -my-2 overflow-hidden"
-      >
+      <div style={{ width: TABLE_SIZES.ops }} className="flex gap-1 -my-2 overflow-hidden">
         {strat.stratPositions
           .map((stratPosition) => ({
             ops: stratPosition.pickedOperators
@@ -420,9 +393,7 @@ function StratItem({
               .filter(Boolean),
             isPowerPosition: stratPosition.isPowerPosition,
             _id: stratPosition._id,
-            position: team.teamPositions.find(
-              (p) => p._id === stratPosition.teamPositionID,
-            ),
+            position: team.teamPositions.find((p) => p._id === stratPosition.teamPositionID),
           }))
           .filter(({ ops }) => ops.length)
           .sort((a, b) => {
@@ -445,11 +416,7 @@ function StratItem({
       >
         <Popover open={actionsOpen} onOpenChange={setActionsOpen}>
           <PopoverTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="cursor-pointer -my-1"
-            >
+            <Button variant="ghost" size="icon" className="cursor-pointer -my-1">
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </PopoverTrigger>

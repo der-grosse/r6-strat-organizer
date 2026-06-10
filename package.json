@@ -8,6 +8,7 @@
     "convex": "convex dev",
     "build": "next build",
     "start": "next start",
+    "fmt": "oxfmt",
     "typecheck": "tsc --noEmit",
     "setup-local-auth": "tsx scripts/setup-auth.ts"
   },
@@ -64,6 +65,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "npm-run-all2": "^8.0.4",
+    "oxfmt": "^0.48.0",
     "tailwindcss": "^4",
     "tsx": "^4.19.4",
     "tw-animate-css": "^1.2.9",

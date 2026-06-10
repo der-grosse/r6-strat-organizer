@@ -39,7 +39,7 @@ export const FilterProvider: React.FC<{
 
   // leading state
   const [isLeading, setIsLeading] = useState(
-    defaultLeading ?? Cookie.get(LEADING_COOKIE_KEY) === "true"
+    defaultLeading ?? Cookie.get(LEADING_COOKIE_KEY) === "true",
   );
 
   // store filter in cookies

@@ -1,11 +1,7 @@
 import { useFilter } from "@/components/context/FilterContext";
 import OperatorPicker from "@/components/general/OperatorPicker";
 import { SidebarMenuButton } from "@/components/ui/sidebar";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { api } from "@/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 

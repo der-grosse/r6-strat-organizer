@@ -21,16 +21,8 @@ export default function Bank2F(props: MapFloorClickableProps) {
         className="*:cursor-pointer"
       >
         {/* windows start */}
-        <path
-          d="M1340.71,957.85 L1380.65,950.21"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1249.25,992.57 L1286.12,975.40"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M1340.71,957.85 L1380.65,950.21" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1249.25,992.57 L1286.12,975.40" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M1178.98,1058.99 L1204.43,1027.27"
           data-type="barricade"
@@ -41,56 +33,16 @@ export default function Bank2F(props: MapFloorClickableProps) {
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M1639.34,943.06 L1724.52,943.06"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1751.34,943.06 L1836.52,943.06"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1722.34,792.06 L1763.01,792.06"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1795.34,792.06 L1836.01,792.06"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M2093.34,792.06 L2134.01,792.06"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M2166.34,792.06 L2207.01,792.06"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M2468.34,792.06 L2509.01,792.06"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M2541.34,792.06 L2582.01,792.06"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M2867.34,792.06 L2908.01,792.06"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M2940.34,792.06 L2981.01,792.06"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M1639.34,943.06 L1724.52,943.06" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1751.34,943.06 L1836.52,943.06" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1722.34,792.06 L1763.01,792.06" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1795.34,792.06 L1836.01,792.06" data-type="barricade" onClick={onClickHandler} />
+        <path d="M2093.34,792.06 L2134.01,792.06" data-type="barricade" onClick={onClickHandler} />
+        <path d="M2166.34,792.06 L2207.01,792.06" data-type="barricade" onClick={onClickHandler} />
+        <path d="M2468.34,792.06 L2509.01,792.06" data-type="barricade" onClick={onClickHandler} />
+        <path d="M2541.34,792.06 L2582.01,792.06" data-type="barricade" onClick={onClickHandler} />
+        <path d="M2867.34,792.06 L2908.01,792.06" data-type="barricade" onClick={onClickHandler} />
+        <path d="M2940.34,792.06 L2981.01,792.06" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M2267.94,2012.34 L2267.94,2097.52"
           data-type="barricade"
@@ -103,11 +55,7 @@ export default function Bank2F(props: MapFloorClickableProps) {
         />
         {/* windows end */}
         {/* doors start */}
-        <path
-          d="M1579.31,858.25 L1579.31,900.46"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M1579.31,858.25 L1579.31,900.46" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M1127.28,1401.19 L1127.09,1500.18"
           data-type="barricade"
@@ -128,11 +76,7 @@ export default function Bank2F(props: MapFloorClickableProps) {
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M1904.31,848.25 L1904.31,890.46"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M1904.31,848.25 L1904.31,890.46" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M1904.28,1166.19 L1904.09,1265.18"
           data-type="barricade"

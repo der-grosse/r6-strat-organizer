@@ -6,8 +6,7 @@ import type { VariantProps } from "class-variance-authority";
 export const DRAG_ASSET_DATA_TYPE = "application/r6-asset";
 
 interface DraggableAssetButtonProps
-  extends React.ComponentProps<"button">,
-    VariantProps<typeof buttonVariants> {
+  extends React.ComponentProps<"button">, VariantProps<typeof buttonVariants> {
   asset: Omit<Asset & Partial<PlacedAsset>, "_id">;
   onAssetAdd: (asset: Omit<Asset & Partial<PlacedAsset>, "_id">) => void;
 }

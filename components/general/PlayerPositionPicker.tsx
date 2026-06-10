@@ -32,17 +32,12 @@ export default function TeamPositionPicker(props: TeamPositionPickerProps) {
   const teamMember = props.team.members.find(
     (member) => member.teamPositionID === props.teamPositionID,
   );
-  const position = props.team.teamPositions.find(
-    (teamPos) => teamPos._id === props.teamPositionID,
-  );
+  const position = props.team.teamPositions.find((teamPos) => teamPos._id === props.teamPositionID);
 
   return (
     <Popover modal={props.modal} open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="ghost"
-          className={cn("text-left justify-start", props.className)}
-        >
+        <Button variant="ghost" className={cn("text-left justify-start", props.className)}>
           {props.teamPositionID ? (
             <>
               <ColorButton
@@ -54,23 +49,15 @@ export default function TeamPositionPicker(props: TeamPositionPickerProps) {
               />
               <Label className="truncate">
                 {teamMember?.name ?? <em>No player available</em>}
-                <span className="text-sm text-muted-foreground">
-                  {position?.positionName}
-                </span>
+                <span className="text-sm text-muted-foreground">{position?.positionName}</span>
               </Label>
             </>
           ) : (
-            <span className="text-muted-foreground text-ellipsis">
-              Select a player position
-            </span>
+            <span className="text-muted-foreground text-ellipsis">Select a player position</span>
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent
-        className="p-0 z-100"
-        side="right"
-        sideOffset={props.popoverOffset}
-      >
+      <PopoverContent className="p-0 z-100" side="right" sideOffset={props.popoverOffset}>
         <Command>
           <CommandInput placeholder="Type a command or search..." />
           <CommandList className="max-h-[600px]">

@@ -41,11 +41,7 @@ export function AppSidebar() {
     <Sidebar variant="inset" className="pr-0">
       <SidebarHeader className="pl-0">
         <div className="ml-1 -mr-1 flex items-center justify-between gap-1">
-          <img
-            src="/icon.svg"
-            className="w-6 h-6 shrink-0"
-            alt="R6 Strats Logo"
-          />
+          <img src="/icon.svg" className="w-6 h-6 shrink-0" alt="R6 Strats Logo" />
           <TeamSwitcher />
           <Button
             variant="ghost"

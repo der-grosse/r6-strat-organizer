@@ -6,11 +6,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useMemo } from "react";
 
-export function filterPlayableStrats(
-  strats: Strat[],
-  filter: Filter,
-  bannedOps: string[],
-) {
+export function filterPlayableStrats(strats: Strat[], filter: Filter, bannedOps: string[]) {
   return strats
     ?.filter((strat) => {
       if (filter.map && filter.map !== strat.map) return false;
@@ -24,9 +20,7 @@ export function filterPlayableStrats(
             (position) =>
               position.isPowerPosition &&
               position.pickedOperators.length &&
-              position.pickedOperators.every((op) =>
-                bannedOps.includes(op.operator),
-              ),
+              position.pickedOperators.every((op) => bannedOps.includes(op.operator)),
           );
           if (positionUnplayable) return false;
         }
@@ -34,13 +28,8 @@ export function filterPlayableStrats(
       })();
       const shouldHideDueToOperatorFilter = (() => {
         function check(type: "attackers" | "defenders") {
-          if (
-            !strat.filters?.[type] ||
-            !strat.filters?.[type]?.operators.length
-          )
-            return false;
-          const { operators, action, filterType, triggerOn } =
-            strat.filters[type];
+          if (!strat.filters?.[type] || !strat.filters?.[type]?.operators.length) return false;
+          const { operators, action, filterType, triggerOn } = strat.filters[type];
           const isHit = (() => {
             if (triggerOn === "banned") {
               return operators[filterType === "any" ? "some" : "every"]((op) =>
@@ -63,10 +52,7 @@ export function filterPlayableStrats(
     });
 }
 
-export function usePlayableStrats(
-  filter: Filter,
-  bannedOps: string[] | undefined | null,
-) {
+export function usePlayableStrats(filter: Filter, bannedOps: string[] | undefined | null) {
   const strats = useQuery(api.strats.list, filter);
 
   const playableStrats = useMemo(() => {

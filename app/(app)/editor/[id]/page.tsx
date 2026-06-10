@@ -14,7 +14,7 @@ export async function generateMetadata({
   const strat = await fetchQuery(
     api.strats.get,
     { id: id as Id<"strats"> },
-    { token: await getJWT() }
+    { token: await getJWT() },
   );
 
   if (!strat) {

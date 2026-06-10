@@ -21,63 +21,23 @@ export default function Consulate1F(props: MapFloorClickableProps) {
         className="*:cursor-pointer"
       >
         {/* windows start */}
-        <path
-          d="M544.34,451.06 L585.01,451.06"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M482.44,1106.84 L482.44,1147.51"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1077.34,823.06 L1118.01,823.06"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M482.44,1752.84 L482.44,1793.51"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M544.34,451.06 L585.01,451.06" data-type="barricade" onClick={onClickHandler} />
+        <path d="M482.44,1106.84 L482.44,1147.51" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1077.34,823.06 L1118.01,823.06" data-type="barricade" onClick={onClickHandler} />
+        <path d="M482.44,1752.84 L482.44,1793.51" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M2515.44,1417.84 L2515.44,1458.51"
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M2583.34,824.06 L2624.01,824.06"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M2583.34,824.06 L2624.01,824.06" data-type="barricade" onClick={onClickHandler} />
         {/* windows end */}
         {/* doors start */}
-        <path
-          d="M975.56,1039.70 L975.56,1002.13"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M520.69,826.22 L619.68,826.41"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M855.25,1193.69 L897.46,1193.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1458.28,880.19 L1458.09,979.18"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1512.25,478.69 L1554.46,478.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M975.56,1039.70 L975.56,1002.13" data-type="barricade" onClick={onClickHandler} />
+        <path d="M520.69,826.22 L619.68,826.41" data-type="barricade" onClick={onClickHandler} />
+        <path d="M855.25,1193.69 L897.46,1193.69" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1458.28,880.19 L1458.09,979.18" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1512.25,478.69 L1554.46,478.69" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M1683.69,2275.22 L1782.68,2275.41"
           data-type="barricade"
@@ -103,26 +63,10 @@ export default function Consulate1F(props: MapFloorClickableProps) {
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M863.25,1714.69 L905.46,1714.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M685.25,1714.69 L727.46,1714.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M2015.28,883.19 L2015.09,982.18"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M2515.31,913.25 L2515.31,955.46"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M863.25,1714.69 L905.46,1714.69" data-type="barricade" onClick={onClickHandler} />
+        <path d="M685.25,1714.69 L727.46,1714.69" data-type="barricade" onClick={onClickHandler} />
+        <path d="M2015.28,883.19 L2015.09,982.18" data-type="barricade" onClick={onClickHandler} />
+        <path d="M2515.31,913.25 L2515.31,955.46" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M2098.25,1034.69 L2140.46,1034.69"
           data-type="barricade"

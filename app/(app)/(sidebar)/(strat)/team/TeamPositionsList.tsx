@@ -30,9 +30,7 @@ export interface TeamPositionsListProps {
 export default function TeamPositionsList(props: TeamPositionsListProps) {
   const updateTeamPosition = useMutation(api.team.updateTeamPosition);
 
-  const [optimisticPositions, setOptimisticPositions] = useState(
-    props.team.teamPositions
-  );
+  const [optimisticPositions, setOptimisticPositions] = useState(props.team.teamPositions);
   useEffect(() => {
     setOptimisticPositions(props.team.teamPositions);
   }, [props.team.teamPositions]);
@@ -41,29 +39,23 @@ export default function TeamPositionsList(props: TeamPositionsListProps) {
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (active.id !== over?.id) {
-      const oldIndex = optimisticPositions.findIndex(
-        (item) => item._id === active.id
-      );
-      const newIndex = optimisticPositions.findIndex(
-        (item) => item._id === over?.id
-      );
+      const oldIndex = optimisticPositions.findIndex((item) => item._id === active.id);
+      const newIndex = optimisticPositions.findIndex((item) => item._id === over?.id);
 
       // Optimistically update the UI
-      const newPositions = arrayMove(
-        optimisticPositions,
-        oldIndex,
-        newIndex
-      ).map((item, index) => ({
-        ...item,
-        index,
-      }));
+      const newPositions = arrayMove(optimisticPositions, oldIndex, newIndex).map(
+        (item, index) => ({
+          ...item,
+          index,
+        }),
+      );
       setOptimisticPositions(newPositions);
 
       try {
@@ -82,11 +74,7 @@ export default function TeamPositionsList(props: TeamPositionsListProps) {
 
   const items = optimisticPositions.map((position, i) => (
     <Fragment key={position._id}>
-      <TeamPositionsItem
-        canEdit={props.canEdit}
-        position={position}
-        team={props.team}
-      />
+      <TeamPositionsItem canEdit={props.canEdit} position={position} team={props.team} />
       {i < props.team.teamPositions.length - 1 && <Separator />}
     </Fragment>
   ));
@@ -94,11 +82,7 @@ export default function TeamPositionsList(props: TeamPositionsListProps) {
   return (
     <div className="flex flex-col gap-2">
       {props.canEdit ? (
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext
             items={optimisticPositions.map((item) => item._id)}
             strategy={verticalListSortingStrategy}

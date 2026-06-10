@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CircleOff, Dot } from "lucide-react";
@@ -36,12 +30,8 @@ export default function CurrentStratPositionSelector({
   const mappedStratPositions = useMemo(
     () =>
       strat.stratPositions.map((sp) => {
-        const teamPosition = team.teamPositions.find(
-          (tp) => tp._id === sp.teamPositionID,
-        );
-        const player = team.members.find(
-          (m) => m._id === teamPosition?.playerID,
-        );
+        const teamPosition = team.teamPositions.find((tp) => tp._id === sp.teamPositionID);
+        const player = team.members.find((m) => m._id === teamPosition?.playerID);
         return {
           _id: sp._id,
           label: teamPosition?.positionName ?? "Unassigned",
@@ -49,8 +39,7 @@ export default function CurrentStratPositionSelector({
             <div
               className={cn(
                 "w-4 h-4 rounded-full",
-                !player?.defaultColor &&
-                  "outline-2 outline-offset-1 outline-muted",
+                !player?.defaultColor && "outline-2 outline-offset-1 outline-muted",
               )}
               style={{
                 background: player?.defaultColor ?? undefined,
@@ -71,10 +60,7 @@ export default function CurrentStratPositionSelector({
     if (!open) return;
 
     function handleTouchOutside(e: TouchEvent) {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setOpen(false);
       }
     }
@@ -154,9 +140,7 @@ export default function CurrentStratPositionSelector({
                 setOpen(false);
               }}
             >
-              {!open && fixedSelectedIcon && sp._id === selected
-                ? fixedSelectedIcon
-                : sp.icon}
+              {!open && fixedSelectedIcon && sp._id === selected ? fixedSelectedIcon : sp.icon}
             </ItemButton>
           ))}
       </div>

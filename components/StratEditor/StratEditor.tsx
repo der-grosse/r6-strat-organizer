@@ -2,10 +2,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import MAPS from "@/lib/static/maps";
 import StratEditorLayout from "./Layout";
-import StratEditorCanvas, {
-  ASSET_BASE_SIZE,
-  CANVAS_BASE_SIZE,
-} from "./canvas/Canvas";
+import StratEditorCanvas, { ASSET_BASE_SIZE, CANVAS_BASE_SIZE } from "./canvas/Canvas";
 import useMountAssets from "./canvas/useMountedAssets";
 import { useKeys } from "../hooks/useKey";
 import { deepCopy, deepEqual } from "../Objects";
@@ -68,10 +65,7 @@ export interface AssetDeselection {
 
 const HISTORY_SIZE = 100;
 
-export function StratEditor({
-  strat: propStrat,
-  team,
-}: Readonly<StratEditorProps>) {
+export function StratEditor({ strat: propStrat, team }: Readonly<StratEditorProps>) {
   const addAssetFct = useMutation(api.strats.addAsset);
   const updateAssetsFct = useMutation(api.strats.updateAssets);
   const deleteAssets = useMutation(api.strats.deleteAssets);
@@ -85,8 +79,7 @@ export function StratEditor({
 
   const { user } = useUser();
 
-  const [activeStratPosition, setActiveStratPosition] =
-    useState<Id<"stratPositions"> | null>(null);
+  const [activeStratPosition, setActiveStratPosition] = useState<Id<"stratPositions"> | null>(null);
 
   const addAsset = useCallback(
     async (asset: Omit<PlacedAsset, "_id">) => {
@@ -145,18 +138,12 @@ export function StratEditor({
       });
     },
   });
-  useOnUnmount(() =>
-    setSelectedAssets({ placedAssetIDs: [], stratID: strat._id }),
-  );
+  useOnUnmount(() => setSelectedAssets({ placedAssetIDs: [], stratID: strat._id }));
 
   const history = useRef<HistoryEvent[]>([]);
   const historyIndex = useRef(-1);
   const pushEvent = useCallback((event: HistoryEvent) => {
-    if (
-      JSON.stringify(history.current[historyIndex.current]) ===
-      JSON.stringify(event)
-    )
-      return;
+    if (JSON.stringify(history.current[historyIndex.current]) === JSON.stringify(event)) return;
     if (
       event.type === "asset-updated" &&
       JSON.stringify(event.old_assets) === JSON.stringify(event.new_assets)
@@ -233,9 +220,7 @@ export function StratEditor({
         deleteAssets({
           placedAssetIDs: delAssets.map((asset) => asset._id),
         }).catch((err) =>
-          toast.error(
-            `Your changes could not be saved! Failed to delete asset: ${err.message}`,
-          ),
+          toast.error(`Your changes could not be saved! Failed to delete asset: ${err.message}`),
         );
         pushEvent({
           type: "asset-deleted",
@@ -246,28 +231,19 @@ export function StratEditor({
         setAssets((assets) => {
           pushEvent({
             type: "asset-updated",
-            old_assets: assets.filter((a) =>
-              updatedAssets.some((asset) => asset._id === a._id),
-            ),
+            old_assets: assets.filter((a) => updatedAssets.some((asset) => asset._id === a._id)),
             new_assets: updatedAssets,
           });
-          return assets.map(
-            (a) => updatedAssets.find((asset) => asset._id === a._id) ?? a,
-          );
+          return assets.map((a) => updatedAssets.find((asset) => asset._id === a._id) ?? a);
         });
         updateAssets(updatedAssets).catch((err) =>
-          toast.error(
-            `Your changes could not be saved! Failed to update assets: ${err.message}`,
-          ),
+          toast.error(`Your changes could not be saved! Failed to update assets: ${err.message}`),
         );
       },
     },
   );
 
-  const map = useMemo(
-    () => MAPS.find((map) => map.name === strat.map) ?? null,
-    [strat.map],
-  );
+  const map = useMemo(() => MAPS.find((map) => map.name === strat.map) ?? null, [strat.map]);
 
   return (
     <StratEditorLayout
@@ -284,21 +260,15 @@ export function StratEditor({
           ...asset,
         } as PlacedAsset;
         setAssets((assets) => [...assets, placedAsset]);
-        setSelected((s) =>
-          shiftPressed ? [...s, placedAsset._id] : [placedAsset._id],
-        );
+        setSelected((s) => (shiftPressed ? [...s, placedAsset._id] : [placedAsset._id]));
         addAsset(placedAsset)
           .then((result) => {
             if (result?.success && result.placedAssetID) {
-              setSelected((s) =>
-                [...s, result.placedAssetID].filter((id) => id !== "UNSET"),
-              );
+              setSelected((s) => [...s, result.placedAssetID].filter((id) => id !== "UNSET"));
             }
           })
           .catch((err) =>
-            toast.error(
-              `Your changes could not be saved! Failed to add asset: ${err.message}`,
-            ),
+            toast.error(`Your changes could not be saved! Failed to add asset: ${err.message}`),
           );
         pushEvent({
           type: "asset-added",
@@ -315,9 +285,7 @@ export function StratEditor({
         <StratEditorCanvas
           selectedAssets={allSelectedAssets}
           onDeselect={(deselected) => {
-            setSelected((selected) =>
-              selected.filter((s) => !deselected.includes(s)),
-            );
+            setSelected((selected) => selected.filter((s) => !deselected.includes(s)));
             if (user?._id) {
               pushEvent({
                 type: "selection-deselected",
@@ -347,21 +315,15 @@ export function StratEditor({
               ...asset,
             } as PlacedAsset;
             setAssets((assets) => [...assets, placedAsset]);
-            setSelected((s) =>
-              shiftPressed ? [...s, placedAsset._id] : [placedAsset._id],
-            );
+            setSelected((s) => (shiftPressed ? [...s, placedAsset._id] : [placedAsset._id]));
             addAsset(placedAsset)
               .then((result) => {
                 if (result?.success && result.placedAssetID) {
-                  setSelected((s) =>
-                    [...s, result.placedAssetID].filter((id) => id !== "UNSET"),
-                  );
+                  setSelected((s) => [...s, result.placedAssetID].filter((id) => id !== "UNSET"));
                 }
               })
               .catch((err) =>
-                toast.error(
-                  `Your changes could not be saved! Failed to add asset: ${err.message}`,
-                ),
+                toast.error(`Your changes could not be saved! Failed to add asset: ${err.message}`),
               );
             pushEvent({
               type: "asset-added",
@@ -372,9 +334,7 @@ export function StratEditor({
             setAssets((existing) => {
               pushEvent({
                 type: "asset-updated",
-                old_assets: existing.filter((a) =>
-                  assets.some((asset) => asset._id === a._id),
-                ),
+                old_assets: existing.filter((a) => assets.some((asset) => asset._id === a._id)),
                 new_assets: assets,
               });
               return existing.map((a) => {
@@ -484,9 +444,7 @@ function undoAssetEvent(
         fcts
           .deleteAssets({ placedAssetIDs: [event.asset._id] })
           .catch((err) =>
-            toast.error(
-              `Your changes could not be saved! Failed to delete asset: ${err.message}`,
-            ),
+            toast.error(`Your changes could not be saved! Failed to delete asset: ${err.message}`),
           );
       });
       return state.filter((a) => a._id !== event.asset._id);
@@ -497,9 +455,7 @@ function undoAssetEvent(
             assets: event.old_assets.map((a) => convertPlacedAssetToAPI(a)),
           })
           .catch((err) =>
-            toast.error(
-              `Your changes could not be saved! Failed to update assets: ${err.message}`,
-            ),
+            toast.error(`Your changes could not be saved! Failed to update assets: ${err.message}`),
           );
       });
       return state.map((a) => {
@@ -513,9 +469,7 @@ function undoAssetEvent(
           fcts
             .addStratAsset({ ...convertPlacedAssetToAPI(asset), stratID })
             .catch((err) =>
-              toast.error(
-                `Your changes could not be saved! Failed to add asset: ${err.message}`,
-              ),
+              toast.error(`Your changes could not be saved! Failed to add asset: ${err.message}`),
             );
         }
       });
@@ -559,18 +513,13 @@ function redoAssetEvent(
       requestAnimationFrame(() => {
         fcts.deleteAssets({ placedAssetIDs: event.assets.map((a) => a._id) });
       });
-      return state.filter(
-        (a) => !event.assets.some((asset) => asset._id === a._id),
-      );
+      return state.filter((a) => !event.assets.some((asset) => asset._id === a._id));
     default:
       throw new Error(`Unknown event type: ${(event as any)?.type}`);
   }
 }
 
-function undoSelectionEvent(
-  state: Selection[],
-  event: SelectionEvent,
-): Selection[] {
+function undoSelectionEvent(state: Selection[], event: SelectionEvent): Selection[] {
   switch (event.type) {
     case "selection-selected":
       return state.filter((s) => !event.selection.includes(s));
@@ -579,10 +528,7 @@ function undoSelectionEvent(
   }
 }
 
-function redoSelectionEvent(
-  state: Selection[],
-  event: SelectionEvent,
-): Selection[] {
+function redoSelectionEvent(state: Selection[], event: SelectionEvent): Selection[] {
   switch (event.type) {
     case "selection-selected":
       return state.concat(event.selection);
@@ -591,9 +537,7 @@ function redoSelectionEvent(
   }
 }
 
-function convertPlacedAssetToAPI<
-  T extends PlacedAsset | Omit<PlacedAsset, "_id">,
->(
+function convertPlacedAssetToAPI<T extends PlacedAsset | Omit<PlacedAsset, "_id">>(
   asset: T,
 ): {
   height: number;
@@ -609,9 +553,9 @@ function convertPlacedAssetToAPI<
 } & (T extends PlacedAsset ? { _id: Id<"placedAssets"> } : { _id: undefined }) {
   //@ts-expect-error -- I don't know how to make TS happy here
   return {
-    _id: ("_id" in asset && asset._id !== "UNSET"
-      ? asset._id
-      : undefined) as T extends PlacedAsset ? Id<"placedAssets"> : undefined,
+    _id: ("_id" in asset && asset._id !== "UNSET" ? asset._id : undefined) as T extends PlacedAsset
+      ? Id<"placedAssets">
+      : undefined,
     height: asset.size.height,
     width: asset.size.width,
     posX: asset.position.x,
@@ -621,52 +565,23 @@ function convertPlacedAssetToAPI<
 
     type: asset.type,
     operator:
-      asset.type === "operator"
-        ? (asset as Omit<OperatorAsset, "_id">).operator
-        : undefined,
+      asset.type === "operator" ? (asset as Omit<OperatorAsset, "_id">).operator : undefined,
     iconType:
-      asset.type === "operator"
-        ? (asset as Omit<OperatorAsset, "_id">).iconType
-        : undefined,
-    gadget:
-      asset.type === "gadget"
-        ? (asset as Omit<GadgetAsset, "_id">).gadget
-        : undefined,
-    variant:
-      asset.type === "layout"
-        ? (asset as Omit<LayoutAsset, "_id">).variant
-        : undefined,
+      asset.type === "operator" ? (asset as Omit<OperatorAsset, "_id">).iconType : undefined,
+    gadget: asset.type === "gadget" ? (asset as Omit<GadgetAsset, "_id">).gadget : undefined,
+    variant: asset.type === "layout" ? (asset as Omit<LayoutAsset, "_id">).variant : undefined,
     placedOn:
-      asset.type === "layout"
-        ? ((asset as Omit<LayoutAsset, "_id">).placedOn ?? null)
-        : undefined,
-    text:
-      asset.type === "textbox"
-        ? (asset as Omit<TextboxAsset, "_id">).text
-        : undefined,
-    fontSize:
-      asset.type === "textbox"
-        ? (asset as Omit<TextboxAsset, "_id">).fontSize
-        : undefined,
+      asset.type === "layout" ? ((asset as Omit<LayoutAsset, "_id">).placedOn ?? null) : undefined,
+    text: asset.type === "textbox" ? (asset as Omit<TextboxAsset, "_id">).text : undefined,
+    fontSize: asset.type === "textbox" ? (asset as Omit<TextboxAsset, "_id">).fontSize : undefined,
     background:
-      asset.type === "textbox"
-        ? (asset as Omit<TextboxAsset, "_id">).background
-        : undefined,
+      asset.type === "textbox" ? (asset as Omit<TextboxAsset, "_id">).background : undefined,
     startCorner:
-      asset.type === "arrow"
-        ? (asset as Omit<ArrowAsset, "_id">).startCorner
-        : undefined,
+      asset.type === "arrow" ? (asset as Omit<ArrowAsset, "_id">).startCorner : undefined,
     startArrowHead:
-      asset.type === "arrow"
-        ? (asset as Omit<ArrowAsset, "_id">).startArrowHead
-        : undefined,
+      asset.type === "arrow" ? (asset as Omit<ArrowAsset, "_id">).startArrowHead : undefined,
     endArrowHead:
-      asset.type === "arrow"
-        ? (asset as Omit<ArrowAsset, "_id">).endArrowHead
-        : undefined,
-    url:
-      asset.type === "image"
-        ? (asset as Omit<ImageAsset, "_id">).url
-        : undefined,
+      asset.type === "arrow" ? (asset as Omit<ArrowAsset, "_id">).endArrowHead : undefined,
+    url: asset.type === "image" ? (asset as Omit<ImageAsset, "_id">).url : undefined,
   };
 }

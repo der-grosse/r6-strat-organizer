@@ -1,11 +1,5 @@
 import { v } from "convex/values";
-import {
-  ActionCtx,
-  mutation,
-  MutationCtx,
-  query,
-  QueryCtx,
-} from "./_generated/server";
+import { ActionCtx, mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
 import { requireUser } from "./auth";
 import { Doc, Id } from "./_generated/dataModel";
 import { Strat } from "../lib/types/strat.types";
@@ -63,9 +57,7 @@ export const list = query({
     } else if (map) {
       strats = await ctx.db
         .query("strats")
-        .withIndex("byTeamAndMap", (q) =>
-          q.eq("teamID", activeTeamID).eq("map", map),
-        )
+        .withIndex("byTeamAndMap", (q) => q.eq("teamID", activeTeamID).eq("map", map))
         .collect();
     } else {
       strats = await ctx.db
@@ -116,12 +108,8 @@ export const list = query({
                 _id: op._id,
                 stratPositionID: op.stratPositionID,
                 operator: op.operator,
-                secondaryGadget: op.secondaryGadget as
-                  | DefenderSecondaryGadgetID
-                  | undefined,
-                tertiaryGadget: op.tertiaryGadget as
-                  | DefenderSecondaryGadgetID
-                  | undefined,
+                secondaryGadget: op.secondaryGadget as DefenderSecondaryGadgetID | undefined,
+                tertiaryGadget: op.tertiaryGadget as DefenderSecondaryGadgetID | undefined,
                 index: op.index,
               }))
               .sort((a, b) => a.index - b.index),
@@ -130,9 +118,7 @@ export const list = query({
       });
     }
 
-    return fullStrats.sort(
-      (a, b) => a.map.localeCompare(b.map) || a.mapIndex - b.mapIndex,
-    );
+    return fullStrats.sort((a, b) => a.map.localeCompare(b.map) || a.mapIndex - b.mapIndex);
   },
 });
 
@@ -179,12 +165,8 @@ export async function getStrat(
             _id: op._id,
             stratPositionID: op.stratPositionID,
             operator: op.operator,
-            secondaryGadget: op.secondaryGadget as
-              | DefenderSecondaryGadgetID
-              | undefined,
-            tertiaryGadget: op.tertiaryGadget as
-              | DefenderSecondaryGadgetID
-              | undefined,
+            secondaryGadget: op.secondaryGadget as DefenderSecondaryGadgetID | undefined,
+            tertiaryGadget: op.tertiaryGadget as DefenderSecondaryGadgetID | undefined,
             index: op.index,
           }))
           .sort((a, b) => a.index - b.index),
@@ -211,9 +193,7 @@ export const archive = mutation({
     // fix map indexes for other strats on the same map
     const stratsOnMap = await ctx.db
       .query("strats")
-      .withIndex("byTeamAndMap", (q) =>
-        q.eq("teamID", activeTeamID).eq("map", stratDoc.map),
-      )
+      .withIndex("byTeamAndMap", (q) => q.eq("teamID", activeTeamID).eq("map", stratDoc.map))
       .collect();
 
     for (const strat of stratsOnMap) {
@@ -253,23 +233,15 @@ export const update = mutation({
 
     await ctx.db.patch(args._id, {
       ...(args.name !== undefined ? { name: args.name } : {}),
-      ...(args.description !== undefined
-        ? { description: args.description }
-        : {}),
+      ...(args.description !== undefined ? { description: args.description } : {}),
       ...(args.map !== undefined ? { map: args.map } : {}),
       ...(args.site !== undefined ? { site: args.site } : {}),
       ...(args.drawingID !== undefined
         ? { drawingID: args.drawingID ?? undefined } // when drawingID is null, we want to remove it
         : {}),
-      ...(args.hiddenFloors !== undefined
-        ? { hiddenFloors: args.hiddenFloors }
-        : {}),
-      ...(args.showFloorNames !== undefined
-        ? { showFloorNames: args.showFloorNames }
-        : {}),
-      ...(args.filters !== undefined
-        ? { filters: args.filters ?? undefined }
-        : {}),
+      ...(args.hiddenFloors !== undefined ? { hiddenFloors: args.hiddenFloors } : {}),
+      ...(args.showFloorNames !== undefined ? { showFloorNames: args.showFloorNames } : {}),
+      ...(args.filters !== undefined ? { filters: args.filters ?? undefined } : {}),
     });
     return { success: true };
   },
@@ -291,9 +263,7 @@ export const create = mutation({
     }
     const mapStrats = await ctx.db
       .query("strats")
-      .withIndex("byTeamAndMap", (q) =>
-        q.eq("teamID", activeTeamID).eq("map", args.map),
-      )
+      .withIndex("byTeamAndMap", (q) => q.eq("teamID", activeTeamID).eq("map", args.map))
       .collect();
 
     const maxIndex = mapStrats.reduce(
@@ -366,15 +336,10 @@ export const createCopy = mutation({
 
     const stratsOnMap = await ctx.db
       .query("strats")
-      .withIndex("byTeamAndMap", (q) =>
-        q.eq("teamID", activeTeamID).eq("map", stratDoc.map),
-      )
+      .withIndex("byTeamAndMap", (q) => q.eq("teamID", activeTeamID).eq("map", stratDoc.map))
       .collect();
     const mapIndex =
-      stratsOnMap.reduce(
-        (max, strat) => (strat.mapIndex > max ? strat.mapIndex : max),
-        -1,
-      ) + 1;
+      stratsOnMap.reduce((max, strat) => (strat.mapIndex > max ? strat.mapIndex : max), -1) + 1;
 
     const stratPositions = await ctx.db
       .query("stratPositions")
@@ -468,9 +433,7 @@ export const updateIndex = mutation({
     const stratsOnMap = (
       await ctx.db
         .query("strats")
-        .withIndex("byTeamAndMap", (q) =>
-          q.eq("teamID", activeTeamID).eq("map", stratDoc.map),
-        )
+        .withIndex("byTeamAndMap", (q) => q.eq("teamID", activeTeamID).eq("map", stratDoc.map))
         .collect()
     ).filter((s) => !s.archived);
 
@@ -485,9 +448,7 @@ export const updateIndex = mutation({
         };
       }
 
-      const visibleCount = stratsOnMap.filter((strat) =>
-        orderedSet.has(strat._id),
-      ).length;
+      const visibleCount = stratsOnMap.filter((strat) => orderedSet.has(strat._id)).length;
       if (visibleCount !== orderedStratIDs.length) {
         return {
           success: false,
@@ -585,8 +546,7 @@ export const updateStratPosition = mutation({
         .withIndex("byStrat", (q) => q.eq("stratID", stratDoc._id))
         .collect();
       const positionAlreadyUsed = currentStratPositions.find(
-        (pos) =>
-          pos.teamPositionID === args.teamPositionID && pos._id !== args._id,
+        (pos) => pos.teamPositionID === args.teamPositionID && pos._id !== args._id,
       );
       if (positionAlreadyUsed) {
         await ctx.db.patch(positionAlreadyUsed._id, {
@@ -595,18 +555,14 @@ export const updateStratPosition = mutation({
       }
     }
     await ctx.db.patch(args._id, {
-      ...(args.isPowerPosition !== undefined
-        ? { isPowerPosition: args.isPowerPosition }
-        : {}),
+      ...(args.isPowerPosition !== undefined ? { isPowerPosition: args.isPowerPosition } : {}),
       ...(args.shouldBringShotgun !== undefined
         ? { shouldBringShotgun: args.shouldBringShotgun }
         : {}),
       ...(args.teamPositionID !== undefined
         ? { teamPositionID: args.teamPositionID ?? undefined } // when null, remove it
         : {}),
-      ...(args.fightsLongRange !== undefined
-        ? { fightsLongRange: args.fightsLongRange }
-        : {}),
+      ...(args.fightsLongRange !== undefined ? { fightsLongRange: args.fightsLongRange } : {}),
     });
     return { success: true };
   },
@@ -667,10 +623,7 @@ export const updatePickedOperatorIndex = mutation({
       return { success: false, error: "Strat not found" };
     }
     const pickedOperatorDoc = await ctx.db.get(args.pickedOperatorID);
-    if (
-      !pickedOperatorDoc ||
-      pickedOperatorDoc.stratPositionID !== args.stratPositionID
-    ) {
+    if (!pickedOperatorDoc || pickedOperatorDoc.stratPositionID !== args.stratPositionID) {
       return {
         success: false,
         error: "Picked operator not found in strat position",
@@ -680,16 +633,12 @@ export const updatePickedOperatorIndex = mutation({
     const pickedOperators = (
       await ctx.db
         .query("pickedOperators")
-        .withIndex("byStratPosition", (q) =>
-          q.eq("stratPositionID", args.stratPositionID),
-        )
+        .withIndex("byStratPosition", (q) => q.eq("stratPositionID", args.stratPositionID))
         .collect()
     ).sort((a, b) => a.index - b.index); // enforce deterministic ordering
 
     // Find the current index of the picked operator
-    const currentIndex = pickedOperators.findIndex(
-      (op) => op._id === args.pickedOperatorID,
-    );
+    const currentIndex = pickedOperators.findIndex((op) => op._id === args.pickedOperatorID);
     if (currentIndex === -1) {
       return {
         success: false,
@@ -761,15 +710,10 @@ export const createPickedOperator = mutation({
     }
     const existingOperators = await ctx.db
       .query("pickedOperators")
-      .withIndex("byStratPosition", (q) =>
-        q.eq("stratPositionID", stratPositionID),
-      )
+      .withIndex("byStratPosition", (q) => q.eq("stratPositionID", stratPositionID))
       .collect();
     const newIndex =
-      existingOperators.reduce(
-        (max, op) => (op.index > max ? op.index : max),
-        -1,
-      ) + 1;
+      existingOperators.reduce((max, op) => (op.index > max ? op.index : max), -1) + 1;
     const pickedOperatorID = await ctx.db.insert("pickedOperators", {
       stratID: stratDoc._id,
       stratPositionID: stratPositionID,
@@ -932,32 +876,20 @@ export const updateAssets = mutation({
         ...(asset.pickedOperatorID !== undefined
           ? { pickedOperatorID: asset.pickedOperatorID ?? undefined }
           : {}),
-        ...(asset.customColor !== undefined
-          ? { customColor: asset.customColor ?? undefined }
-          : {}),
+        ...(asset.customColor !== undefined ? { customColor: asset.customColor ?? undefined } : {}),
 
         ...(asset.type !== undefined ? { type: asset.type } : {}),
         ...(asset.variant !== undefined ? { variant: asset.variant } : {}),
         ...(asset.operator !== undefined ? { operator: asset.operator } : {}),
         ...(asset.iconType !== undefined ? { iconType: asset.iconType } : {}),
         ...(asset.gadget !== undefined ? { gadget: asset.gadget } : {}),
-        ...(asset.placedOn !== undefined
-          ? { placedOn: asset.placedOn ?? undefined }
-          : {}),
+        ...(asset.placedOn !== undefined ? { placedOn: asset.placedOn ?? undefined } : {}),
         ...(asset.text !== undefined ? { text: asset.text } : {}),
         ...(asset.fontSize !== undefined ? { fontSize: asset.fontSize } : {}),
-        ...(asset.background !== undefined
-          ? { background: asset.background }
-          : {}),
-        ...(asset.startCorner !== undefined
-          ? { startCorner: asset.startCorner }
-          : {}),
-        ...(asset.startArrowHead !== undefined
-          ? { startArrowHead: asset.startArrowHead }
-          : {}),
-        ...(asset.endArrowHead !== undefined
-          ? { endArrowHead: asset.endArrowHead }
-          : {}),
+        ...(asset.background !== undefined ? { background: asset.background } : {}),
+        ...(asset.startCorner !== undefined ? { startCorner: asset.startCorner } : {}),
+        ...(asset.startArrowHead !== undefined ? { startArrowHead: asset.startArrowHead } : {}),
+        ...(asset.endArrowHead !== undefined ? { endArrowHead: asset.endArrowHead } : {}),
         ...(asset.url !== undefined ? { url: asset.url } : {}),
       });
     }
@@ -998,9 +930,7 @@ export const getSelectedAssets = query({
       .withIndex("byStrat", (q) => q.eq("stratID", stratID))
       .collect();
 
-    const otherUsersSelectedAssets = selectedAssetsDoc.filter(
-      (doc) => doc.userID !== userID,
-    );
+    const otherUsersSelectedAssets = selectedAssetsDoc.filter((doc) => doc.userID !== userID);
 
     return otherUsersSelectedAssets.map((doc) => ({
       userID: doc.userID,
@@ -1023,9 +953,7 @@ export const setSelectedAssets = mutation({
     let id = (
       await ctx.db
         .query("selectedAssets")
-        .withIndex("byStratAndUser", (q) =>
-          q.eq("stratID", stratID).eq("userID", userID),
-        )
+        .withIndex("byStratAndUser", (q) => q.eq("stratID", stratID).eq("userID", userID))
         .first()
     )?._id;
 

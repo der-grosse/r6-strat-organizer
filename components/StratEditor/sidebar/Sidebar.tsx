@@ -14,11 +14,7 @@ import {
   UsersRound,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import StratEditorGadgetsSidebar from "./Gadgets";
 import StratEditorMetaSidebar from "./Meta";
@@ -47,15 +43,9 @@ export interface StratEditorSidebarProps {
   onActiveStratPositionChange: (id: Id<"stratPositions"> | null) => void;
 }
 
-export default function StratEditorSidebar(
-  props: Readonly<StratEditorSidebarProps>,
-) {
+export default function StratEditorSidebar(props: Readonly<StratEditorSidebarProps>) {
   const [openTab, setOpenTab] = useState<
-    | "meta"
-    | "player-ops"
-    | "selected-elements"
-    | "operator-gadgets"
-    | "operator-assets"
+    "meta" | "player-ops" | "selected-elements" | "operator-gadgets" | "operator-assets"
   >("meta");
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -99,9 +89,7 @@ export default function StratEditorSidebar(
           .filter((a) => a.type === "layout" && a.variant === "reinforcement")
           .reduce(
             (acc, asset) => {
-              const cur = asset.stratPositionID
-                ? acc.get(asset.stratPositionID)
-                : undefined;
+              const cur = asset.stratPositionID ? acc.get(asset.stratPositionID) : undefined;
               if (cur) {
                 acc.set(asset.stratPositionID!, {
                   ...cur,
@@ -131,10 +119,7 @@ export default function StratEditorSidebar(
                   props.team.teamPositions.find(
                     (teamPos) => teamPos._id === stratPos.teamPositionID,
                   ) ?? null;
-                const player =
-                  props.team.members.find(
-                    (m) => m._id === position?.playerID,
-                  ) ?? null;
+                const player = props.team.members.find((m) => m._id === position?.playerID) ?? null;
                 return [
                   stratPos._id,
                   {
@@ -187,12 +172,7 @@ export default function StratEditorSidebar(
           />
         );
       case "player-ops":
-        return (
-          <StratEditorPlayerPositionsSidebar
-            strat={props.strat}
-            team={props.team}
-          />
-        );
+        return <StratEditorPlayerPositionsSidebar strat={props.strat} team={props.team} />;
       default:
         return (
           <div className="flex items-center justify-center h-full">
@@ -227,8 +207,7 @@ export default function StratEditorSidebar(
           }}
           tooltip={{
             title: "Operator Lineup",
-            description:
-              "Select what operators you want to bring and which player will pick them",
+            description: "Select what operators you want to bring and which player will pick them",
           }}
           active={openTab === "player-ops"}
         />
@@ -238,9 +217,7 @@ export default function StratEditorSidebar(
             icon={<Circle />}
             onClick={() => {
               setOpenTab("selected-elements");
-              setSidebarOpen((open) =>
-                openTab === "selected-elements" ? !open : true,
-              );
+              setSidebarOpen((open) => (openTab === "selected-elements" ? !open : true));
             }}
             tooltip={{
               title: "Selected Elements",
@@ -256,9 +233,7 @@ export default function StratEditorSidebar(
             icon={<BicepsFlexed />}
             onClick={() => {
               setOpenTab("operator-gadgets");
-              setSidebarOpen((open) =>
-                openTab === "operator-gadgets" ? !open : true,
-              );
+              setSidebarOpen((open) => (openTab === "operator-gadgets" ? !open : true));
             }}
             tooltip={{
               title: "Operator Gadgets",
@@ -273,9 +248,7 @@ export default function StratEditorSidebar(
             icon={<ChessRook />}
             onClick={() => {
               setOpenTab("operator-assets");
-              setSidebarOpen((open) =>
-                openTab === "operator-assets" ? !open : true,
-              );
+              setSidebarOpen((open) => (openTab === "operator-assets" ? !open : true));
             }}
             tooltip={{
               title: "Operator Assets",
@@ -299,9 +272,7 @@ export default function StratEditorSidebar(
             <div className="flex gap-1 p-1 items-center cursor-default">
               <span className="text-xs text-muted-foreground text-right">
                 {MAX_REINFORCEMENT -
-                  placedReinforcements
-                    .map((v) => v.count)
-                    .reduce((a, b) => a + b, 0)}
+                  placedReinforcements.map((v) => v.count).reduce((a, b) => a + b, 0)}
               </span>
               <div className="flex-1">
                 <Reinforcement color="white" />
@@ -311,26 +282,19 @@ export default function StratEditorSidebar(
           <TooltipContent side="right">
             <p className="text-sm">
               {MAX_REINFORCEMENT -
-                placedReinforcements
-                  .map((v) => v.count)
-                  .reduce((a, b) => a + b, 0)}{" "}
+                placedReinforcements.map((v) => v.count).reduce((a, b) => a + b, 0)}{" "}
               Reinforcements remaining
             </p>
             {placedReinforcements
               .filter((p) => p.count > 0)
               .map((p) => (
-                <div
-                  className="flex items-center gap-1 mt-1"
-                  key={p.position?._id ?? -1}
-                >
+                <div className="flex items-center gap-1 mt-1" key={p.position?._id ?? -1}>
                   <p className="w-4">{p.count}x</p>
                   {p.player ? (
                     <>
                       <ColorButton disabled color={p.color} size="small" />
                       <p>{p.player.name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {p.position?.positionName}
-                      </p>
+                      <p className="text-xs text-muted-foreground">{p.position?.positionName}</p>
                     </>
                   ) : (
                     <p>
@@ -364,9 +328,7 @@ export default function StratEditorSidebar(
         }
         className={cn(
           "bg-background flex-1 h-full absolute lg:relative transition-[left] duration-300 w-(--sidebar-overlay-width) lg:w-(--sidebar-width) border-r border-border",
-          sidebarOpen
-            ? "max-lg:left-[100%]"
-            : "max-lg:-left-(--sidebar-overlay-width)",
+          sidebarOpen ? "max-lg:left-[100%]" : "max-lg:-left-(--sidebar-overlay-width)",
         )}
       >
         {sidebarContent}
@@ -409,9 +371,7 @@ function SidebarButton(props: {
       <TooltipContent side="right">
         <div className="flex flex-col">
           <p className="text-sm">{props.tooltip.title}</p>
-          <p className="text-xs text-muted-foreground">
-            {props.tooltip.description}
-          </p>
+          <p className="text-xs text-muted-foreground">{props.tooltip.description}</p>
         </div>
       </TooltipContent>
     </Tooltip>

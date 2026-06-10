@@ -4,12 +4,7 @@ import { cn } from "@/lib/utils";
 import { ArrowCorner } from "@/lib/types/asset.types";
 import { getArrowEndpoints } from "./arrow";
 
-export type AssetHandle =
-  | "resize"
-  | "rotate"
-  | "none"
-  | "arrow-start"
-  | "arrow-end";
+export type AssetHandle = "resize" | "rotate" | "none" | "arrow-start" | "arrow-end";
 
 // The menu's foreignObject must be large enough to contain the (2x scaled) menu
 // in every browser. Firefox clips to these bounds, so they are intentionally
@@ -164,10 +159,7 @@ export default function SVGAsset({
               stroke="currentColor"
               strokeWidth="1"
               filter="url(#globalDropShadow)"
-              className={cn(
-                "svg-selected-rect pointer-events-none",
-                !selected && "hidden",
-              )}
+              className={cn("svg-selected-rect pointer-events-none", !selected && "hidden")}
             />
             <circle
               cx={size.width * 1.025}
@@ -198,9 +190,7 @@ export default function SVGAsset({
                 "resize-handle",
                 !selected && "hidden",
                 !readonly &&
-                  (ctrlKeyDown
-                    ? "cursor-[url(/cursor/rotate.png),_grab]"
-                    : "cursor-se-resize"),
+                  (ctrlKeyDown ? "cursor-[url(/cursor/rotate.png),_grab]" : "cursor-se-resize"),
               )}
               onMouseDown={(e) => {
                 e.stopPropagation();
@@ -228,9 +218,7 @@ export default function SVGAsset({
           // matrix(sx, 0, 0, sy, cx-sx*cx, cy-sy*cy) -> to scale with a transform origin at the center bottom
           transform={`matrix(${zoom}, 0, 0, ${zoom}, ${
             size.width / 2 - (size.width / 2) * zoom
-          }, 0) translate(${size.width / 2} ${
-            -size.height * (1 - zoom)
-          }) translate(0, ${
+          }, 0) translate(${size.width / 2} ${-size.height * (1 - zoom)}) translate(0, ${
             // Adjust the vertical position based on rotation
             (rotation === 0
               ? 0
@@ -243,8 +231,7 @@ export default function SVGAsset({
 
                   const baseAngle = Math.atan2(size.height, size.width);
                   const rotatedAngle = baseAngle + radians;
-                  const offset =
-                    diagonalHalf * Math.sin(rotatedAngle) - size.height / 2;
+                  const offset = diagonalHalf * Math.sin(rotatedAngle) - size.height / 2;
 
                   return -Math.max(0, offset);
                 })()) - 15

@@ -51,21 +51,9 @@ export default function ChaletB(props: MapFloorClickableProps) {
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M2110.25,169.69 L2152.46,169.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M2041.31,290.25 L2041.31,332.46"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1884.25,788.69 L1926.46,788.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M2110.25,169.69 L2152.46,169.69" data-type="barricade" onClick={onClickHandler} />
+        <path d="M2041.31,290.25 L2041.31,332.46" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1884.25,788.69 L1926.46,788.69" data-type="barricade" onClick={onClickHandler} />
         {/* doors end */}
         {/* reinforcements start */}
         <path

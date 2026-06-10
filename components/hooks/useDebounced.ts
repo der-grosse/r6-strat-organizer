@@ -11,7 +11,7 @@ const useDebounced = <T>(
   } = {
     debounceDelay: 500,
     onChange: undefined,
-  }
+  },
 ) => {
   const [debouncedValue, setDebouncedValue] = React.useState(value);
   const latestValueRef = React.useRef(value);

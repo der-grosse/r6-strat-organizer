@@ -1,8 +1,5 @@
 import { cookies } from "next/headers";
-import {
-  LEADING_COOKIE_KEY,
-  parseCookies,
-} from "@/components/context/FilterContext.functions";
+import { LEADING_COOKIE_KEY, parseCookies } from "@/components/context/FilterContext.functions";
 import Providers from "./Providers";
 
 export default async function ProvidersLayout({

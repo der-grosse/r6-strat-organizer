@@ -1,9 +1,4 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { HexColorPicker } from "react-colorful";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
@@ -22,7 +17,7 @@ export interface ColorPickerDialogProps {
 
 export default function ColorPickerDialog(props: ColorPickerDialogProps) {
   const [currentCustomColor, setCurrentCustomColor] = useState(
-    props.color || DEFAULT_COLORS.at(-1)!
+    props.color || DEFAULT_COLORS.at(-1)!,
   );
 
   const isValidHexColor = (color: string) => {
@@ -109,7 +104,7 @@ export function ColorButton(props: {
         "rounded-full hover:shadow-lg focus:outline-none focus:ring-2",
         props.size === "small" ? "w-6 h-6" : "w-12 h-12",
         !props.disabled && "cursor-pointer",
-        props.className
+        props.className,
       )}
       disabled={props.disabled}
       style={{ backgroundColor: props.color ?? DEFAULT_COLORS.at(-1) }}

@@ -4,10 +4,7 @@ const MapFloorClickableHandler =
     e.preventDefault();
     e.stopPropagation();
 
-    const type = e.currentTarget.dataset.type as
-      | "barricade"
-      | "reinforcement"
-      | "hatch";
+    const type = e.currentTarget.dataset.type as "barricade" | "reinforcement" | "hatch";
     if (type !== "barricade" && type !== "reinforcement" && type !== "hatch") {
       console.error("Invalid type:", type);
       return;
@@ -49,9 +46,7 @@ const MapFloorClickableHandler =
       );
     } else {
       const d = e.currentTarget.getAttribute("d");
-      const coords = d?.match(
-        /M(\d+\.?\d*),(\d+\.?\d*) L(\d+\.?\d*),(\d+\.?\d*)/,
-      );
+      const coords = d?.match(/M(\d+\.?\d*),(\d+\.?\d*) L(\d+\.?\d*),(\d+\.?\d*)/);
       if (!coords || coords.length !== 5) {
         console.error("Invalid path data for", type, ":", d);
         return;

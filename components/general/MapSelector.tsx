@@ -26,10 +26,7 @@ export default function MapSelector(props: MapSelectorProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent side="right" className="w-56">
         {!props.hideEmpty && (
-          <DropdownMenuItem
-            key="clear"
-            onClick={() => props.onChange(undefined)}
-          >
+          <DropdownMenuItem key="clear" onClick={() => props.onChange(undefined)}>
             <em>Clear</em>
           </DropdownMenuItem>
         )}

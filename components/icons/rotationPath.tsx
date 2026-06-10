@@ -7,21 +7,11 @@ export interface RotationPathProps {
   height: number;
   innerColor?: string;
   color?: string;
-  variant: Exclude<
-    LayoutAsset["variant"],
-    "explosion" | "barricade" | "reinforcement"
-  >;
+  variant: Exclude<LayoutAsset["variant"], "explosion" | "barricade" | "reinforcement">;
 }
 
 export default function RotationPath(props: RotationPathProps) {
-  const {
-    x,
-    y,
-    width,
-    height,
-    innerColor = "#b97a56",
-    color = "#cfe2f3",
-  } = props;
+  const { x, y, width, height, innerColor = "#b97a56", color = "#cfe2f3" } = props;
   const barBorderWidth = height * 0.06;
   const barSpacing = height * 0.1;
   const barHeight = (height - barBorderWidth * 4 - barSpacing * 2) / 3;

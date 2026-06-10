@@ -2,13 +2,7 @@
 import { useUser } from "@/components/context/UserContext";
 import useSaveDebounced from "@/components/hooks/useSaveDebounced";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogClose,
@@ -20,11 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { api } from "@/convex/_generated/api";
 import { FullTeam } from "@/lib/types/team.types";
 import { checkUbisoftID } from "@/lib/ubisoft/ubi";
@@ -34,13 +24,11 @@ import { Check, RotateCcwKey, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
-export default function AccountInfo(props: {
-  team: Pick<FullTeam, "members">;
-}) {
+export default function AccountInfo(props: { team: Pick<FullTeam, "members"> }) {
   const self = useQuery(api.self.get, {});
   const user = useMemo(
     () => props.team.members.find((m) => m._id === self?._id),
-    [props.team, self]
+    [props.team, self],
   );
 
   const updateSelf = useMutation(api.self.update);
@@ -58,52 +46,37 @@ export default function AccountInfo(props: {
     if (!ubisoftID) setUbisoftID(user.ubisoftID ?? "");
   }, [user]);
 
-  const { saveNow: saveUsername } = useSaveDebounced(
-    newUsername,
-    async (newUsername) => {
-      try {
-        await updateSelf({
-          name: newUsername,
-        });
-      } catch (err) {
-        setUsernameInvalid(true);
-        toast.error(
-          err instanceof Error ? err.message : "Failed to change username"
-        );
-      }
+  const { saveNow: saveUsername } = useSaveDebounced(newUsername, async (newUsername) => {
+    try {
+      await updateSelf({
+        name: newUsername,
+      });
+    } catch (err) {
+      setUsernameInvalid(true);
+      toast.error(err instanceof Error ? err.message : "Failed to change username");
     }
-  );
+  });
 
-  const { saveNow: saveEmail } = useSaveDebounced(
-    newEmail,
-    async (newEmail) => {
-      if (newEmail && !isEmailValid(newEmail)) return;
-      try {
-        await updateSelf({ email: newEmail });
-      } catch (err) {
-        toast.error(
-          err instanceof Error ? err.message : "Failed to change email"
-        );
-      }
+  const { saveNow: saveEmail } = useSaveDebounced(newEmail, async (newEmail) => {
+    if (newEmail && !isEmailValid(newEmail)) return;
+    try {
+      await updateSelf({ email: newEmail });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to change email");
     }
-  );
+  });
 
-  const { saveNow: saveUbisoftID } = useSaveDebounced(
-    ubisoftID,
-    async (ubisoftID) => {
-      try {
-        await updateSelf({
-          ubisoftID,
-        });
-        const isValid = await checkUbisoftID(ubisoftID);
-        setUbisoftIDValid(isValid);
-      } catch (err) {
-        toast.error(
-          err instanceof Error ? err.message : "Failed to change Ubisoft ID"
-        );
-      }
+  const { saveNow: saveUbisoftID } = useSaveDebounced(ubisoftID, async (ubisoftID) => {
+    try {
+      await updateSelf({
+        ubisoftID,
+      });
+      const isValid = await checkUbisoftID(ubisoftID);
+      setUbisoftIDValid(isValid);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to change Ubisoft ID");
     }
-  );
+  });
 
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
@@ -123,9 +96,7 @@ export default function AccountInfo(props: {
         toast.success("Password changed successfully");
       }
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to change password"
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to change password");
     }
   };
 
@@ -151,11 +122,7 @@ export default function AccountInfo(props: {
             }}
             onBlur={() => saveUsername()}
             placeholder="Username"
-            className={
-              usernameInvalid
-                ? "!border-destructive !bg-destructive/25"
-                : undefined
-            }
+            className={usernameInvalid ? "!border-destructive !bg-destructive/25" : undefined}
           />
         </div>
         <div className="space-y-1">
@@ -241,9 +208,7 @@ export default function AccountInfo(props: {
                 />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="confirm-new-password-input">
-                  Confirm New Password
-                </Label>
+                <Label htmlFor="confirm-new-password-input">Confirm New Password</Label>
                 <Input
                   id="confirm-new-password-input"
                   type="password"
@@ -255,21 +220,14 @@ export default function AccountInfo(props: {
             </div>
             <DialogFooter>
               <DialogClose asChild>
-                <Button
-                  variant="outline"
-                  onClick={() => setChangePasswordOpen(false)}
-                >
+                <Button variant="outline" onClick={() => setChangePasswordOpen(false)}>
                   <X /> Cancel
                 </Button>
               </DialogClose>
               <Button
                 variant="outline"
                 onClick={handleChangePassword}
-                disabled={
-                  newPassword !== confirmNewPassword ||
-                  !newPassword ||
-                  !oldPassword
-                }
+                disabled={newPassword !== confirmNewPassword || !newPassword || !oldPassword}
               >
                 <Check /> Confirm
               </Button>

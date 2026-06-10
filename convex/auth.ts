@@ -28,9 +28,7 @@ type User = Omit<JWTPayload, "v" | "_id" | "activeTeamID" | "teams"> & {
   }[];
 };
 
-export async function requireUser(
-  ctx: QueryCtx | ActionCtx | MutationCtx,
-): Promise<User>;
+export async function requireUser(ctx: QueryCtx | ActionCtx | MutationCtx): Promise<User>;
 export async function requireUser(
   ctx: QueryCtx | ActionCtx | MutationCtx,
   filter: Partial<{ teamID: Id<"teams"> | string; admin: boolean }> & {
@@ -75,8 +73,7 @@ export async function requireUser(
     payload.teams.some((team) => {
       if (!team || typeof team !== "object") return true;
       if (!("teamID" in team) || typeof team.teamID !== "string") return true;
-      if (!("isAdmin" in team) || typeof team.isAdmin !== "boolean")
-        return true;
+      if (!("isAdmin" in team) || typeof team.isAdmin !== "boolean") return true;
       return false;
     })
   ) {
@@ -110,9 +107,7 @@ export async function requireUser(
   } as User;
 }
 
-export async function requireServerJWT(
-  ctx: QueryCtx | ActionCtx | MutationCtx,
-) {
+export async function requireServerJWT(ctx: QueryCtx | ActionCtx | MutationCtx) {
   const user = await requireUser(ctx);
   if (!user || user._id !== "NEXTJS_SERVER_JWT") {
     throw new Error("Unauthorized");
@@ -245,10 +240,7 @@ export const createTeam = mutation({
     password: v.optional(v.string()),
     email: v.optional(v.string()),
   },
-  async handler(
-    ctx,
-    args,
-  ): Promise<{ error?: string; success?: boolean; teamID?: Id<"teams"> }> {
+  async handler(ctx, args): Promise<{ error?: string; success?: boolean; teamID?: Id<"teams"> }> {
     await requireServerJWT(ctx);
 
     let userID = args.userID;
@@ -363,9 +355,7 @@ export const joinTeamWithInvite = mutation({
 
     const existingMembership = await ctx.db
       .query("userTeams")
-      .withIndex("byUserAndTeam", (q) =>
-        q.eq("userID", args.userID).eq("teamID", invite.teamID),
-      )
+      .withIndex("byUserAndTeam", (q) => q.eq("userID", args.userID).eq("teamID", invite.teamID))
       .first();
 
     if (existingMembership) {

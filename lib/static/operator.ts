@@ -243,11 +243,7 @@ export const DEFENDERS = [
     name: "Rook",
     icon: "/ops/def/rook.webp",
     iconBW: "/ops/def/rook_bw.png",
-    secondaryGadgets: [
-      "proximity_alarm",
-      "impact_grenade",
-      "observation_blocker",
-    ],
+    secondaryGadgets: ["proximity_alarm", "impact_grenade", "observation_blocker"],
     hasPrimaryShotgun: true,
   },
   {
@@ -303,11 +299,7 @@ export const DEFENDERS = [
     name: "Caveira",
     icon: "/ops/def/caveira.webp",
     iconBW: "/ops/def/caveira_bw.png",
-    secondaryGadgets: [
-      "impact_grenade",
-      "proximity_alarm",
-      "observation_blocker",
-    ],
+    secondaryGadgets: ["impact_grenade", "proximity_alarm", "observation_blocker"],
     hasPrimaryShotgun: true,
   },
   {
@@ -402,11 +394,7 @@ export const DEFENDERS = [
     icon: "/ops/def/goyo.webp",
     iconBW: "/ops/def/goyo_bw.png",
     gadget: "volcan_canister",
-    secondaryGadgets: [
-      "proximity_alarm",
-      "bulletproof_camera",
-      "impact_grenade",
-    ],
+    secondaryGadgets: ["proximity_alarm", "bulletproof_camera", "impact_grenade"],
     hasPrimaryShotgun: true,
   },
   {
@@ -447,11 +435,7 @@ export const DEFENDERS = [
     icon: "/ops/def/thunderbird.webp",
     iconBW: "/ops/def/thunderbird_bw.png",
     gadget: "kona_station",
-    secondaryGadgets: [
-      "deployable_shield",
-      "barbed_wire",
-      "bulletproof_camera",
-    ],
+    secondaryGadgets: ["deployable_shield", "barbed_wire", "bulletproof_camera"],
     hasPrimaryShotgun: true,
     hasSecondaryShotgun: true,
   },
@@ -698,10 +682,7 @@ export const DEFENDER_PRIMARY_GADGETS = [
   aspectRatio?: number;
 }[];
 
-export type DefenderPrimaryGadget = Extract<
-  (typeof DEFENDERS)[number],
-  { gadget: any }
->["gadget"];
+export type DefenderPrimaryGadget = Extract<(typeof DEFENDERS)[number], { gadget: any }>["gadget"];
 
 export const DEFENDER_SECONDARY_GADGETS = [
   {
@@ -755,7 +736,6 @@ export const DEFENDER_SECONDARY_GADGETS = [
   aspectRatio?: number;
 }[];
 
-export type DefenderSecondaryGadget =
-  (typeof DEFENDER_SECONDARY_GADGETS)[number];
+export type DefenderSecondaryGadget = (typeof DEFENDER_SECONDARY_GADGETS)[number];
 
 export type DefenderSecondaryGadgetID = DefenderSecondaryGadget["id"];

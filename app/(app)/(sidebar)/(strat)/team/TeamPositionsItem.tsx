@@ -20,15 +20,12 @@ export interface TeamPositionsItemProps {
   team: FullTeam;
 }
 
-export default function TeamPositionsItem({
-  canEdit,
-  position,
-  team,
-}: TeamPositionsItemProps) {
+export default function TeamPositionsItem({ canEdit, position, team }: TeamPositionsItemProps) {
   const updateTeamPosition = useMutation(api.team.updateTeamPosition);
 
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: position._id });
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+    id: position._id,
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -36,17 +33,9 @@ export default function TeamPositionsItem({
   };
 
   return (
-    <div
-      className="grid grid-cols-[auto_auto_1fr] gap-2"
-      ref={setNodeRef}
-      style={style}
-    >
+    <div className="grid grid-cols-[auto_auto_1fr] gap-2" ref={setNodeRef} style={style}>
       {canEdit && (
-        <div
-          {...attributes}
-          {...listeners}
-          className="cursor-grab hover:cursor-grabbing"
-        >
+        <div {...attributes} {...listeners} className="cursor-grab hover:cursor-grabbing">
           <GripVertical className="h-4 w-4 text-gray-400 py-2 box-content" />
         </div>
       )}
@@ -69,17 +58,11 @@ export default function TeamPositionsItem({
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost">
                   {(() => {
-                    const member = team.members.find(
-                      (m) => m._id === position.playerID
-                    );
+                    const member = team.members.find((m) => m._id === position.playerID);
                     if (!member) return <em>Select player</em>;
                     return (
                       <>
-                        <ColorButton
-                          component="span"
-                          color={member.defaultColor}
-                          size="small"
-                        />
+                        <ColorButton component="span" color={member.defaultColor} size="small" />
                         {member.name}
                       </>
                     );
@@ -111,11 +94,7 @@ export default function TeamPositionsItem({
                       })
                     }
                   >
-                    <ColorButton
-                      component="span"
-                      color={member.defaultColor}
-                      size="small"
-                    />
+                    <ColorButton component="span" color={member.defaultColor} size="small" />
                     {member.name}
                   </DropdownMenuItem>
                 ))}
@@ -128,9 +107,7 @@ export default function TeamPositionsItem({
           <span className="min-w-48">{position.positionName}</span>
           <span className="text-sm flex items-center gap-1">
             {(() => {
-              const member = team.members.find(
-                (m) => m._id === position.playerID
-              );
+              const member = team.members.find((m) => m._id === position.playerID);
               if (!member) return <em>Unassigned</em>;
               return (
                 <>

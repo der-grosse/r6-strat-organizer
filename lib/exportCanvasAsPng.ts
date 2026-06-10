@@ -113,12 +113,7 @@ function copyToCanvas(
   return new Promise((resolve) => {
     img.onload = () => {
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      resolve(
-        canvas.toDataURL(
-          `image/${format === "jpg" ? "jpeg" : format}`,
-          quality,
-        ),
-      );
+      resolve(canvas.toDataURL(`image/${format === "jpg" ? "jpeg" : format}`, quality));
     };
   });
 }
@@ -156,10 +151,7 @@ export async function svgToImg(
   try {
     // Clone into a detached SVG so we don't mutate the live DOM with
     // inlined styles / removed elements.
-    const target = document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "svg",
-    );
+    const target = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     target.innerHTML = source.innerHTML;
     for (const attr of source.attributes) {
       target.setAttribute(attr.name, attr.value);
@@ -174,25 +166,16 @@ export async function svgToImg(
     }
 
     if (ignore != null) {
-      target
-        .querySelectorAll(ignore)
-        .forEach((el) => el.parentNode?.removeChild(el));
+      target.querySelectorAll(ignore).forEach((el) => el.parentNode?.removeChild(el));
     }
 
     // Use the SVG viewBox to derive the output resolution so the image
     // matches the logical canvas size, not the on-screen pixel size.
     const viewBox = source.viewBox.baseVal;
     const svgSize = source.getBoundingClientRect();
-    const resolutionScale =
-      viewBox.width > 0 ? (viewBox.width / svgSize.width) * scale : scale;
+    const resolutionScale = viewBox.width > 0 ? (viewBox.width / svgSize.width) * scale : scale;
 
-    const file = await copyToCanvas(
-      source,
-      target,
-      resolutionScale,
-      format,
-      quality,
-    );
+    const file = await copyToCanvas(source, target, resolutionScale, format, quality);
 
     if (download) {
       downloadImage(file, name, format);
@@ -202,4 +185,3 @@ export async function svgToImg(
     restoreImages();
   }
 }
-

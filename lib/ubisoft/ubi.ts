@@ -12,14 +12,12 @@ export async function checkUbisoftID(id: string): Promise<boolean> {
   const blob = await res.blob();
   const reader = new FileReader();
   reader.readAsDataURL(blob);
-  const base64data = await new Promise<string | ArrayBuffer | null>(
-    (resolve) => {
-      reader.onloadend = () => {
-        const base64data = reader.result;
-        resolve(base64data);
-      };
-    }
-  );
+  const base64data = await new Promise<string | ArrayBuffer | null>((resolve) => {
+    reader.onloadend = () => {
+      const base64data = reader.result;
+      resolve(base64data);
+    };
+  });
   if (base64data === DEFAULT_UBI_AVATAR || base64data === null) return false;
   return true;
 }

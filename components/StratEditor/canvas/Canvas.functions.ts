@@ -9,7 +9,7 @@ export function clamp(value: number, min: number, max: number) {
 
 export function rotateVector(
   vector: { x: number; y: number },
-  angle: number
+  angle: number,
 ): { x: number; y: number } {
   const radians = (angle * Math.PI) / 180;
   return {
@@ -21,7 +21,7 @@ export function rotateVector(
 export function resizeAsset(
   asset: Pick<CanvasAsset, "size" | "position" | "rotation">,
   leveledDelta: { x: number; y: number },
-  makeSquare: boolean
+  makeSquare: boolean,
 ): Pick<CanvasAsset, "size" | "position"> {
   let newSize = clampAssetSize({
     width: asset.size.width + leveledDelta.x,
@@ -44,7 +44,7 @@ export function resizeAsset(
 export function clampAssetSize(
   size: { width: number; height: number },
   min: number = MIN_ASSET_SIZE,
-  max: number = MAX_ASSET_SIZE
+  max: number = MAX_ASSET_SIZE,
 ): { width: number; height: number } {
   return {
     width: clamp(size.width, min, max),

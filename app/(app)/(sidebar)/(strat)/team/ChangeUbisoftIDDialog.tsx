@@ -11,11 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { TeamMember } from "@/lib/types/team.types";
@@ -31,15 +27,11 @@ export interface ChangeUbisoftIDDialogProps {
   teamID: Id<"teams">;
 }
 
-export default function ChangeUbisoftIDDialog(
-  props: ChangeUbisoftIDDialogProps
-) {
+export default function ChangeUbisoftIDDialog(props: ChangeUbisoftIDDialogProps) {
   const updateTeamMember = useMutation(api.team.updateTeamMember);
 
   const [newUbisoftID, setNewUbisoftID] = useState("");
-  const [newUbisoftIDValid, setNewUbisoftIDValid] = useState<boolean | null>(
-    null
-  );
+  const [newUbisoftIDValid, setNewUbisoftIDValid] = useState<boolean | null>(null);
   useSaveDebounced(newUbisoftID, async (ubisoftID) => {
     setNewUbisoftIDValid(null);
     const valid = await checkUbisoftID(ubisoftID);
@@ -54,9 +46,7 @@ export default function ChangeUbisoftIDDialog(
       }}
     >
       <DialogContent>
-        <DialogTitle>
-          {props.member?.ubisoftID ? "Change" : "Add"} Ubisoft ID
-        </DialogTitle>
+        <DialogTitle>{props.member?.ubisoftID ? "Change" : "Add"} Ubisoft ID</DialogTitle>
         <DialogDescription>
           {props.member?.ubisoftID
             ? "Change the Ubisoft ID associated with this account."
@@ -81,9 +71,7 @@ export default function ChangeUbisoftIDDialog(
           <Tooltip>
             <TooltipTrigger asChild>
               <div>
-                {newUbisoftID && newUbisoftIDValid === null && (
-                  <Skeleton className="size-5 mt-2" />
-                )}
+                {newUbisoftID && newUbisoftIDValid === null && <Skeleton className="size-5 mt-2" />}
                 {newUbisoftID && newUbisoftIDValid === true && (
                   <Check className="text-green-400 size-5 mt-2" />
                 )}
@@ -94,12 +82,8 @@ export default function ChangeUbisoftIDDialog(
             </TooltipTrigger>
             <TooltipContent>
               <span>
-                {newUbisoftID &&
-                  newUbisoftIDValid === null &&
-                  "Checking Ubisoft profile..."}
-                {newUbisoftID &&
-                  newUbisoftIDValid === true &&
-                  "Ubisoft profile found"}
+                {newUbisoftID && newUbisoftIDValid === null && "Checking Ubisoft profile..."}
+                {newUbisoftID && newUbisoftIDValid === true && "Ubisoft profile found"}
                 {newUbisoftID &&
                   newUbisoftIDValid === false &&
                   "Ubisoft profile not found (User could have no profile picture)"}
@@ -124,9 +108,7 @@ export default function ChangeUbisoftIDDialog(
               }
             }}
             disabled={
-              !props.member ||
-              props.member.ubisoftID === newUbisoftID ||
-              !newUbisoftID.trim()
+              !props.member || props.member.ubisoftID === newUbisoftID || !newUbisoftID.trim()
             }
           >
             <Check /> Save

@@ -3,15 +3,15 @@
 import { useEffect, useRef } from "react";
 
 export default function useOnUnmount(callback: () => void) {
-	const callbackRef = useRef(callback);
+  const callbackRef = useRef(callback);
 
-	useEffect(() => {
-		callbackRef.current = callback;
-	}, [callback]);
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
 
-	useEffect(() => {
-		return () => {
-			callbackRef.current();
-		};
-	}, []);
+  useEffect(() => {
+    return () => {
+      callbackRef.current();
+    };
+  }, []);
 }

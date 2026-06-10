@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useCallback,
-  useState,
-  useEffect,
-} from "react";
+import React, { createContext, useContext, useCallback, useState, useEffect } from "react";
 
 interface ResizeContextType {
   isResizing: boolean;
@@ -16,7 +10,7 @@ interface ResizeContextType {
     handlers: {
       onMove: (e: MouseEvent) => void;
       onEnd: () => void;
-    }
+    },
   ) => void;
   unregisterResizeHandlers: (id: string) => void;
 }
@@ -42,11 +36,11 @@ export function ResizeProvider({ children }: { children: React.ReactNode }) {
       handlers: {
         onMove: (e: MouseEvent) => void;
         onEnd: () => void;
-      }
+      },
     ) => {
       setResizeHandlers((prev) => new Map(prev).set(id, handlers));
     },
-    []
+    [],
   );
 
   const unregisterResizeHandlers = useCallback((id: string) => {
@@ -65,7 +59,7 @@ export function ResizeProvider({ children }: { children: React.ReactNode }) {
         handlers.onMove(e);
       }
     },
-    [isResizing, activeResizable, resizeHandlers]
+    [isResizing, activeResizable, resizeHandlers],
   );
 
   const handleMouseUp = useCallback(() => {

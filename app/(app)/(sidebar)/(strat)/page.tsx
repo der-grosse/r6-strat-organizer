@@ -14,9 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
   );
 
   return {
-    title: `Current strat${
-      active ? ` | ${active?.name} | ${active?.map} - ${active?.site}` : ""
-    }`,
+    title: `Current strat${active ? ` | ${active?.name} | ${active?.map} - ${active?.site}` : ""}`,
     description: "View the currently active strat",
   };
 }

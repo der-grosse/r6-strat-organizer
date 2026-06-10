@@ -1,10 +1,4 @@
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import TeamMemberItem from "./TeamMemberItem";
 import { useUser } from "@/components/context/UserContext";
 import { TeamMember } from "@/lib/types/team.types";
@@ -42,9 +36,7 @@ export default function TeamMemberList(props: TeamMemberListProps) {
               member={member}
               onChangeColor={props.onChangeColor.bind(null, member)}
               onChangeUbisoftID={
-                props.onChangeUbisoftID
-                  ? props.onChangeUbisoftID.bind(null, member)
-                  : undefined
+                props.onChangeUbisoftID ? props.onChangeUbisoftID.bind(null, member) : undefined
               }
             />
           ))}

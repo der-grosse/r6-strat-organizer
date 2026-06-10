@@ -41,10 +41,7 @@ const stratPositionIdMap = new Map<number, Id<"stratPositions">>();
 const pickedOperatorIdMap = new Map<number, Id<"pickedOperators">>();
 
 // Helper to map IDs
-function mapId<T>(
-  map: Map<number, T>,
-  oldId: number | null | undefined
-): T | undefined {
+function mapId<T>(map: Map<number, T>, oldId: number | null | undefined): T | undefined {
   if (oldId === null || oldId === undefined) return undefined;
   return map.get(oldId);
 }
@@ -156,9 +153,7 @@ async function migrate() {
 
     // 5. Password Reset Tokens
     console.log("Migrating Password Reset Tokens...");
-    const tokensRes = await pgClient.query(
-      "SELECT * FROM password_reset_tokens"
-    );
+    const tokensRes = await pgClient.query("SELECT * FROM password_reset_tokens");
     const tokens = [];
     for (const row of tokensRes.rows) {
       const newUserId = userIdMap.get(row.user_id);
@@ -239,9 +234,7 @@ async function migrate() {
 
     // 10. Strat Positions
     console.log("Migrating Strat Positions...");
-    const stratPositionsRes = await pgClient.query(
-      "SELECT * FROM strat_positions"
-    );
+    const stratPositionsRes = await pgClient.query("SELECT * FROM strat_positions");
     const stratPositions: {
       originalId: number;
       teamPositionID: Id<"teamPositions"> | undefined;
@@ -319,10 +312,9 @@ async function migrate() {
     }
     const pickedOpsChunks = chunkArray(pickedOps, 100);
     for (const chunk of pickedOpsChunks) {
-      const result = await client.mutation(
-        api.migration.importPickedOperators,
-        { pickedOperators: chunk }
-      );
+      const result = await client.mutation(api.migration.importPickedOperators, {
+        pickedOperators: chunk,
+      });
       for (const { originalId, newId } of result) {
         pickedOperatorIdMap.set(originalId, newId);
       }
@@ -346,10 +338,7 @@ async function migrate() {
           stratPositionID: mapId(stratPositionIdMap, row.strat_position_id),
           pickedOperatorID: undefined, // Leaving this undefined for now as mapping is complex without more queries
           customColor: row.custom_color || undefined,
-          type:
-            row.type === "rotate" || row.type === "reinforcement"
-              ? "layout"
-              : row.type,
+          type: row.type === "rotate" || row.type === "reinforcement" ? "layout" : row.type,
           operator: row.operator || undefined,
           iconType: row.icon_type || undefined,
           gadget: row.gadget || undefined,

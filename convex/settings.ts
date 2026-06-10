@@ -34,15 +34,9 @@ export const get = query({
 
 export const update = mutation({
   args: {
-    activeStratLayout: v.optional(
-      v.union(v.literal("bottom"), v.literal("top")),
-    ),
+    activeStratLayout: v.optional(v.union(v.literal("bottom"), v.literal("top"))),
     stratGadgetViewModifier: v.optional(
-      v.union(
-        v.literal("none"),
-        v.literal("hideForeign"),
-        v.literal("grayscaleForeign"),
-      ),
+      v.union(v.literal("none"), v.literal("hideForeign"), v.literal("grayscaleForeign")),
     ),
     activeStratNameTemplate: v.optional(
       v.object({
@@ -57,9 +51,7 @@ export const update = mutation({
     const user = await requireUser(ctx);
 
     // Strip undefined values
-    const patch = Object.fromEntries(
-      Object.entries(args).filter(([, v]) => v !== undefined),
-    );
+    const patch = Object.fromEntries(Object.entries(args).filter(([, v]) => v !== undefined));
 
     if (Object.keys(patch).length === 0) return;
 

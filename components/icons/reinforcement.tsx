@@ -12,13 +12,7 @@ export default function Reinforcement(props: ReinforcementProps) {
 
   return (
     <svg viewBox={`0 0 ${width} ${height}`} className={className}>
-      <ReinforcementPath
-        x={0}
-        y={0}
-        width={width}
-        height={height}
-        color={color}
-      />
+      <ReinforcementPath x={0} y={0} width={width} height={height} color={color} />
     </svg>
   );
 }

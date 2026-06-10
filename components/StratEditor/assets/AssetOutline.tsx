@@ -15,28 +15,23 @@ export default function AssetOutline(props: {
       props.asset.customColor ??
       (() => {
         const pickedOperator = props.stratPositions.find(
-          (op) => op._id === props.asset.stratPositionID
+          (op) => op._id === props.asset.stratPositionID,
         );
         if (!pickedOperator?.teamPositionID) return null;
         const teamPos = props.team.teamPositions.find(
-          (teamPos) => teamPos._id === pickedOperator.teamPositionID
+          (teamPos) => teamPos._id === pickedOperator.teamPositionID,
         );
         if (!teamPos) return null;
-        const member = props.team.members.find(
-          (m) => m._id === teamPos.playerID
-        );
+        const member = props.team.members.find((m) => m._id === teamPos.playerID);
         if (!member) return null;
         return member.defaultColor;
       })() ??
       DEFAULT_COLORS.at(-1)!,
-    [props.asset, props.stratPositions, props.team]
+    [props.asset, props.stratPositions, props.team],
   );
 
   return (
-    <div
-      className="border-4 h-full w-full rounded-xs"
-      style={{ borderColor: color }}
-    >
+    <div className="border-4 h-full w-full rounded-xs" style={{ borderColor: color }}>
       {props.children}
     </div>
   );

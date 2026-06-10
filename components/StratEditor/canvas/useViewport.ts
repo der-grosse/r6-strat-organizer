@@ -66,10 +66,7 @@ export function calculateZoomedViewBox(
 
 export function setSvgViewBox(svg: SVGSVGElement | null, viewBox: ViewBox) {
   if (!svg) return;
-  svg.setAttribute(
-    "viewBox",
-    `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`,
-  );
+  svg.setAttribute("viewBox", `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`);
 }
 
 function clamp(value: number, min: number, max: number) {
@@ -94,8 +91,7 @@ export function useViewport({
   // Calculate viewBox based on map dimensions
   useEffect(() => {
     if (!map) return;
-    const aspectRatio =
-      map.floors.length === 1 || map.floors.length > 2 ? 4 / 3 : 8 / 3;
+    const aspectRatio = map.floors.length === 1 || map.floors.length > 2 ? 4 / 3 : 8 / 3;
     const width = baseWidth;
     const height = width / aspectRatio;
     setViewBox((prev) => ({ ...prev, width, height }));
@@ -124,9 +120,7 @@ export function useViewport({
     zoomOriginRef.current = zoomOrigin;
   }, [zoomOrigin]);
 
-  const debouncedZoomCommit = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
+  const debouncedZoomCommit = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const zoomedViewBox = useMemo(
     () => calculateZoomedViewBox(viewBox, zoomFactor, zoomOrigin),
@@ -182,19 +176,13 @@ export function useViewport({
         const pt = svg.createSVGPoint();
         pt.x = e.clientX;
         pt.y = e.clientY;
-        const svgP = pt.matrixTransform(
-          svg.getScreenCTM()?.inverse() || new DOMMatrix(),
-        );
+        const svgP = pt.matrixTransform(svg.getScreenCTM()?.inverse() || new DOMMatrix());
 
         const nextOrigin = {
           x: svgP.x,
           y: svgP.y,
-          relX:
-            (svgP.x - lastZoomedViewBox.current.x) /
-            lastZoomedViewBox.current.width,
-          relY:
-            (svgP.y - lastZoomedViewBox.current.y) /
-            lastZoomedViewBox.current.height,
+          relX: (svgP.x - lastZoomedViewBox.current.x) / lastZoomedViewBox.current.width,
+          relY: (svgP.y - lastZoomedViewBox.current.y) / lastZoomedViewBox.current.height,
         };
         const nextZoom = clamp(
           zoomFactorRef.current + e.deltaY * ZOOM_MODIFIER,
@@ -245,8 +233,7 @@ export function useViewport({
   const spaceDown = isKeyDown(" ");
   const [isDraggingViewport, setIsDraggingViewport] = useState(false);
   // allow panning when holding space (any mouse button) or using middle mouse alone
-  const canDragViewport =
-    isViewportMovable && (spaceDown || isDraggingViewport);
+  const canDragViewport = isViewportMovable && (spaceDown || isDraggingViewport);
 
   // add mousemove and mouseup listeners for dragging the viewport
   useEffect(() => {
@@ -258,9 +245,7 @@ export function useViewport({
       const pt = svg.createSVGPoint();
       pt.x = e.clientX;
       pt.y = e.clientY;
-      const svgP = pt.matrixTransform(
-        svg.getScreenCTM()?.inverse() || new DOMMatrix(),
-      );
+      const svgP = pt.matrixTransform(svg.getScreenCTM()?.inverse() || new DOMMatrix());
       const dx = svgP.x - dragViewportStart.x;
       const dy = svgP.y - dragViewportStart.y;
       panByDelta(dx, dy);
@@ -285,9 +270,7 @@ export function useViewport({
       const pt = svg.createSVGPoint();
       pt.x = e.clientX;
       pt.y = e.clientY;
-      const svgP = pt.matrixTransform(
-        svg.getScreenCTM()?.inverse() || new DOMMatrix(),
-      );
+      const svgP = pt.matrixTransform(svg.getScreenCTM()?.inverse() || new DOMMatrix());
       setDragViewportStart({
         x: svgP.x,
         y: svgP.y,

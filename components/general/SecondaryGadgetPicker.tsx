@@ -64,16 +64,14 @@ export default function SecondaryGadgetPicker({
     } else {
       const gadgetIDsOfOps = Array.from(
         new Set(
-          DEFENDERS.filter((def) =>
-            showGadgetOfOperators?.includes(def.name),
-          ).flatMap((def) => def.secondaryGadgets),
+          DEFENDERS.filter((def) => showGadgetOfOperators?.includes(def.name)).flatMap(
+            (def) => def.secondaryGadgets,
+          ),
         ),
       ).filter((id) => id !== selected);
       return [
         ...(selectedGadget ? [selectedGadget] : []),
-        ...DEFENDER_SECONDARY_GADGETS.filter((g) =>
-          gadgetIDsOfOps.includes(g.id),
-        ),
+        ...DEFENDER_SECONDARY_GADGETS.filter((g) => gadgetIDsOfOps.includes(g.id)),
       ];
     }
   }, [selectedGadget, showGadgetOfOperators]);
@@ -92,10 +90,7 @@ export default function SecondaryGadgetPicker({
         <Trigger>
           {selected ? (
             <>
-              <GadgetIcon
-                id={selected}
-                className={slotProps?.icon?.className}
-              />
+              <GadgetIcon id={selected} className={slotProps?.icon?.className} />
               {!onlyShowIcon && selectedGadget?.name}
             </>
           ) : (
@@ -112,11 +107,7 @@ export default function SecondaryGadgetPicker({
           )}
         </Trigger>
       </PopoverTrigger>
-      <PopoverContent
-        className="p-0 z-100"
-        side="right"
-        sideOffset={popoverOffset}
-      >
+      <PopoverContent className="p-0 z-100" side="right" sideOffset={popoverOffset}>
         <Command key={selected}>
           <CommandInput placeholder="Search for gadgets" ref={inputRef} />
           <CommandList>
@@ -146,15 +137,11 @@ export default function SecondaryGadgetPicker({
                   <GadgetIcon id={gadget.id} />
                   {gadget.name}
                   <CommandShortcut>
-                    {selected === gadget.id && (
-                      <Check className="text-muted-foreground" />
-                    )}
+                    {selected === gadget.id && <Check className="text-muted-foreground" />}
                   </CommandShortcut>
                 </CommandItem>
               ))}
-              {otherGadgets.length > 0 && prioritizedGadgets.length > 0 && (
-                <CommandSeparator />
-              )}
+              {otherGadgets.length > 0 && prioritizedGadgets.length > 0 && <CommandSeparator />}
               {otherGadgets.map((gadget) => (
                 <CommandItem
                   key={gadget.name}
@@ -170,9 +157,7 @@ export default function SecondaryGadgetPicker({
                   <GadgetIcon id={gadget.id} />
                   {gadget.name}
                   <CommandShortcut>
-                    {selected === gadget.id && (
-                      <Check className="text-muted-foreground" />
-                    )}
+                    {selected === gadget.id && <Check className="text-muted-foreground" />}
                   </CommandShortcut>
                 </CommandItem>
               ))}

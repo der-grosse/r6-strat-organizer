@@ -62,29 +62,14 @@ export default function MapBackground(props: MapBackgroundProps) {
               <g transform={`translate(${x}, ${y})`}>
                 <foreignObject width={width} height={height}>
                   <floor.clickables
-                    onClick={(
-                      type,
-                      rel_x,
-                      rel_y,
-                      rel_width,
-                      rel_height,
-                      rotation
-                    ) => {
-                      const { width: abs_width, height: abs_height } =
-                        clampAssetSize({
-                          width:
-                            rel_width * width +
-                            (type === "barricade" ? 10 : -5), // add a little bit of spacing that the edge is over the window edge
-                          height:
-                            rel_height * height +
-                            (type === "barricade" ? 10 : -5), // add a little bit of spacing that the edge is over the window edge
-                        });
+                    onClick={(type, rel_x, rel_y, rel_width, rel_height, rotation) => {
+                      const { width: abs_width, height: abs_height } = clampAssetSize({
+                        width: rel_width * width + (type === "barricade" ? 10 : -5), // add a little bit of spacing that the edge is over the window edge
+                        height: rel_height * height + (type === "barricade" ? 10 : -5), // add a little bit of spacing that the edge is over the window edge
+                      });
                       const abs_x = rel_x * width + x - abs_width / 2;
                       const abs_y = rel_y * width + y - abs_height / 2;
-                      const baseAsset = ((): Pick<
-                        LayoutAsset,
-                        "type" | "variant" | "placedOn"
-                      > => {
+                      const baseAsset = ((): Pick<LayoutAsset, "type" | "variant" | "placedOn"> => {
                         switch (type) {
                           case "barricade":
                             return {
@@ -112,13 +97,11 @@ export default function MapBackground(props: MapBackgroundProps) {
                       // check if an asset at this position alreaady exists -> prevent duplicate assets
                       const existingAsset = assets?.find((asset) => {
                         if (asset.type !== baseAsset.type) return false;
-                        const assetCenterX =
-                          asset.position.x + (asset.size?.width || 0) / 2;
-                        const assetCenterY =
-                          asset.position.y + (asset.size?.height || 0) / 2;
+                        const assetCenterX = asset.position.x + (asset.size?.width || 0) / 2;
+                        const assetCenterY = asset.position.y + (asset.size?.height || 0) / 2;
                         const distance = Math.sqrt(
                           Math.pow(assetCenterX - (abs_x + abs_width / 2), 2) +
-                            Math.pow(assetCenterY - (abs_y + abs_height / 2), 2)
+                            Math.pow(assetCenterY - (abs_y + abs_height / 2), 2),
                         );
                         return distance < 5; // small threshold to account for minor differences
                       });

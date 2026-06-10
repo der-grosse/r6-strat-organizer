@@ -33,8 +33,7 @@ export async function resetJWT(payload?: Omit<JWTPayload, "v">) {
     // Keep the currently active team selected if the user is still a member,
     // otherwise fall back to their first team.
     const activeTeamID =
-      current?.activeTeamID &&
-      user.teams.some((t) => t.teamID === current.activeTeamID)
+      current?.activeTeamID && user.teams.some((t) => t.teamID === current.activeTeamID)
         ? current.activeTeamID
         : user.teams[0]?.teamID;
     payload = {
@@ -170,11 +169,7 @@ export async function deleteTeam(teamID: string) {
 
 // Looks up which team an invite key belongs to (for the accept-invite page).
 export async function getInviteInfo(inviteKey: string) {
-  return fetchQuery(
-    api.team.getInviteInfo,
-    { inviteKey },
-    { token: process.env.SERVER_JWT! },
-  );
+  return fetchQuery(api.team.getInviteInfo, { inviteKey }, { token: process.env.SERVER_JWT! });
 }
 
 // Adds the currently logged-in user to the team an invite key points to and
@@ -280,11 +275,7 @@ export async function requestResetPassword(email: string) {
   return true;
 }
 
-export async function resetPassword(
-  email: string,
-  token: string,
-  newPassword: string,
-) {
+export async function resetPassword(email: string, token: string, newPassword: string) {
   const user = await fetchQuery(
     api.auth.getUserFromName,
     { name: email },

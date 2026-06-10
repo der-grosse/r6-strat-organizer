@@ -1,9 +1,5 @@
 import DndList from "@/components/general/DndList";
-import {
-  SidebarMenuAction,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
+import { SidebarMenuAction, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Strat } from "@/lib/types/strat.types";
@@ -50,13 +46,8 @@ export default function SidebarStrats(props: SidebarStratsProps) {
       >
         {(strat, rootProps, handle) => (
           <SidebarMenuItem {...rootProps} className="-ml-1">
-            <SidebarMenuButton
-              className="inline h-auto"
-              onClick={() => props.onSelect(strat)}
-            >
-              <span className="inline-block align-text-bottom -ml-2">
-                {handle}
-              </span>
+            <SidebarMenuButton className="inline h-auto" onClick={() => props.onSelect(strat)}>
+              <span className="inline-block align-text-bottom -ml-2">{handle}</span>
               {!props.showSite ? (
                 strat.name
               ) : (
@@ -65,9 +56,7 @@ export default function SidebarStrats(props: SidebarStratsProps) {
                   {strat.name && (
                     <>
                       <span className="mx-1">|</span>
-                      <span className="text-muted-foreground">
-                        {strat.name}
-                      </span>
+                      <span className="text-muted-foreground">{strat.name}</span>
                     </>
                   )}
                 </>

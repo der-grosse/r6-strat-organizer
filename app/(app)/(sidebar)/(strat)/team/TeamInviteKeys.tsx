@@ -1,12 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -38,9 +32,7 @@ export default function TeamInviteKeys(props: { teamID: Id<"teams"> }) {
       navigator.clipboard.writeText(getFullInviteURL(key.inviteKey));
       toast.success("Invite key created successfully");
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to create invite key"
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to create invite key");
     }
   };
 
@@ -49,9 +41,7 @@ export default function TeamInviteKeys(props: { teamID: Id<"teams"> }) {
       await deleteInviteKey({ inviteKey: id });
       toast.success("Invite key deleted successfully");
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to delete invite key"
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to delete invite key");
     }
   };
 
@@ -68,9 +58,7 @@ export default function TeamInviteKeys(props: { teamID: Id<"teams"> }) {
     <Card>
       <CardHeader>
         <CardTitle>Invite Keys</CardTitle>
-        <CardDescription>
-          Create and manage invite keys for your team
-        </CardDescription>
+        <CardDescription>Create and manage invite keys for your team</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -87,10 +75,7 @@ export default function TeamInviteKeys(props: { teamID: Id<"teams"> }) {
               {inviteKeys
                 .toSorted((a, b) => {
                   if (a.usedAt && b.usedAt) {
-                    return (
-                      new Date(a.usedAt).getTime() -
-                      new Date(b.usedAt).getTime()
-                    );
+                    return new Date(a.usedAt).getTime() - new Date(b.usedAt).getTime();
                   }
                   if (a.usedAt) {
                     return 1;
@@ -109,19 +94,13 @@ export default function TeamInviteKeys(props: { teamID: Id<"teams"> }) {
                         className="-my-2 align-sub"
                         onClick={() => {
                           if (visibleKeys.includes(key.inviteKey)) {
-                            setVisibleKeys(
-                              visibleKeys.filter((k) => k !== key.inviteKey)
-                            );
+                            setVisibleKeys(visibleKeys.filter((k) => k !== key.inviteKey));
                           } else {
                             setVisibleKeys([...visibleKeys, key.inviteKey]);
                           }
                         }}
                       >
-                        {visibleKeys.includes(key.inviteKey) ? (
-                          <EyeOff />
-                        ) : (
-                          <Eye />
-                        )}
+                        {visibleKeys.includes(key.inviteKey) ? <EyeOff /> : <Eye />}
                       </Button>
                       {visibleKeys.includes(key.inviteKey)
                         ? key.inviteKey
@@ -146,9 +125,7 @@ export default function TeamInviteKeys(props: { teamID: Id<"teams"> }) {
                               variant="ghost"
                               size="icon"
                               onClick={() => {
-                                copyToClipboard(
-                                  getFullInviteURL(key.inviteKey)
-                                );
+                                copyToClipboard(getFullInviteURL(key.inviteKey));
                               }}
                             >
                               <Copy className="h-4 w-4" />

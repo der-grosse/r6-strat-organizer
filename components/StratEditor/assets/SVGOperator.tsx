@@ -27,11 +27,7 @@ export interface SVGOperatorProps {
  * marker is drawn at 130% of the box (centered, overflowing it) to match the
  * previous HTML version.
  */
-export default function SVGOperator({
-  asset,
-  stratPositions,
-  team,
-}: SVGOperatorProps) {
+export default function SVGOperator({ asset, stratPositions, team }: SVGOperatorProps) {
   const color = getAssetColor(asset, stratPositions, team);
   const { width: W, height: H } = asset.size;
 
@@ -49,8 +45,7 @@ export default function SVGOperator({
   const radius = plateW * 0.05;
 
   const op = OPERATORS.find((o) => o.name === asset.operator);
-  const img =
-    asset.iconType === "bw" && op && "iconBW" in op ? op.iconBW : op?.icon;
+  const img = asset.iconType === "bw" && op && "iconBW" in op ? op.iconBW : op?.icon;
 
   return (
     <g>

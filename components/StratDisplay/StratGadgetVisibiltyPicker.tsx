@@ -22,14 +22,10 @@ const ICONS = [
 ] as const;
 
 export interface StratGadgetVisibiltyPickerProps {
-  onChange?: (
-    viewModifier: "none" | "hideForeign" | "grayscaleForeign",
-  ) => void;
+  onChange?: (viewModifier: "none" | "hideForeign" | "grayscaleForeign") => void;
 }
 
-export default function StratGadgetVisibiltyPicker(
-  props: StratGadgetVisibiltyPickerProps,
-) {
+export default function StratGadgetVisibiltyPicker(props: StratGadgetVisibiltyPickerProps) {
   const settings = useQuery(api.settings.get);
   const updateSettings = useMutation(api.settings.update);
   const initialViewModifierChangeSent = useRef(false);
@@ -37,10 +33,7 @@ export default function StratGadgetVisibiltyPicker(
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (
-      settings?.stratGadgetViewModifier &&
-      !initialViewModifierChangeSent.current
-    ) {
+    if (settings?.stratGadgetViewModifier && !initialViewModifierChangeSent.current) {
       props.onChange?.(settings.stratGadgetViewModifier);
       initialViewModifierChangeSent.current = true;
     }
@@ -50,10 +43,7 @@ export default function StratGadgetVisibiltyPicker(
   useEffect(() => {
     if (!isOpen) return;
     const handlePointerDown = (e: PointerEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setIsOpen(false);
       }
     };
@@ -72,8 +62,7 @@ export default function StratGadgetVisibiltyPicker(
 
   const viewModifier = settings?.stratGadgetViewModifier ?? "none";
 
-  const ActiveIcon =
-    ICONS.find((icon) => icon.name === viewModifier)?.icon ?? Eye;
+  const ActiveIcon = ICONS.find((icon) => icon.name === viewModifier)?.icon ?? Eye;
 
   return (
     <div ref={containerRef} className="flex justify-start items-start relative">
@@ -104,9 +93,7 @@ export default function StratGadgetVisibiltyPicker(
                 onClick={() => onChange(icon.name)}
               >
                 <IconComponent
-                  className={
-                    viewModifier === icon.name ? "" : "text-muted-foreground"
-                  }
+                  className={viewModifier === icon.name ? "" : "text-muted-foreground"}
                 />
               </Button>
             );

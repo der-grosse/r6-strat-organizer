@@ -21,31 +21,11 @@ export default function Consulate2F(props: MapFloorClickableProps) {
         className="*:cursor-pointer"
       >
         {/* windows start */}
-        <path
-          d="M334.44,1371.84 L334.44,1412.51"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M436.66,379.94 L395.99,379.94"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M334.44,1371.84 L334.44,1412.51"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M436.66,379.94 L395.99,379.94"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1096.66,752.94 L1055.99,752.94"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M334.44,1371.84 L334.44,1412.51" data-type="barricade" onClick={onClickHandler} />
+        <path d="M436.66,379.94 L395.99,379.94" data-type="barricade" onClick={onClickHandler} />
+        <path d="M334.44,1371.84 L334.44,1412.51" data-type="barricade" onClick={onClickHandler} />
+        <path d="M436.66,379.94 L395.99,379.94" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1096.66,752.94 L1055.99,752.94" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M2240.34,1867.06 L2281.01,1867.06"
           data-type="barricade"
@@ -66,43 +46,19 @@ export default function Consulate2F(props: MapFloorClickableProps) {
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M2187.34,753.06 L2228.01,753.06"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M2187.34,753.06 L2228.01,753.06" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M1154.34,1866.06 L1195.01,1866.06"
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M1307.44,671.84 L1307.44,712.51"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M1307.44,671.84 L1307.44,712.51" data-type="barricade" onClick={onClickHandler} />
         {/* windows end */}
         {/* doors start */}
-        <path
-          d="M1005.25,978.69 L1047.46,978.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M365.25,980.69 L407.46,980.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M592.25,1338.69 L634.46,1338.69"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M978.31,1750.25 L978.31,1792.46"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M1005.25,978.69 L1047.46,978.69" data-type="barricade" onClick={onClickHandler} />
+        <path d="M365.25,980.69 L407.46,980.69" data-type="barricade" onClick={onClickHandler} />
+        <path d="M592.25,1338.69 L634.46,1338.69" data-type="barricade" onClick={onClickHandler} />
+        <path d="M978.31,1750.25 L978.31,1792.46" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M1538.69,1298.22 L1637.68,1298.41"
           data-type="barricade"
@@ -128,11 +84,7 @@ export default function Consulate2F(props: MapFloorClickableProps) {
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M1867.28,852.19 L1867.09,951.18"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M1867.28,852.19 L1867.09,951.18" data-type="barricade" onClick={onClickHandler} />
         <path
           d="M1380.25,1103.69 L1422.46,1103.69"
           data-type="barricade"
@@ -148,21 +100,9 @@ export default function Consulate2F(props: MapFloorClickableProps) {
           data-type="barricade"
           onClick={onClickHandler}
         />
-        <path
-          d="M2598.31,871.25 L2598.31,913.46"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1538.69,755.22 L1637.68,755.41"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
-        <path
-          d="M1310.31,852.25 L1310.31,894.46"
-          data-type="barricade"
-          onClick={onClickHandler}
-        />
+        <path d="M2598.31,871.25 L2598.31,913.46" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1538.69,755.22 L1637.68,755.41" data-type="barricade" onClick={onClickHandler} />
+        <path d="M1310.31,852.25 L1310.31,894.46" data-type="barricade" onClick={onClickHandler} />
         {/* doors end */}
         {/* reinforcements start */}
         <path

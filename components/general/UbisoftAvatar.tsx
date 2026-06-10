@@ -18,11 +18,7 @@ export default function UbisoftAvatar(props: UbisoftAvatarProps) {
   }, [props.ubisoftID]);
 
   if (!valid) {
-    return (
-      <Ubisoft
-        className={cn("h-8 w-8 text-muted-foreground", props.className)}
-      />
-    );
+    return <Ubisoft className={cn("h-8 w-8 text-muted-foreground", props.className)} />;
   }
 
   return (

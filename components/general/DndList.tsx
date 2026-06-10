@@ -49,9 +49,7 @@ export interface DndListProps<Item extends { id: string | number }> {
   };
 }
 
-export default function DndList<Item extends { id: string | number }>(
-  props: DndListProps<Item>,
-) {
+export default function DndList<Item extends { id: string | number }>(props: DndListProps<Item>) {
   const [optimisticItems, setOptimisticItems] = useState(props.items);
   useEffect(() => {
     setOptimisticItems(props.items);
@@ -68,12 +66,8 @@ export default function DndList<Item extends { id: string | number }>(
     const { active, over } = event;
 
     if (active.id !== over?.id) {
-      const oldIndex = optimisticItems.findIndex(
-        (item) => item.id === active.id,
-      );
-      const newIndex = optimisticItems.findIndex(
-        (item) => item.id === over?.id,
-      );
+      const oldIndex = optimisticItems.findIndex((item) => item.id === active.id);
+      const newIndex = optimisticItems.findIndex((item) => item.id === over?.id);
 
       // Optimistically update the UI
       const movedItem = optimisticItems[oldIndex];
@@ -91,11 +85,7 @@ export default function DndList<Item extends { id: string | number }>(
   };
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext
         items={optimisticItems.map((item) => item.id)}
         strategy={verticalListSortingStrategy}
@@ -126,8 +116,9 @@ function DndListItem<Item extends { id: string | number }>(props: {
     };
   };
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: props.item.id });
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+    id: props.item.id,
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -143,10 +134,7 @@ function DndListItem<Item extends { id: string | number }>(props: {
     <div
       {...attributes}
       {...listeners}
-      className={cn(
-        "cursor-grab hover:cursor-grabbing",
-        props.slots?.handle?.className,
-      )}
+      className={cn("cursor-grab hover:cursor-grabbing", props.slots?.handle?.className)}
     >
       <GripVertical className="h-4 w-4 text-gray-400" />
     </div>,

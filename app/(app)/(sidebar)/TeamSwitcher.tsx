@@ -58,18 +58,13 @@ export function TeamSwitcher() {
             disabled={busy}
             className="flex-1 justify-between gap-1 px-2 font-semibold"
           >
-            <span className="truncate">
-              {activeTeam?.name ?? "Select a team"}
-            </span>
+            <span className="truncate">{activeTeam?.name ?? "Select a team"}</span>
             <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-56">
           {teams.map((team) => (
-            <DropdownMenuItem
-              key={team.teamID}
-              onSelect={() => handleSwitch(team.teamID)}
-            >
+            <DropdownMenuItem key={team.teamID} onSelect={() => handleSwitch(team.teamID)}>
               <span className="truncate">{team.name}</span>
               {team.isActive && <Check className="ml-auto h-4 w-4" />}
             </DropdownMenuItem>
@@ -93,10 +88,7 @@ export function TeamSwitcher() {
   );
 }
 
-function CreateTeamDialog(props: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}) {
+function CreateTeamDialog(props: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -123,8 +115,7 @@ function CreateTeamDialog(props: {
           <DialogHeader>
             <DialogTitle>Create a new team</DialogTitle>
             <DialogDescription>
-              You&apos;ll be the admin of this team and it will become your
-              active team.
+              You&apos;ll be the admin of this team and it will become your active team.
             </DialogDescription>
           </DialogHeader>
           <div className="my-4 space-y-2">

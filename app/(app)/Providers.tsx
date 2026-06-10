@@ -25,10 +25,7 @@ export default function Providers(props: Readonly<ProvidersProps>) {
     <ConvexClientProvider>
       <Authenticated>
         <UserProvider jwt={props.jwt}>
-          <FilterProvider
-            defaultFilter={props.cookieFilter}
-            defaultLeading={props.defaultLeading}
-          >
+          <FilterProvider defaultFilter={props.cookieFilter} defaultLeading={props.defaultLeading}>
             <SlotProvider>
               <ResizeProvider>
                 <StratExportProvider>{props.children}</StratExportProvider>

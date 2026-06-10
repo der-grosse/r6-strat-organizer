@@ -20,8 +20,7 @@ export const get = query({
     if (payload.activeTeamID) {
       return {
         ...fullUser,
-        team:
-          fullUser.teams.find((t) => t.teamID === payload.activeTeamID) ?? null,
+        team: fullUser.teams.find((t) => t.teamID === payload.activeTeamID) ?? null,
         ...(isNextServer ? { hashedPassword: userDoc.password } : {}),
       };
     } else {

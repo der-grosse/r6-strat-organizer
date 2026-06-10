@@ -34,8 +34,9 @@ export interface OperatorPickerProps<
 
 export default function OperatorPicker<
   Multiple extends boolean = false,
-  Value extends Multiple extends true ? string[] : string | null =
-    Multiple extends true ? string[] : string | null,
+  Value extends Multiple extends true ? string[] : string | null = Multiple extends true
+    ? string[]
+    : string | null,
 >({
   side,
   selected,
@@ -62,11 +63,7 @@ export default function OperatorPicker<
 
   const operators = (() => {
     const totalOps = [];
-    const selectedArray = multiple
-      ? (selected as string[])
-      : selected
-        ? [selected as string]
-        : [];
+    const selectedArray = multiple ? (selected as string[]) : selected ? [selected as string] : [];
     const selectedOps = selectedArray?.map(
       (op) => [...DEFENDERS, ...ATTACKERS].find((o) => o.name === op)!,
     );
@@ -74,16 +71,14 @@ export default function OperatorPicker<
     if (!side || side === "defender" || side === "both") {
       totalOps.push(
         ...DEFENDERS.filter(
-          (def) =>
-            !hideOps?.includes(def.name) && !selectedArray?.includes(def.name),
+          (def) => !hideOps?.includes(def.name) && !selectedArray?.includes(def.name),
         ),
       );
     }
     if (!side || side === "attacker" || side === "both") {
       totalOps.push(
         ...ATTACKERS.filter(
-          (atk) =>
-            !hideOps?.includes(atk.name) && !selectedArray?.includes(atk.name),
+          (atk) => !hideOps?.includes(atk.name) && !selectedArray?.includes(atk.name),
         ),
       );
     }
@@ -98,24 +93,19 @@ export default function OperatorPicker<
             selected.length ? (
               (() => {
                 const selectedDefender = filterNull(
-                  selected.map((name) =>
-                    DEFENDERS.find((op) => op.name === name),
-                  ),
+                  selected.map((name) => DEFENDERS.find((op) => op.name === name)),
                 );
                 const selectedAttacker = filterNull(
-                  selected.map((name) =>
-                    ATTACKERS.find((op) => op.name === name),
-                  ),
+                  selected.map((name) => ATTACKERS.find((op) => op.name === name)),
                 );
                 return (
                   <>
                     {selectedDefender.map((op) => (
                       <OperatorIcon key={op.name} op={op} className="-mx-1" />
                     ))}
-                    {selectedDefender.length > 0 &&
-                      selectedAttacker.length > 0 && (
-                        <Separator orientation="vertical" />
-                      )}
+                    {selectedDefender.length > 0 && selectedAttacker.length > 0 && (
+                      <Separator orientation="vertical" />
+                    )}
                     {selectedAttacker.map((op) => (
                       <OperatorIcon key={op.name} op={op} className="-mx-1" />
                     ))}
@@ -126,22 +116,14 @@ export default function OperatorPicker<
               "Select banned OPs"
             )
           ) : selected ? (
-            <OperatorIcon
-              op={
-                [...DEFENDERS, ...ATTACKERS].find((o) => o.name === selected)!
-              }
-            />
+            <OperatorIcon op={[...DEFENDERS, ...ATTACKERS].find((o) => o.name === selected)!} />
           ) : (
             "Select banned OPs"
           )}
           <ChevronRight className="ml-auto" />
         </Trigger>
       </PopoverTrigger>
-      <PopoverContent
-        className="p-0 z-100"
-        side="right"
-        sideOffset={popoverOffset}
-      >
+      <PopoverContent className="p-0 z-100" side="right" sideOffset={popoverOffset}>
         <Command key={Array.isArray(selected) ? selected.join(",") : selected}>
           <CommandInput
             placeholder="Search for Operators..."
@@ -180,9 +162,7 @@ export default function OperatorPicker<
                       onChange(
                         (multiple
                           ? selected?.includes(op.name)
-                            ? (selected as string[]).filter(
-                                (o) => o !== op.name,
-                              )
+                            ? (selected as string[]).filter((o) => o !== op.name)
                             : [...(selected as string[]), op.name]
                           : op.name) as Value,
                       );
@@ -194,9 +174,7 @@ export default function OperatorPicker<
                     <CommandShortcut>
                       {(Array.isArray(selected)
                         ? selected.includes(op.name)
-                        : selected === op.name) && (
-                        <Check className="text-muted-foreground" />
-                      )}
+                        : selected === op.name) && <Check className="text-muted-foreground" />}
                     </CommandShortcut>
                   </CommandItem>
                 ))}

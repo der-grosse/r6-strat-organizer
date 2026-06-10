@@ -6,8 +6,7 @@ import { getStrat } from "./strats";
 export const get = query({
   args: {},
   async handler(ctx) {
-    const { activeTeamID } =
-      (await requireUser(ctx, { allowNull: true })) ?? {};
+    const { activeTeamID } = (await requireUser(ctx, { allowNull: true })) ?? {};
     if (!activeTeamID) return null;
 
     const activeStratDoc = await ctx.db

@@ -1,13 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Signup() {
   return (
@@ -32,9 +26,7 @@ export default function Signup() {
           <Card>
             <CardHeader>
               <CardTitle>Create a New Team</CardTitle>
-              <CardDescription>
-                Create a new team and become its administrator
-              </CardDescription>
+              <CardDescription>Create a new team and become its administrator</CardDescription>
             </CardHeader>
             <CardContent>
               <Button asChild className="w-full">
@@ -46,9 +38,7 @@ export default function Signup() {
           <Card>
             <CardHeader>
               <CardTitle>Join Existing Team</CardTitle>
-              <CardDescription>
-                Join an existing team using an invite key
-              </CardDescription>
+              <CardDescription>Join an existing team using an invite key</CardDescription>
             </CardHeader>
             <CardContent>
               <Button asChild variant="outline" className="w-full">

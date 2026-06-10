@@ -62,8 +62,7 @@ export function DeleteStratDialog({
         <DialogHeader>
           <DialogTitle>Delete Strat</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete the strat "{stratName}"? This action
-            cannot be undone.
+            Are you sure you want to delete the strat "{stratName}"? This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
