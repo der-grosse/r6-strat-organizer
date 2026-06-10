@@ -266,10 +266,10 @@ export default function StratDisplay(props: StratDisplayProps) {
           {Details}
         </div>
       ) : props.strat === null ? (
-        <>
+        <div className="flex flex-col items-center gap-4">
           <Ban className="text-muted-foreground" height={64} width={64} />
           <p className="text-muted-foreground">No strat selected</p>
-        </>
+        </div>
       ) : null}
     </div>
   );

@@ -2,9 +2,13 @@ import VariableWidthIcon from "./variableWidthIcon";
 
 const CastleBarricade = VariableWidthIcon({
   parts: {
-    end: {
+    left: {
       src: "/gadgets/castle_end_left.png",
       alt: "Castle Barricade End Left",
+    },
+    right: {
+      src: "/gadgets/castle_end_right.png",
+      alt: "Castle Barricade End Right",
     },
     between: {
       src: "/gadgets/castle_beam.png",

@@ -9,7 +9,8 @@ export default function VariableWidthIcon({
   parts,
 }: {
   parts: {
-    end: VariableWidthIconPart;
+    left: VariableWidthIconPart;
+    right: VariableWidthIconPart;
     middle: VariableWidthIconPart;
     between: VariableWidthIconPart;
   };
@@ -23,12 +24,12 @@ export default function VariableWidthIcon({
         )}
       >
         <img
-          src={parts.end.src}
-          alt={parts.end.alt}
+          src={parts.left.src}
+          alt={parts.left.alt}
           className="h-full aspect-auto object-contain max-h-full"
           draggable={false}
         />
-        <div className="flex h-full">
+        <div className="flex h-full -mx-0.5">
           <img
             src={parts.between.src}
             alt={parts.between.alt}
@@ -42,7 +43,7 @@ export default function VariableWidthIcon({
           className="h-full aspect-auto object-contain"
           draggable={false}
         />
-        <div className="flex h-full">
+        <div className="flex h-full -mx-0.5">
           <img
             src={parts.between.src}
             alt={parts.between.alt}
@@ -51,9 +52,9 @@ export default function VariableWidthIcon({
           />
         </div>
         <img
-          src={parts.end.src}
-          alt={parts.end.alt}
-          className="h-full aspect-auto object-contain -scale-x-100"
+          src={parts.right.src}
+          alt={parts.right.alt}
+          className="h-full aspect-auto object-contain"
           draggable={false}
         />
       </div>

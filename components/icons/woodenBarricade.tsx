@@ -2,9 +2,13 @@ import VariableWidthIcon from "./variableWidthIcon";
 
 const WoodenBarricade = VariableWidthIcon({
   parts: {
-    end: {
+    left: {
       src: "/gadgets/barricade_end_left.png",
       alt: "Wooden Barricade End Left",
+    },
+    right: {
+      src: "/gadgets/barricade_end_right.png",
+      alt: "Wooden Barricade End Right",
     },
     between: {
       src: "/gadgets/barricade_middle.png",
