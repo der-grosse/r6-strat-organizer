@@ -29,7 +29,7 @@ export default function VariableWidthIcon({
           className="h-full aspect-auto object-contain max-h-full"
           draggable={false}
         />
-        <div className="flex h-full -mx-0.5">
+        <div className="flex h-full -mx-0.125">
           <img
             src={parts.between.src}
             alt={parts.between.alt}
@@ -43,7 +43,7 @@ export default function VariableWidthIcon({
           className="h-full aspect-auto object-contain"
           draggable={false}
         />
-        <div className="flex h-full -mx-0.5">
+        <div className="flex h-full -mx-0.125">
           <img
             src={parts.between.src}
             alt={parts.between.alt}
