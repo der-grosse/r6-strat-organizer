@@ -330,6 +330,40 @@ export function StratEditor({ strat: propStrat, team }: Readonly<StratEditorProp
               asset: placedAsset,
             });
           }}
+          onAssetsAdd={(assetsToAdd) => {
+            if (assetsToAdd.length === 0) return;
+            // optimistically render the copies with temporary ids, then swap in
+            // the real ids returned by the server
+            const tempAssets = assetsToAdd.map((asset, i) => ({
+              ...asset,
+              _id: `UNSET-${Date.now()}-${i}` as Id<"placedAssets">,
+            })) as PlacedAsset[];
+            setAssets((assets) => [...assets, ...tempAssets]);
+            setSelected(tempAssets.map((a) => a._id));
+
+            Promise.all(assetsToAdd.map((asset) => addAsset(asset as Omit<PlacedAsset, "_id">)))
+              .then((results) => {
+                const created: PlacedAsset[] = [];
+                results.forEach((result, i) => {
+                  if (result?.success && result.placedAssetID) {
+                    created.push({ ...tempAssets[i], _id: result.placedAssetID });
+                  }
+                });
+                // replace the temporary selection with the real asset ids
+                setSelected((s) => [
+                  ...s.filter((id) => !tempAssets.some((t) => t._id === id)),
+                  ...created.map((c) => c._id),
+                ]);
+                for (const asset of created) {
+                  pushEvent({ type: "asset-added", asset });
+                }
+              })
+              .catch((err) =>
+                toast.error(
+                  `Your changes could not be saved! Failed to add assets: ${err.message}`,
+                ),
+              );
+          }}
           onAssetChange={(assets) => {
             setAssets((existing) => {
               pushEvent({

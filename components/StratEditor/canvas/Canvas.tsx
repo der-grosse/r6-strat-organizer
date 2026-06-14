@@ -14,6 +14,7 @@ import { useViewport } from "./useViewport";
 import { useAssetInteraction } from "./useAssetInteraction";
 import { useMarqueeSelection } from "./useMarqueeSelection";
 import { clamp } from "./Canvas.functions";
+import { deepCopy } from "../../Objects";
 import { DRAG_ASSET_DATA_TYPE } from "../sidebar/DraggableAssetButton";
 
 export interface CanvasAsset {
@@ -28,6 +29,8 @@ interface CanvasProps<A extends CanvasAsset> {
   map: R6Map | null;
   assets: A[];
   onAssetAdd: (asset: Omit<Asset & Partial<PlacedAsset>, "_id">) => void;
+  /** Add several assets at once and select them all (used for copy/paste). */
+  onAssetsAdd?: (assets: Omit<A, "_id">[]) => void;
   onAssetChange: (assets: A[]) => void;
   onAssetRemove: (assets: A["_id"][]) => void;
   renderAsset: (
@@ -47,11 +50,15 @@ interface CanvasProps<A extends CanvasAsset> {
 // should be a multiple of 4 and 3 to have nicer numbers for aspect ratio
 export const CANVAS_BASE_SIZE = 2400;
 export const ASSET_BASE_SIZE = 40;
+// offset (in svg units) applied to pasted/duplicated assets so they don't land
+// exactly on top of the originals; grows with each consecutive paste
+const PASTE_OFFSET = 20;
 
 export default function StratEditorCanvas<A extends CanvasAsset>({
   map,
   assets: propAssets,
   onAssetAdd,
+  onAssetsAdd,
   onAssetChange,
   onAssetRemove,
   renderAsset,
@@ -144,6 +151,30 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
     };
   }, [handleWheel]);
 
+  // in-memory clipboard for copy/paste (snapshot of the assets at copy time +
+  // how many times it has been pasted, so each paste is offset a bit further)
+  const clipboard = useRef<{ assets: A[]; pasteCount: number } | null>(null);
+
+  const getSelectedAssets = () =>
+    userSelectedAssets.map((id) => assets.find((a) => a._id === id)).filter(Boolean) as A[];
+
+  // build offset, id-less copies of the given assets ready to be added
+  const buildCopies = (source: A[], offsetSteps: number): Omit<A, "_id">[] => {
+    const offset = PASTE_OFFSET * offsetSteps;
+    return source.map((asset) => {
+      const { _id: _omit, ...rest } = asset;
+      return {
+        ...rest,
+        position: {
+          x: clamp(asset.position.x + offset, 0, viewBox.width - asset.size.width),
+          y: clamp(asset.position.y + offset, 0, viewBox.height - asset.size.height),
+        },
+      } as Omit<A, "_id">;
+    });
+  };
+
+  const canCopyPaste = !readonly && !!onAssetsAdd;
+
   // keyboard shortcuts
   useKeys([
     // remove selected assets
@@ -176,6 +207,41 @@ export default function StratEditorCanvas<A extends CanvasAsset>({
         e.preventDefault();
       },
       active: !readonly,
+    },
+    // copy selected assets to the clipboard
+    {
+      shortcut: { key: "c", ctrlKey: true },
+      action() {
+        if (document.activeElement !== svgRef.current) return;
+        const selected = getSelectedAssets();
+        if (selected.length === 0) return;
+        clipboard.current = { assets: deepCopy(selected), pasteCount: 0 };
+      },
+      active: canCopyPaste,
+    },
+    // paste clipboard assets (offset + selected)
+    {
+      shortcut: { key: "v", ctrlKey: true },
+      action(e) {
+        if (document.activeElement !== svgRef.current) return;
+        if (!clipboard.current || clipboard.current.assets.length === 0) return;
+        e.preventDefault();
+        clipboard.current.pasteCount += 1;
+        onAssetsAdd?.(buildCopies(clipboard.current.assets, clipboard.current.pasteCount));
+      },
+      active: canCopyPaste,
+    },
+    // duplicate the current selection in place (offset + selected)
+    {
+      shortcut: { key: "d", ctrlKey: true },
+      action(e) {
+        if (document.activeElement !== svgRef.current) return;
+        const selected = getSelectedAssets();
+        if (selected.length === 0) return;
+        e.preventDefault();
+        onAssetsAdd?.(buildCopies(selected, 1));
+      },
+      active: canCopyPaste,
     },
   ]);
 
