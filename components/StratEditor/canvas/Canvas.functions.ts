@@ -7,6 +7,19 @@ export function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
+/** Convert a client (screen) coordinate into the SVG's user coordinate space. */
+export function clientToSvgPoint(
+  svg: SVGSVGElement,
+  clientX: number,
+  clientY: number,
+): { x: number; y: number } {
+  const pt = svg.createSVGPoint();
+  pt.x = clientX;
+  pt.y = clientY;
+  const { x, y } = pt.matrixTransform(svg.getScreenCTM()?.inverse() || new DOMMatrix());
+  return { x, y };
+}
+
 export function rotateVector(
   vector: { x: number; y: number },
   angle: number,

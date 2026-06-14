@@ -74,7 +74,11 @@ export default function SVGAsset({
     <g
       ref={assetRef}
       transform={`translate(${position.x}, ${position.y})`}
-      onMouseDown={(e) => onMouseDown(e, "none")}
+      onMouseDown={(e) => {
+        // keep canvas-level handlers (marquee selection) from firing on the asset
+        e.stopPropagation();
+        onMouseDown(e, "none");
+      }}
       onTouchStart={(e) => {
         e.stopPropagation();
         onTouchStart(e, "none");
