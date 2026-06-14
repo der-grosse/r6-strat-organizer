@@ -12,10 +12,18 @@ export interface RotationPathProps {
 
 export default function RotationPath(props: RotationPathProps) {
   const { x, y, width, height, innerColor = "#b97a56", color = "#cfe2f3" } = props;
-  const barBorderWidth = height * 0.06;
-  const barSpacing = height * 0.1;
-  const barHeight = (height - barBorderWidth * 4 - barSpacing * 2) / 3;
-  const borderRadius = height * 0.025;
+  const barBorderWidth = height * 0.055;
+  const colorBorderWidth = barBorderWidth * 1.5;
+  const borderRadius = height * 0.05;
+
+  // Inner area inside the colored outline, filled by the three bars.
+  const innerTop = y + colorBorderWidth;
+  const innerHeight = height - colorBorderWidth * 2;
+  // Subtract one bar border so the top/bottom strokes stay inside the inner area.
+  const barHeight = (innerHeight - barBorderWidth) / 3;
+  const barX = x + colorBorderWidth + barBorderWidth / 2;
+  const barWidth = width - colorBorderWidth * 2 - barBorderWidth;
+  const barTop = innerTop + barBorderWidth / 2;
 
   const bars = (() => {
     switch (props.variant) {
@@ -36,69 +44,32 @@ export default function RotationPath(props: RotationPathProps) {
 
   return (
     <g name="rotation" stroke="#000">
-      {/* white outline */}
+      {/* colored outline around the whole asset */}
       <rect
-        x={x + barBorderWidth / 2}
-        y={y + barBorderWidth / 2}
-        width={width - barBorderWidth}
-        height={height - barBorderWidth}
+        x={x + colorBorderWidth / 2}
+        y={y + colorBorderWidth / 2}
+        width={width - colorBorderWidth}
+        height={height - colorBorderWidth}
         fill="none"
-        strokeWidth={barBorderWidth}
-        rx={borderRadius}
-        ry={borderRadius}
+        strokeWidth={colorBorderWidth}
+        rx={borderRadius + colorBorderWidth / 2}
+        ry={borderRadius + colorBorderWidth / 2}
         stroke={color}
       />
-      {/* white fill between top and middle bar */}
-      <rect
-        x={x + barBorderWidth / 2}
-        y={y + barBorderWidth / 2 + barHeight}
-        width={width - barBorderWidth}
-        height={barSpacing + barBorderWidth * 1.5}
-        stroke="none"
-        fill={color}
-      />
-      {/* white fill between middle and bottom bar */}
-      <rect
-        x={x + barBorderWidth / 2}
-        y={y + barBorderWidth * 1 + barHeight * 2 + barSpacing}
-        width={width - barBorderWidth}
-        height={barSpacing + barBorderWidth * 2}
-        stroke="none"
-        fill={color}
-      />
-      {/* top bar */}
-      <rect
-        x={x + barBorderWidth}
-        y={y + barBorderWidth}
-        width={width - barBorderWidth * 2}
-        height={barHeight}
-        strokeWidth={barBorderWidth}
-        rx={borderRadius}
-        ry={borderRadius}
-        fill={bars[0] ? innerColor : "none"}
-      />
-      {/* middle bar */}
-      <rect
-        x={x + barBorderWidth}
-        y={y + barBorderWidth * 1.65 + barHeight + barSpacing}
-        width={width - barBorderWidth * 2}
-        height={barHeight}
-        strokeWidth={barBorderWidth}
-        rx={borderRadius}
-        ry={borderRadius}
-        fill={bars[1] ? innerColor : "none"}
-      />
-      {/* bottom bar */}
-      <rect
-        x={x + barBorderWidth}
-        y={y + (barBorderWidth * 5) / 2 + barHeight * 2 + barSpacing * 2}
-        width={width - barBorderWidth * 2}
-        height={barHeight}
-        strokeWidth={barBorderWidth}
-        rx={borderRadius}
-        ry={borderRadius}
-        fill={bars[2] ? innerColor : "none"}
-      />
+      {/* three rounded bars; adjacent strokes overlap exactly on shared edges */}
+      {bars.map((filled, i) => (
+        <rect
+          key={i}
+          x={barX}
+          y={barTop + i * barHeight}
+          width={barWidth}
+          height={barHeight}
+          strokeWidth={barBorderWidth}
+          rx={borderRadius}
+          ry={borderRadius}
+          fill={filled ? innerColor : "none"}
+        />
+      ))}
     </g>
   );
 }

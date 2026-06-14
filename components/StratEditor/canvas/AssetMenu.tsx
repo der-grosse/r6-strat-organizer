@@ -202,12 +202,44 @@ export default function AssetMenu({
             }
             onSelect={(id) => {
               updateAssets(
-                selectedAssets.map((asset) => ({
-                  ...asset,
-                  ...(asset.type === "layout" && {
+                selectedAssets.map((asset) => {
+                  if (asset.type !== "layout") return asset;
+                  // change size of asset when default aspect ratio of layout variant changes
+                  // reinforcements are wide (3/2) while explosions are square (1/1)
+                  // change the height accordingly to keep the same width, so the asset doesn't look stretched or squished
+                  // recenter the asset position to keep it centered on the same point
+                  const oldVariant = asset.variant;
+                  const oldAspectRatio = oldVariant ? LAYOUT_VARIANT_ASPECT_RATIO[oldVariant] : 1;
+                  const newAspectRatio = LAYOUT_VARIANT_ASPECT_RATIO[id];
+                  const aspectRatioDiff = newAspectRatio / oldAspectRatio;
+                  const newHeight = asset.size.height / aspectRatioDiff;
+
+                  const heightChange = asset.size.height - newHeight;
+
+                  const changes =
+                    aspectRatioDiff !== 1
+                      ? {
+                          size: {
+                            ...asset.size,
+                            height: newHeight,
+                          },
+                          position: {
+                            ...asset.position,
+                            y: asset.position.y + heightChange / 2,
+                          },
+                          rotation:
+                            oldVariant === "reinforcement" && id !== "reinforcement"
+                              ? 0
+                              : asset.rotation, // reset rotation for non-reinforcement variants, since they look weird when rotated and don't have a specific rotation variant
+                        }
+                      : undefined;
+
+                  return {
+                    ...asset,
                     variant: id,
-                  }),
-                })),
+                    ...changes,
+                  };
+                }),
               );
             }}
           />,
