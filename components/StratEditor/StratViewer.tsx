@@ -117,6 +117,8 @@ function removeUnusedFloors(
     };
   });
 
+  const unattributedAssets: PlacedAsset[] = [];
+
   for (const asset of assets) {
     const floor = floors.find((f) => {
       const assetRight = asset.position.x + asset.size.width;
@@ -135,7 +137,8 @@ function removeUnusedFloors(
     if (floor) {
       floor.assets.push(deepCopy(asset));
     } else {
-      console.debug("Asset not on any floor, skipping", asset);
+      console.debug("Asset not on any floor", asset);
+      unattributedAssets.push(deepCopy(asset));
     }
   }
 
@@ -181,8 +184,15 @@ function removeUnusedFloors(
     }
   }
 
+  // Assets that couldn't be attributed to a floor are only shown when no floor
+  // is hidden, since otherwise their positions wouldn't be remapped correctly.
+  const allFloorsShown = usedFloors.length === map.floors.length;
+
   return {
-    assets: usedFloors.flatMap((f) => f.assets),
+    assets: [
+      ...usedFloors.flatMap((f) => f.assets),
+      ...(allFloorsShown ? unattributedAssets : []),
+    ],
     map: {
       ...map,
       floors: usedFloors.map((f) => {
