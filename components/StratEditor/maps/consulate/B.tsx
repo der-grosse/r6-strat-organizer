@@ -7,19 +7,21 @@ export default function ConsulateB(props: MapFloorClickableProps) {
     <svg
       width="799.68"
       height="599.76"
-      viewBox="0.00 0.00 3332.00 2499.00"
+      viewBox="0 0 3332 2499"
       xmlns="http://www.w3.org/2000/svg"
-      xmlnsXlink="http://www.w3.org/1999/xlink"
       className={cn("size-full", props.className)}
     >
       <g
         strokeLinecap="round"
         fill="none"
         stroke="transparent"
-        strokeWidth="20.00"
+        strokeWidth="20"
         strokeLinejoin="round"
         className="*:cursor-pointer"
       >
+        {/* windows start */}
+        {/* no windows */}
+        {/* windows end */}
         {/* doors start */}
         <path
           d="M3024.31,1342.25 L3024.31,1384.46"
@@ -73,6 +75,11 @@ export default function ConsulateB(props: MapFloorClickableProps) {
           onClick={onClickHandler}
         />
         <path d="M412.31,796.25 L412.31,838.46" data-type="barricade" onClick={onClickHandler} />
+        <path
+          d="M2448.81,1935.75 L2448.81,1977.96"
+          data-type="barricade"
+          onClick={onClickHandler}
+        />
         {/* doors end */}
         {/* reinforcements start */}
         <path
@@ -165,7 +172,20 @@ export default function ConsulateB(props: MapFloorClickableProps) {
           data-type="reinforcement"
           onClick={onClickHandler}
         />
+        <path
+          d="M2167.30,1128.70 L2078.77,1128.53"
+          data-type="reinforcement"
+          onClick={onClickHandler}
+        />
+        <path
+          d="M2267.30,1128.70 L2178.77,1128.53"
+          data-type="reinforcement"
+          onClick={onClickHandler}
+        />
         {/* reinforcements end */}
+        {/* hatches start */}
+        {/* no hatches */}
+        {/* hatches end */}
       </g>
     </svg>
   );

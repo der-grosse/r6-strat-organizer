@@ -7,16 +7,15 @@ export default function Consulate2F(props: MapFloorClickableProps) {
     <svg
       width="799.68"
       height="599.76"
-      viewBox="0.00 0.00 3332.00 2499.00"
+      viewBox="0 0 3332 2499"
       xmlns="http://www.w3.org/2000/svg"
-      xmlnsXlink="http://www.w3.org/1999/xlink"
       className={cn("size-full", props.className)}
     >
       <g
         strokeLinecap="round"
         fill="none"
         stroke="transparent"
-        strokeWidth="20.00"
+        strokeWidth="20"
         strokeLinejoin="round"
         className="*:cursor-pointer"
       >
@@ -103,6 +102,7 @@ export default function Consulate2F(props: MapFloorClickableProps) {
         <path d="M2598.31,871.25 L2598.31,913.46" data-type="barricade" onClick={onClickHandler} />
         <path d="M1538.69,755.22 L1637.68,755.41" data-type="barricade" onClick={onClickHandler} />
         <path d="M1310.31,852.25 L1310.31,894.46" data-type="barricade" onClick={onClickHandler} />
+        <path d="M713.16,1368.61 L783.02,1438.74" data-type="barricade" onClick={onClickHandler} />
         {/* doors end */}
         {/* reinforcements start */}
         <path
@@ -198,22 +198,20 @@ export default function Consulate2F(props: MapFloorClickableProps) {
         {/* reinforcements end */}
         {/* hatches start */}
         <rect
-          x="2489.64"
-          y="1195.64"
-          width="78.72000000000025"
-          height="77.7199999999998"
+          x="448.64"
+          y="1231.64"
+          width="78.72"
+          height="77.72"
           fill="transparent"
-          stroke="none"
           data-type="hatch"
           onClick={onClickHandler}
         />
         <rect
-          x="448.64"
-          y="1231.64"
-          width="78.72000000000003"
-          height="77.7199999999998"
+          x="2489.64"
+          y="1195.64"
+          width="78.72"
+          height="77.72"
           fill="transparent"
-          stroke="none"
           data-type="hatch"
           onClick={onClickHandler}
         />

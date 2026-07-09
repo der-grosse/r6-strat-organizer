@@ -1,15 +1,16 @@
 <svg width="799.68" height="599.76" viewBox="0 0 3332 2499" xmlns="http://www.w3.org/2000/svg">
-  <g stroke-linecap="round" fill="none" stroke="#2E2E36" stroke-width="15" stroke-linejoin="round">
-    <path d="M2109.25,538.69 L2151.46,538.69" />
-    <path d="M1895.25,726.69 L1937.46,726.69" />
-    <path d="M2001.31,953.25 L2001.31,995.46" />
-    <path d="M1508.25,882.69 L1550.46,882.69" />
-    <path d="M2145.25,1465.69 L2187.46,1465.69" />
-    <path d="M1766.31,1241.25 L1766.31,1283.46" />
-    <path d="M1635.69,1462.22 L1734.68,1462.41" />
-    <path d="M1392.69,1677.22 L1491.68,1677.41" />
-    <path d="M1204.25,1677.69 L1246.46,1677.69" />
-    <path d="M1204.25,1861.69 L1246.46,1861.69" />
-    <path d="M1674.25,538.69 L1716.46,538.69" />
-  </g>
+<g stroke-linecap="round" id="SINGLE_DOOR_Copy_8">
+<path d="M2109.25,538.69 L2151.46,538.69" stroke-width="15" stroke-opacity="1" stroke-linejoin="round"/>
+<path d="M1895.25,726.69 L1937.46,726.69" stroke-width="15" stroke-opacity="1" stroke-linejoin="round"/>
+<path d="M2001.31,953.25 L2001.31,995.46" stroke-width="15" stroke-opacity="1" stroke-linejoin="round"/>
+<path d="M1508.25,882.69 L1550.46,882.69" stroke-width="15" stroke-opacity="1" stroke-linejoin="round"/>
+<path d="M2145.25,1465.69 L2187.46,1465.69" stroke-width="15" stroke-opacity="1" stroke-linejoin="round"/>
+<path d="M1766.31,1241.25 L1766.31,1283.46" stroke-width="15" stroke-opacity="1" stroke-linejoin="round"/>
+<path d="M1635.69,1462.22 L1734.68,1462.41" stroke-width="15" stroke-opacity="1" stroke-linejoin="round"/>
+<path d="M1392.69,1677.22 L1491.68,1677.41" stroke-width="15" stroke-opacity="1" stroke-linejoin="round"/>
+<path d="M1204.25,1677.69 L1246.46,1677.69" stroke-width="15" stroke-opacity="1" stroke-linejoin="round"/>
+<path d="M1204.25,1861.69 L1246.46,1861.69" stroke-width="15" stroke-opacity="1" stroke-linejoin="round"/>
+<path d="M1674.25,538.69 L1716.46,538.69" stroke-width="15" stroke-opacity="1" stroke-linejoin="round"/>
+<path d="M1358.81,2083.75 L1358.81,2125.96" stroke-width="15" stroke-opacity="1" stroke-linejoin="round"/>
+</g>
 </svg>

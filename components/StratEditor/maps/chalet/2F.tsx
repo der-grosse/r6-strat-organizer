@@ -7,16 +7,15 @@ export default function Chalet2F(props: MapFloorClickableProps) {
     <svg
       width="799.68"
       height="599.76"
-      viewBox="0.00 0.00 3332.00 2499.00"
+      viewBox="0 0 3332 2499"
       xmlns="http://www.w3.org/2000/svg"
-      xmlnsXlink="http://www.w3.org/1999/xlink"
       className={cn("size-full", props.className)}
     >
       <g
         strokeLinecap="round"
         fill="none"
         stroke="transparent"
-        strokeWidth="20.00"
+        strokeWidth="20"
         strokeLinejoin="round"
         className="*:cursor-pointer"
       >
@@ -79,6 +78,11 @@ export default function Chalet2F(props: MapFloorClickableProps) {
           onClick={onClickHandler}
         />
         <path d="M1674.25,538.69 L1716.46,538.69" data-type="barricade" onClick={onClickHandler} />
+        <path
+          d="M1358.81,2083.75 L1358.81,2125.96"
+          data-type="barricade"
+          onClick={onClickHandler}
+        />
         {/* doors end */}
         {/* reinforcements start */}
         <path
@@ -184,32 +188,29 @@ export default function Chalet2F(props: MapFloorClickableProps) {
         {/* reinforcements end */}
         {/* hatches start */}
         <rect
-          x="2118.64"
-          y="939.64"
-          width="78.72000000000025"
-          height="77.72000000000003"
+          x="862.64"
+          y="1884.64"
+          width="78.72"
+          height="77.72"
           fill="transparent"
-          stroke="none"
           data-type="hatch"
           onClick={onClickHandler}
         />
         <rect
           x="1264.64"
           y="1693.64"
-          width="78.7199999999998"
-          height="77.7199999999998"
+          width="78.72"
+          height="77.72"
           fill="transparent"
-          stroke="none"
           data-type="hatch"
           onClick={onClickHandler}
         />
         <rect
-          x="862.64"
-          y="1884.64"
-          width="78.72000000000003"
-          height="77.7199999999998"
+          x="2118.64"
+          y="939.64"
+          width="78.72"
+          height="77.72"
           fill="transparent"
-          stroke="none"
           data-type="hatch"
           onClick={onClickHandler}
         />

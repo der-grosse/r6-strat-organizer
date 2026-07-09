@@ -7,16 +7,15 @@ export default function Consulate1F(props: MapFloorClickableProps) {
     <svg
       width="799.68"
       height="599.76"
-      viewBox="0.00 0.00 3332.00 2499.00"
+      viewBox="0 0 3332 2499"
       xmlns="http://www.w3.org/2000/svg"
-      xmlnsXlink="http://www.w3.org/1999/xlink"
       className={cn("size-full", props.className)}
     >
       <g
         strokeLinecap="round"
         fill="none"
         stroke="transparent"
-        strokeWidth="20.00"
+        strokeWidth="20"
         strokeLinejoin="round"
         className="*:cursor-pointer"
       >
@@ -84,11 +83,7 @@ export default function Consulate1F(props: MapFloorClickableProps) {
         />
         {/* doors end */}
         {/* reinforcements start */}
-        <path
-          d="M654.36,1193.11 L803.00,1193.66"
-          data-type="reinforcement"
-          onClick={onClickHandler}
-        />
+        <path d="M654.36,1193.11 L803,1193.66" data-type="reinforcement" onClick={onClickHandler} />
         <path
           d="M1171.71,1034.11 L1259.49,1034.66"
           data-type="reinforcement"
@@ -162,42 +157,38 @@ export default function Consulate1F(props: MapFloorClickableProps) {
         {/* reinforcements end */}
         {/* hatches start */}
         <rect
-          x="1113.64"
-          y="1424.64"
-          width="78.7199999999998"
-          height="77.7199999999998"
+          x="2793.64"
+          y="1823.64"
+          width="78.72"
+          height="77.72"
           fill="transparent"
-          stroke="none"
-          data-type="hatch"
-          onClick={onClickHandler}
-        />
-        <rect
-          x="2247.64"
-          y="858.64"
-          width="78.72000000000025"
-          height="77.72000000000003"
-          fill="transparent"
-          stroke="none"
           data-type="hatch"
           onClick={onClickHandler}
         />
         <rect
           x="2991.64"
           y="894.64"
-          width="78.72000000000025"
-          height="77.72000000000003"
+          width="78.72"
+          height="77.72"
           fill="transparent"
-          stroke="none"
           data-type="hatch"
           onClick={onClickHandler}
         />
         <rect
-          x="2793.64"
-          y="1823.64"
-          width="78.72000000000025"
-          height="77.7199999999998"
+          x="2247.64"
+          y="858.64"
+          width="78.72"
+          height="77.72"
           fill="transparent"
-          stroke="none"
+          data-type="hatch"
+          onClick={onClickHandler}
+        />
+        <rect
+          x="1113.64"
+          y="1424.64"
+          width="78.72"
+          height="77.72"
+          fill="transparent"
           data-type="hatch"
           onClick={onClickHandler}
         />

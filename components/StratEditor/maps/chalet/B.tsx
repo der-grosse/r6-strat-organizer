@@ -7,19 +7,21 @@ export default function ChaletB(props: MapFloorClickableProps) {
     <svg
       width="799.68"
       height="599.76"
-      viewBox="0.00 0.00 3332.00 2499.00"
+      viewBox="0 0 3332 2499"
       xmlns="http://www.w3.org/2000/svg"
-      xmlnsXlink="http://www.w3.org/1999/xlink"
       className={cn("size-full", props.className)}
     >
       <g
         strokeLinecap="round"
         fill="none"
         stroke="transparent"
-        strokeWidth="20.00"
+        strokeWidth="20"
         strokeLinejoin="round"
         className="*:cursor-pointer"
       >
+        {/* windows start */}
+        {/* no windows */}
+        {/* windows end */}
         {/* doors start */}
         <path
           d="M1828.25,1912.69 L1870.46,1912.69"
@@ -122,6 +124,9 @@ export default function ChaletB(props: MapFloorClickableProps) {
           onClick={onClickHandler}
         />
         {/* reinforcements end */}
+        {/* hatches start */}
+        {/* no hatches */}
+        {/* hatches end */}
       </g>
     </svg>
   );

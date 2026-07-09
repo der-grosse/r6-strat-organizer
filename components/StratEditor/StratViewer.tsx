@@ -189,10 +189,7 @@ function removeUnusedFloors(
   const allFloorsShown = usedFloors.length === map.floors.length;
 
   return {
-    assets: [
-      ...usedFloors.flatMap((f) => f.assets),
-      ...(allFloorsShown ? unattributedAssets : []),
-    ],
+    assets: [...usedFloors.flatMap((f) => f.assets), ...(allFloorsShown ? unattributedAssets : [])],
     map: {
       ...map,
       floors: usedFloors.map((f) => {

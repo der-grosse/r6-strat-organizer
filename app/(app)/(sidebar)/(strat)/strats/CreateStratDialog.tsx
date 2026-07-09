@@ -37,6 +37,7 @@ import { extractDrawingID } from "@/lib/googleDrawings";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "next/navigation";
+import { useFilter } from "@/components/context/FilterContext";
 
 const formSchema = z.object({
   map: z.string().min(1, "Map is required"),
@@ -47,6 +48,7 @@ const formSchema = z.object({
 });
 
 export function CreateStratDialog() {
+  const { filter } = useFilter();
   const router = useRouter();
   const createStrat = useMutation(api.strats.create);
   const [open, setOpen] = useState(false);
@@ -54,8 +56,8 @@ export function CreateStratDialog() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      map: "",
-      site: "",
+      map: filter.map ?? "",
+      site: filter.site ?? "",
       name: "",
       description: "",
       drawingID: null,

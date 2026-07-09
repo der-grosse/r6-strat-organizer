@@ -527,10 +527,10 @@ function generateTSXComponent(floor, svgLayers, floorName, outputPath) {
 
     // Generate TSX content
     let tsx = `import { cn } from "@/lib/utils";
-import FloorClickableClickHandler from "../clickHandler";
+import MapFloorClickableHandler from "../clickHandler";
 
 export default function ${floorName}(props: MapFloorClickableProps) {
-  const onClickHandler = FloorClickableClickHandler(props.onClick);
+  const onClickHandler = MapFloorClickableHandler(props.onClick);
   return (
     <svg
       width="${width}"
@@ -728,7 +728,7 @@ function processAllSVGs() {
       if (layers[type]) {
         try {
           svgLayers[type] = fs.readFileSync(layers[type], "utf8");
-        } catch (e) {
+        } catch {
           // Layer not available
         }
       }
@@ -763,7 +763,7 @@ function processAllSVGs() {
   console.log(`  📁 TSX output saved to: ${componentDir}\n`);
 }
 
-const map = "lair";
+const map = "consulate";
 
 // Run the script
 processAllSVGs();

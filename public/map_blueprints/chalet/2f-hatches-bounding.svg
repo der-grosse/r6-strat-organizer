@@ -1,7 +1,5 @@
 <svg width="799.68" height="599.76" viewBox="0 0 3332 2499" xmlns="http://www.w3.org/2000/svg">
-  <g stroke-linecap="round" fill="none" stroke="#CCC" stroke-width="10" stroke-linejoin="round">
-    <rect x="2118.64" y="939.64" width="78.72000000000025" height="77.72000000000003" fill="transparent" stroke="none" />
-    <rect x="1264.64" y="1693.64" width="78.7199999999998" height="77.7199999999998" fill="transparent" stroke="none" />
-    <rect x="862.64" y="1884.64" width="78.72000000000003" height="77.7199999999998" fill="transparent" stroke="none" />
-  </g>
+  <rect x="862.64" y="1884.64" width="78.72" height="77.72" fill="transparent" stroke="none" />
+  <rect x="1264.64" y="1693.64" width="78.72" height="77.72" fill="transparent" stroke="none" />
+  <rect x="2118.64" y="939.64" width="78.72" height="77.72" fill="transparent" stroke="none" />
 </svg>
