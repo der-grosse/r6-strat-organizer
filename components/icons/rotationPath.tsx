@@ -70,6 +70,17 @@ export default function RotationPath(props: RotationPathProps) {
           fill={filled ? innerColor : "none"}
         />
       ))}
+      <rect
+        x={barX}
+        y={barTop}
+        width={barWidth}
+        height={barHeight * 3}
+        strokeWidth={barBorderWidth}
+        fill="none"
+        stroke="#000"
+        rx={borderRadius}
+        ry={borderRadius}
+      />
     </g>
   );
 }
