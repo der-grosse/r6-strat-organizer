@@ -402,7 +402,7 @@ export const DEFENDERS = [
     icon: "/ops/def/wamai.webp",
     iconBW: "/ops/def/wamai_bw.png",
     gadget: "magnet",
-    secondaryGadgets: ["impact_grenade", "proximity_alarm"],
+    secondaryGadgets: ["c4", "deployable_shield", "proximity_alarm"],
     hasSecondaryShotgun: true,
   },
   {
