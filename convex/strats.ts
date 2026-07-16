@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { ActionCtx, mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
+import { mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
 import { requireUser } from "./auth";
 import { Doc, Id } from "./_generated/dataModel";
 import { Strat } from "../lib/types/strat.types";
@@ -202,6 +202,14 @@ export const archive = mutation({
           mapIndex: strat.mapIndex - 1,
         });
       }
+    }
+
+    const activeStrat = await ctx.db
+      .query("activeStrats")
+      .withIndex("byTeam", (q) => q.eq("teamID", activeTeamID))
+      .first();
+    if (activeStrat?.stratID === stratID) {
+      await ctx.db.delete(activeStrat._id);
     }
 
     return { success: true };
