@@ -7,14 +7,6 @@ import { PlacedAsset } from "../lib/types/asset.types";
 import { DefenderSecondaryGadgetID } from "../lib/static/operator";
 import { stratFilter } from "./schema";
 
-// Reads must tolerate the legacy attacker/defender pair until every stored doc has
-// been through migration.migrateStratFilters.
-function normalizeFilters(filters: Doc<"strats">["filters"]): StratFilter[] {
-  if (!filters) return [];
-  if (Array.isArray(filters)) return filters;
-  return [filters.attackers, filters.defenders].filter((filter) => filter !== undefined);
-}
-
 export const get = query({
   args: {
     id: v.id("strats"),
@@ -83,7 +75,7 @@ export const list = query({
         mapIndex: strat.mapIndex,
         hiddenFloors: strat.hiddenFloors || [],
         showFloorNames: strat.showFloorNames ?? true,
-        filters: normalizeFilters(strat.filters),
+        filters: strat.filters || [],
         stratPositions: stratPositions
           .map((pos) => ({
             _id: pos._id,
@@ -140,7 +132,7 @@ export async function getStrat(
     mapIndex: stratDoc.mapIndex,
     showFloorNames: stratDoc.showFloorNames ?? true,
     hiddenFloors: stratDoc.hiddenFloors || [],
-    filters: normalizeFilters(stratDoc.filters),
+    filters: stratDoc.filters || [],
     stratPositions: stratPositions
       .map((pos) => ({
         _id: pos._id,
@@ -364,7 +356,7 @@ export const createCopy = mutation({
       mapIndex,
       hiddenFloors: stratDoc.hiddenFloors,
       showFloorNames: stratDoc.showFloorNames,
-      filters: normalizeFilters(stratDoc.filters),
+      filters: stratDoc.filters || [],
     });
 
     const stratPositionIDMap: Record<string, Id<"stratPositions">> = {};

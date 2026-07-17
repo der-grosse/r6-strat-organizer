@@ -8,16 +8,6 @@ export const stratFilter = v.object({
   operators: v.array(v.string()),
 });
 
-// Filters were once a fixed attacker/defender pair. Stored docs are rewritten to
-// the flat array by migration.migrateStratFilters; this branch must stay until
-// that has run against every deployment, then it can be dropped.
-const legacyStratFilters = v.object({
-  attackers: v.optional(stratFilter),
-  defenders: v.optional(stratFilter),
-});
-
-export const stratFilters = v.union(v.array(stratFilter), legacyStratFilters);
-
 const schema = defineSchema({
   teams: defineTable({
     name: v.string(),
@@ -88,7 +78,7 @@ const schema = defineSchema({
     mapIndex: v.number(),
     showFloorNames: v.optional(v.boolean()),
     hiddenFloors: v.optional(v.array(v.number())),
-    filters: v.optional(stratFilters),
+    filters: v.optional(v.array(stratFilter)),
   })
     .index("byTeam", ["teamID"])
     .index("byTeamAndMap", ["teamID", "map"])
