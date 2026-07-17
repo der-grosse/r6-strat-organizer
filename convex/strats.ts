@@ -2,28 +2,18 @@ import { v } from "convex/values";
 import { mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
 import { requireUser } from "./auth";
 import { Doc, Id } from "./_generated/dataModel";
-import { Strat } from "../lib/types/strat.types";
+import { Strat, StratFilter } from "../lib/types/strat.types";
 import { PlacedAsset } from "../lib/types/asset.types";
 import { DefenderSecondaryGadgetID } from "../lib/static/operator";
+import { stratFilter } from "./schema";
 
-const stratFilters = v.object({
-  attackers: v.optional(
-    v.object({
-      triggerOn: v.union(v.literal("banned"), v.literal("available")),
-      action: v.union(v.literal("hide"), v.literal("show")),
-      filterType: v.union(v.literal("any"), v.literal("all")),
-      operators: v.array(v.string()),
-    }),
-  ),
-  defenders: v.optional(
-    v.object({
-      triggerOn: v.union(v.literal("banned"), v.literal("available")),
-      action: v.union(v.literal("hide"), v.literal("show")),
-      filterType: v.union(v.literal("any"), v.literal("all")),
-      operators: v.array(v.string()),
-    }),
-  ),
-});
+// Reads must tolerate the legacy attacker/defender pair until every stored doc has
+// been through migration.migrateStratFilters.
+function normalizeFilters(filters: Doc<"strats">["filters"]): StratFilter[] {
+  if (!filters) return [];
+  if (Array.isArray(filters)) return filters;
+  return [filters.attackers, filters.defenders].filter((filter) => filter !== undefined);
+}
 
 export const get = query({
   args: {
@@ -93,7 +83,7 @@ export const list = query({
         mapIndex: strat.mapIndex,
         hiddenFloors: strat.hiddenFloors || [],
         showFloorNames: strat.showFloorNames ?? true,
-        filters: strat.filters,
+        filters: normalizeFilters(strat.filters),
         stratPositions: stratPositions
           .map((pos) => ({
             _id: pos._id,
@@ -150,7 +140,7 @@ export async function getStrat(
     mapIndex: stratDoc.mapIndex,
     showFloorNames: stratDoc.showFloorNames ?? true,
     hiddenFloors: stratDoc.hiddenFloors || [],
-    filters: stratDoc.filters,
+    filters: normalizeFilters(stratDoc.filters),
     stratPositions: stratPositions
       .map((pos) => ({
         _id: pos._id,
@@ -226,7 +216,7 @@ export const update = mutation({
     drawingID: v.optional(v.nullable(v.string())),
     hiddenFloors: v.optional(v.array(v.number())),
     showFloorNames: v.optional(v.boolean()),
-    filters: v.optional(v.nullable(stratFilters)),
+    filters: v.optional(v.nullable(v.array(stratFilter))),
   },
   async handler(ctx, args) {
     const { activeTeamID } = await requireUser(ctx);
@@ -262,7 +252,7 @@ export const create = mutation({
     name: v.string(),
     description: v.string(),
     drawingID: v.optional(v.nullable(v.string())),
-    filters: v.optional(stratFilters),
+    filters: v.optional(v.array(stratFilter)),
   },
   async handler(ctx, args) {
     const { activeTeamID } = await requireUser(ctx);
@@ -374,7 +364,7 @@ export const createCopy = mutation({
       mapIndex,
       hiddenFloors: stratDoc.hiddenFloors,
       showFloorNames: stratDoc.showFloorNames,
-      filters: stratDoc.filters,
+      filters: normalizeFilters(stratDoc.filters),
     });
 
     const stratPositionIDMap: Record<string, Id<"stratPositions">> = {};

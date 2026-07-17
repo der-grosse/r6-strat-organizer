@@ -4,23 +4,23 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import SidebarLabeledToggle from "@/components/ui/sidebarLabeledToggle";
-import { Strat } from "@/lib/types/strat.types";
-import { ChessRook, ChevronDown, Swords } from "lucide-react";
-
-type Filter = NonNullable<Strat["filters"]>["defenders"];
+import { StratFilter } from "@/lib/types/strat.types";
+import { ChessRook, ChevronDown, Funnel, Swords } from "lucide-react";
+import { ATTACKERS, DEFENDERS } from "@/lib/static/operator";
 
 export interface OperatorFilterProps {
-  filter: Filter;
-  onChange: (newFilter: Filter) => void;
-  type: "attackers" | "defenders";
+  filter: StratFilter;
+  index: number;
+  onChange: (newFilter: StratFilter) => void;
+  onRemove: () => void;
 }
 
-const DEFAULT_FILTER = {
+export const DEFAULT_FILTER = {
   triggerOn: "banned",
   action: "show",
   filterType: "all",
   operators: [],
-} satisfies Filter;
+} satisfies StratFilter;
 
 const SLOT_STYLES = {
   button: {
@@ -31,22 +31,31 @@ const SLOT_STYLES = {
   },
 };
 
+function FilterIcon({ filter }: { filter: StratFilter }) {
+  if (!filter.operators.length) {
+    return <Funnel className="h-4 w-4" />;
+  }
+  if (filter.operators.every((op) => DEFENDERS.some((def) => def.name === op))) {
+    return <ChessRook className="h-4 w-4" />;
+  }
+  if (filter.operators.every((op) => ATTACKERS.some((def) => def.name === op))) {
+    return <Swords className="h-4 w-4" />;
+  }
+  return <Funnel className="h-4 w-4" />;
+}
+
 export default function OperatorFilter(props: OperatorFilterProps) {
   return (
     <Collapsible className="rounded-md border bg-muted/50 py-1">
       <CollapsibleTrigger asChild>
         <Button
           variant="ghost"
-          className="group flex w-full items-center justify-between gap-2 !px-2 text-muted-foreground hover:bg-muted/70"
+          className="group flex w-full items-center justify-between gap-2 px-2! text-muted-foreground hover:bg-muted/70"
         >
           <span className="flex items-center gap-1 text-sm">
-            {props.type === "attackers" ? (
-              <Swords className="h-4 w-4" />
-            ) : (
-              <ChessRook className="h-4 w-4" />
-            )}
-            {props.type === "attackers" ? "Attacker" : "Defender"} Filter
-            {props.filter && props.filter.operators.length > 0 && (
+            <FilterIcon filter={props.filter} />
+            Filter {props.index + 1}
+            {props.filter.operators.length > 0 && (
               <span className="text-xs text-muted-foreground">(active)</span>
             )}
           </span>
@@ -58,10 +67,9 @@ export default function OperatorFilter(props: OperatorFilterProps) {
         <SidebarLabeledToggle
           label="Trigger on ops"
           labels={["banned", "available"]}
-          active={props.filter?.triggerOn === "banned"}
+          active={props.filter.triggerOn === "banned"}
           onChange={(toggled) => {
             props.onChange({
-              ...DEFAULT_FILTER,
               ...props.filter,
               triggerOn: toggled ? "banned" : "available",
             });
@@ -71,10 +79,9 @@ export default function OperatorFilter(props: OperatorFilterProps) {
         <SidebarLabeledToggle
           label="Action when triggered"
           labels={["hide", "show"]}
-          active={props.filter?.action === "hide"}
+          active={props.filter.action === "hide"}
           onChange={(toggled) => {
             props.onChange({
-              ...DEFAULT_FILTER,
               ...props.filter,
               action: toggled ? "hide" : "show",
             });
@@ -84,10 +91,9 @@ export default function OperatorFilter(props: OperatorFilterProps) {
         <SidebarLabeledToggle
           label="Match if any or all ops banned"
           labels={["any", "all"]}
-          active={props.filter?.filterType === "any"}
+          active={props.filter.filterType === "any"}
           onChange={(toggled) => {
             props.onChange({
-              ...DEFAULT_FILTER,
               ...props.filter,
               filterType: toggled ? "any" : "all",
             });
@@ -96,19 +102,16 @@ export default function OperatorFilter(props: OperatorFilterProps) {
         />
         <Label className="text-muted-foreground p-1">Operators</Label>
         <OperatorPicker
-          side={props.type === "attackers" ? "attacker" : "defender"}
-          selected={props.filter?.operators ?? []}
+          side="both"
+          selected={props.filter.operators}
           multiple
           trigger={({ children, ...rest }) => (
             <Button {...rest} variant="secondary" className="w-full">
-              {props.filter?.operators?.length
-                ? children
-                : `Select ${props.type === "attackers" ? "Attackers" : "Defenders"}`}
+              {props.filter.operators.length ? children : "Select Operators"}
             </Button>
           )}
           onChange={(operators) => {
             props.onChange({
-              ...DEFAULT_FILTER,
               ...props.filter,
               operators,
             });
@@ -119,21 +122,16 @@ export default function OperatorFilter(props: OperatorFilterProps) {
           <em>{stringifyFilter(props.filter)}</em>
         </span>
         <Separator orientation="horizontal" className="mt-2" />
-        <Button
-          variant="ghost"
-          size="sm"
-          className="w-full"
-          onClick={() => props.onChange({ ...DEFAULT_FILTER })}
-        >
-          Clear Filter
+        <Button variant="ghost" size="sm" className="w-full" onClick={props.onRemove}>
+          Remove Filter
         </Button>
       </CollapsibleContent>
     </Collapsible>
   );
 }
 
-function stringifyFilter(filter: Filter) {
-  if (!filter?.operators.length) {
+function stringifyFilter(filter: StratFilter) {
+  if (!filter.operators.length) {
     return "No filter set";
   }
   return `If ${filter.filterType} selected operator${filter.filterType === "all" ? "s are" : " is"} ${filter.triggerOn}, this strat is ${filter.action === "hide" ? "hidden" : "shown"}`;

@@ -26,10 +26,9 @@ export function filterPlayableStrats(strats: Strat[], filter: Filter, bannedOps:
         }
         return true;
       })();
-      const shouldHideDueToOperatorFilter = (() => {
-        function check(type: "attackers" | "defenders") {
-          if (!strat.filters?.[type] || !strat.filters?.[type]?.operators.length) return false;
-          const { operators, action, filterType, triggerOn } = strat.filters[type];
+      const shouldHideDueToOperatorFilter = strat.filters.some(
+        ({ operators, action, filterType, triggerOn }) => {
+          if (!operators.length) return false;
           const isHit = (() => {
             if (triggerOn === "banned") {
               return operators[filterType === "any" ? "some" : "every"]((op) =>
@@ -42,9 +41,8 @@ export function filterPlayableStrats(strats: Strat[], filter: Filter, bannedOps:
             }
           })();
           return isHit ? action === "hide" : action === "show";
-        }
-        return check("attackers") || check("defenders");
-      })();
+        },
+      );
       return {
         strat,
         playable: powerPositionsPlayable && !shouldHideDueToOperatorFilter,

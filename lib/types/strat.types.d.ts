@@ -26,13 +26,10 @@ export interface Strat {
   showFloorNames: boolean;
   hiddenFloors: number[];
   stratPositions: StratPositions[];
-  filters?: {
-    attackers?: StratFilter;
-    defenders?: StratFilter;
-  };
+  filters: StratFilter[];
 }
 
-interface StratFilter {
+export interface StratFilter {
   triggerOn: "banned" | "available";
   action: "hide" | "show";
   filterType: "any" | "all";

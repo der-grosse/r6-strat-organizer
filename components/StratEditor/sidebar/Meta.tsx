@@ -22,6 +22,7 @@ import {
   Link,
   Map,
   MapPinned,
+  Plus,
   Settings2,
   Trash,
   Unlink,
@@ -33,7 +34,7 @@ import { Strat } from "@/lib/types/strat.types";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import MAPS from "@/lib/static/maps";
-import OperatorFilter from "./OperatorFilter";
+import OperatorFilter, { DEFAULT_FILTER } from "./OperatorFilter";
 import SidebarLabeledToggle from "@/components/ui/sidebarLabeledToggle";
 import { FullTeam } from "@/lib/types/team.types";
 import { useStratExport } from "../ExportRenderer";
@@ -186,26 +187,38 @@ export default function StratEditorMetaSidebar(props: StratEditorMetaSidebarProp
             <Funnel className="text-muted-foreground" />
             <Label className="text-muted-foreground">Filters</Label>
           </div>
-          <OperatorFilter
-            type="attackers"
-            filter={props.strat.filters?.attackers}
-            onChange={(attackers) => {
+          {props.strat.filters.map((filter, index) => (
+            <OperatorFilter
+              key={index}
+              index={index}
+              filter={filter}
+              onChange={(updated) => {
+                updateStrat({
+                  _id: props.strat._id,
+                  filters: props.strat.filters.map((f, i) => (i === index ? updated : f)),
+                });
+              }}
+              onRemove={() => {
+                updateStrat({
+                  _id: props.strat._id,
+                  filters: props.strat.filters.filter((_, i) => i !== index),
+                });
+              }}
+            />
+          ))}
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => {
               updateStrat({
                 _id: props.strat._id,
-                filters: { ...props.strat.filters, attackers },
+                filters: [...props.strat.filters, { ...DEFAULT_FILTER }],
               });
             }}
-          />
-          <OperatorFilter
-            type="defenders"
-            filter={props.strat.filters?.defenders}
-            onChange={(defenders) => {
-              updateStrat({
-                _id: props.strat._id,
-                filters: { ...props.strat.filters, defenders },
-              });
-            }}
-          />
+          >
+            <Plus className="mr-2" />
+            Add Filter
+          </Button>
 
           <Separator />
           <div className="flex items-center gap-2">

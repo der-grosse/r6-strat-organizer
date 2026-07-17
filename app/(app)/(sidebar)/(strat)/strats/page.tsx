@@ -364,26 +364,17 @@ function StratItem({
         )}
       </div>
       <div className="flex justify-end pr-4" style={{ width: TABLE_SIZES.filters }}>
-        {[
-          ...(strat.filters?.attackers?.operators?.map((a) => ({
-            type: "attackers" as const,
-            op: a,
-          })) || []),
-          ...(strat.filters?.defenders?.operators.map((d) => ({
-            type: "defenders" as const,
-            op: d,
-          })) || []),
-        ].map(({ type, op }) => (
-          <div className="relative" key={op}>
-            <OperatorIcon op={op} />
-            {((strat.filters?.[type]?.triggerOn === "banned" &&
-              strat.filters[type].action === "show") ||
-              (strat.filters?.[type]?.triggerOn === "available" &&
-                strat.filters[type].action === "hide")) && (
-              <Slash className="size-8 absolute top-0 left-0 opacity-70 text-destructive" />
-            )}
-          </div>
-        ))}
+        {strat.filters
+          .flatMap((filter) => filter.operators.map((op) => ({ filter, op })))
+          .map(({ filter, op }, index) => (
+            <div className="relative" key={`${index}-${op}`}>
+              <OperatorIcon op={op} />
+              {((filter.triggerOn === "banned" && filter.action === "show") ||
+                (filter.triggerOn === "available" && filter.action === "hide")) && (
+                <Slash className="size-8 absolute top-0 left-0 opacity-70 text-destructive" />
+              )}
+            </div>
+          ))}
       </div>
       <div style={{ width: TABLE_SIZES.ops }} className="flex gap-1 -my-2 overflow-hidden">
         {strat.stratPositions
