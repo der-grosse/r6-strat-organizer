@@ -5,6 +5,8 @@ export interface BaseAsset {
   _id: Id<"placedAssets">;
   stratPositionID?: Id<"stratPositions">;
   customColor?: string;
+  // When set, this asset only belongs to the referenced adaptation.
+  adaptationID?: Id<"adaptations">;
 }
 
 export interface LayoutAsset extends BaseAsset {

@@ -8,6 +8,15 @@ export const stratFilter = v.object({
   operators: v.array(v.string()),
 });
 
+// Adaptation filters describe when an adaptation should become active. Unlike
+// stratFilter they have no hide/show action: a matching filter simply activates
+// the adaptation.
+export const adaptationFilter = v.object({
+  triggerOn: v.union(v.literal("banned"), v.literal("available")),
+  filterType: v.union(v.literal("any"), v.literal("all")),
+  operators: v.array(v.string()),
+});
+
 const schema = defineSchema({
   teams: defineTable({
     name: v.string(),
@@ -59,6 +68,9 @@ const schema = defineSchema({
   activeStrats: defineTable({
     teamID: v.id("teams"),
     stratID: v.id("strats"),
+    // Manual adaptation selection synced to the team: an adaptation id, "none"
+    // (force base strat) or absent (auto-resolve from operator bans).
+    adaptationSelection: v.optional(v.string()),
   }).index("byTeam", ["teamID"]),
 
   bannedOps: defineTable({
@@ -84,8 +96,22 @@ const schema = defineSchema({
     .index("byTeamAndMap", ["teamID", "map"])
     .index("byTeamMapAndSite", ["teamID", "map", "site"]),
 
+  // Adaptations are prioritized variations of a strat. When an adaptation's
+  // filters match, its extra assets are shown and the base assets it lists in
+  // hiddenAssetIDs are hidden. Priority is determined by `index` (lower first).
+  adaptations: defineTable({
+    stratID: v.id("strats"),
+    name: v.string(),
+    index: v.number(),
+    filters: v.array(adaptationFilter),
+    hiddenAssetIDs: v.array(v.id("placedAssets")),
+  }).index("byStrat", ["stratID"]),
+
   placedAssets: defineTable({
     stratID: v.id("strats"),
+    // When set, this asset only exists for the referenced adaptation and is
+    // hidden in the base strat / other adaptations.
+    adaptationID: v.optional(v.id("adaptations")),
     posX: v.number(),
     posY: v.number(),
     width: v.number(),

@@ -22,6 +22,21 @@ export const get = query({
   },
 });
 
+export const getAdaptationSelection = query({
+  args: {},
+  async handler(ctx) {
+    const { activeTeamID } = (await requireUser(ctx, { allowNull: true })) ?? {};
+    if (!activeTeamID) return null;
+
+    const activeStratDoc = await ctx.db
+      .query("activeStrats")
+      .withIndex("byTeam", (q) => q.eq("teamID", activeTeamID))
+      .first();
+
+    return activeStratDoc?.adaptationSelection ?? null;
+  },
+});
+
 export const set = mutation({
   args: { stratID: v.union(v.id("strats"), v.null()) },
   async handler(ctx, { stratID }) {
@@ -41,14 +56,32 @@ export const set = mutation({
       return null;
     }
 
-    // Update if exists, otherwise create
+    // Update if exists, otherwise create. Reset the adaptation selection back
+    // to auto whenever the active strat changes.
     if (existing) {
-      await ctx.db.patch(existing._id, { stratID });
+      await ctx.db.patch(existing._id, { stratID, adaptationSelection: undefined });
     } else {
       await ctx.db.insert("activeStrats", { teamID: activeTeamID, stratID });
     }
 
     return stratID;
+  },
+});
+
+export const setAdaptation = mutation({
+  args: { selection: v.union(v.string(), v.null()) },
+  async handler(ctx, { selection }) {
+    const { activeTeamID } = await requireUser(ctx);
+    if (!activeTeamID) throw new Error("No active team set");
+
+    const existing = await ctx.db
+      .query("activeStrats")
+      .withIndex("byTeam", (q) => q.eq("teamID", activeTeamID))
+      .first();
+    if (!existing) return null;
+
+    await ctx.db.patch(existing._id, { adaptationSelection: selection ?? undefined });
+    return selection;
   },
 });
 

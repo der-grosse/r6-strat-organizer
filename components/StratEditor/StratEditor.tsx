@@ -26,6 +26,8 @@ import { api } from "@/convex/_generated/api";
 import useDebounced from "../hooks/useDebounced";
 import useOnUnmount from "../hooks/useOnUnmount";
 import isKeyDown from "../hooks/isKeyDown";
+import { SidebarTab } from "./sidebar/Sidebar";
+import { X } from "lucide-react";
 
 interface StratEditorProps {
   strat: Strat;
@@ -70,6 +72,7 @@ export function StratEditor({ strat: propStrat, team }: Readonly<StratEditorProp
   const updateAssetsFct = useMutation(api.strats.updateAssets);
   const deleteAssets = useMutation(api.strats.deleteAssets);
   const setSelectedAssets = useMutation(api.strats.setSelectedAssets);
+  const updateAdaptationFct = useMutation(api.strats.updateAdaptation);
 
   const [strat, setStrat] = useState<Strat>(propStrat);
   // Update local state when prop changes
@@ -80,6 +83,25 @@ export function StratEditor({ strat: propStrat, team }: Readonly<StratEditorProp
   const { user } = useUser();
 
   const [activeStratPosition, setActiveStratPosition] = useState<Id<"stratPositions"> | null>(null);
+
+  // Sidebar tab + open state are lifted here so the adaptation banner can
+  // navigate to the Adaptations tab.
+  const [sidebarTab, setSidebarTab] = useState<SidebarTab>("meta");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // The adaptation currently being edited on the canvas (null = editing the
+  // base strat).
+  const [activeAdaptationID, setActiveAdaptationID] = useState<Id<"adaptations"> | null>(null);
+  const activeAdaptation = useMemo(
+    () => strat.adaptations.find((a) => a._id === activeAdaptationID) ?? null,
+    [strat.adaptations, activeAdaptationID],
+  );
+  // Reset the active adaptation if it disappears (e.g. deleted).
+  useEffect(() => {
+    if (activeAdaptationID && !strat.adaptations.some((a) => a._id === activeAdaptationID)) {
+      setActiveAdaptationID(null);
+    }
+  }, [strat.adaptations, activeAdaptationID]);
 
   const addAsset = useCallback(
     async (asset: Omit<PlacedAsset, "_id">) => {
@@ -108,6 +130,54 @@ export function StratEditor({ strat: propStrat, team }: Readonly<StratEditorProp
       setAssets(queryAssets);
     }
   }, [queryAssets]);
+
+  // Assets rendered on the canvas: base assets always, plus the active
+  // adaptation's own assets when editing one. Other adaptations' assets stay
+  // hidden.
+  const visibleAssets = useMemo(
+    () =>
+      assets.filter((asset) => !asset.adaptationID || asset.adaptationID === activeAdaptationID),
+    [assets, activeAdaptationID],
+  );
+
+  // Assets considered "active" for sidebar counts: the active adaptation's own
+  // assets plus the base assets it does not hide (or just base assets when no
+  // adaptation is being edited). Unlike visibleAssets, this excludes base assets
+  // hidden by the active adaptation so gadget budgets reflect what is really on
+  // the canvas for the adaptation.
+  const activeAssets = useMemo(() => {
+    if (!activeAdaptation) return assets.filter((asset) => !asset.adaptationID);
+    const hidden = new Set(activeAdaptation.hiddenAssetIDs);
+    return assets.filter(
+      (asset) =>
+        asset.adaptationID === activeAdaptation._id ||
+        (!asset.adaptationID && !hidden.has(asset._id)),
+    );
+  }, [assets, activeAdaptation]);
+
+  // Toggle whether the given base assets are hidden for the active adaptation.
+  const setAssetsHiddenInAdaptation = useCallback(
+    (assetIDs: Id<"placedAssets">[], hidden: boolean) => {
+      if (!activeAdaptation) return;
+      const next = new Set(activeAdaptation.hiddenAssetIDs);
+      for (const id of assetIDs) {
+        if (hidden) next.add(id);
+        else next.delete(id);
+      }
+      const hiddenAssetIDs = [...next];
+      // optimistic update so the canvas reflects the change immediately
+      setStrat((s) => ({
+        ...s,
+        adaptations: s.adaptations.map((a) =>
+          a._id === activeAdaptation._id ? { ...a, hiddenAssetIDs } : a,
+        ),
+      }));
+      updateAdaptationFct({ adaptationID: activeAdaptation._id, hiddenAssetIDs }).catch((err) =>
+        toast.error(`Your changes could not be saved! Failed to update adaptation: ${err.message}`),
+      );
+    },
+    [activeAdaptation, updateAdaptationFct],
+  );
 
   const selectedAssetsOfOtherUsers = useQuery(api.strats.getSelectedAssets, {
     stratID: strat._id,
@@ -211,8 +281,9 @@ export function StratEditor({ strat: propStrat, team }: Readonly<StratEditorProp
   ]);
 
   const { renderAsset, onAssetDoubleClick, UI } = useMountAssets(
-    { team, stratPositions: strat.stratPositions },
+    { team, stratPositions: strat.stratPositions, activeAdaptation },
     {
+      setAssetsHiddenInAdaptation,
       deleteAssets(delAssets) {
         setAssets((assets) =>
           assets.filter((a) => !delAssets.some((asset) => asset._id === a._id)),
@@ -257,6 +328,7 @@ export function StratEditor({ strat: propStrat, team }: Readonly<StratEditorProp
           position: { x: CANVAS_BASE_SIZE / 20, y: CANVAS_BASE_SIZE / 20 },
           rotation: 0,
           stratPositionID: activeStratPosition ?? undefined,
+          adaptationID: activeAdaptationID ?? undefined,
           ...asset,
         } as PlacedAsset;
         setAssets((assets) => [...assets, placedAsset]);
@@ -275,10 +347,40 @@ export function StratEditor({ strat: propStrat, team }: Readonly<StratEditorProp
           asset: placedAsset,
         });
       }}
-      assets={assets}
+      assets={activeAssets}
+      allAssets={assets}
       strat={strat}
       team={team}
+      activeAdaptationID={activeAdaptationID}
+      onActiveAdaptationChange={setActiveAdaptationID}
+      openTab={sidebarTab}
+      setOpenTab={setSidebarTab}
+      sidebarOpen={sidebarOpen}
+      setSidebarOpen={setSidebarOpen}
     >
+      {activeAdaptation && (
+        <div className="absolute top-2 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1 rounded-full border border-primary bg-background/95 py-1 pl-4 pr-1 shadow-lg backdrop-blur">
+          <button
+            type="button"
+            className="text-sm cursor-pointer"
+            title="Show this adaptation in the sidebar"
+            onClick={() => {
+              setSidebarTab("adaptations");
+              setSidebarOpen(true);
+            }}
+          >
+            Editing adaptation: <span className="font-semibold">{activeAdaptation.name}</span>
+          </button>
+          <button
+            type="button"
+            className="flex items-center justify-center rounded-full p-1 text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
+            aria-label="Exit adaptation editing"
+            onClick={() => setActiveAdaptationID(null)}
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
       {strat.drawingID ? (
         <StratDisplay editView hideDetails strat={strat} team={team} />
       ) : (
@@ -304,7 +406,7 @@ export function StratEditor({ strat: propStrat, team }: Readonly<StratEditorProp
               });
           }}
           map={map}
-          assets={assets}
+          assets={visibleAssets}
           onAssetAdd={(asset) => {
             const placedAsset = {
               _id: "UNSET" as Id<"placedAssets">,
@@ -312,6 +414,7 @@ export function StratEditor({ strat: propStrat, team }: Readonly<StratEditorProp
               position: { x: CANVAS_BASE_SIZE / 20, y: CANVAS_BASE_SIZE / 20 },
               rotation: 0,
               stratPositionID: activeStratPosition ?? undefined,
+              adaptationID: activeAdaptationID ?? undefined,
               ...asset,
             } as PlacedAsset;
             setAssets((assets) => [...assets, placedAsset]);
@@ -596,6 +699,7 @@ function convertPlacedAssetToAPI<T extends PlacedAsset | Omit<PlacedAsset, "_id"
     posY: asset.position.y,
     rotation: asset.rotation,
     stratPositionID: asset.stratPositionID ?? null,
+    adaptationID: asset.adaptationID ?? null,
 
     type: asset.type,
     operator:

@@ -1,0 +1,1 @@
+- [Adaptations feature](adaptations-feature.md) — strat adaptations data model + editor built; view UI still pending

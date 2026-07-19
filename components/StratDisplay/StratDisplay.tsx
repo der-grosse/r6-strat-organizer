@@ -17,12 +17,18 @@ import { Strat } from "@/lib/types/strat.types";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import StratGadgetVisibiltyPicker from "./StratGadgetVisibiltyPicker";
+import AdaptationSelector from "./AdaptationSelector";
+import { resolveAutoAdaptation, resolveSelectedAdaptation } from "@/lib/adaptations";
 
 export interface StratDisplayProps {
   strat: Strat | null | undefined;
   team: FullTeam;
   editView?: boolean;
   hideDetails?: boolean;
+  /** Raw adaptation selection (null/"auto" → auto, "none" → base, or an id). */
+  adaptationSelection?: string | null;
+  /** When omitted the adaptation selector is read-only. */
+  onAdaptationSelectionChange?: (selection: string | null) => void;
 }
 
 export default function StratDisplay(props: StratDisplayProps) {
@@ -68,6 +74,12 @@ export default function StratDisplay(props: StratDisplayProps) {
   const [viewModifier, setViewModifier] = useState<"none" | "hideForeign" | "grayscaleForeign">(
     "none",
   );
+
+  const adaptationSelection = props.adaptationSelection ?? null;
+  const autoResolvedAdaptation = props.strat ? resolveAutoAdaptation(props.strat, bannedOps) : null;
+  const resolvedAdaptation = props.strat
+    ? resolveSelectedAdaptation(props.strat, adaptationSelection, bannedOps)
+    : null;
 
   const Details = !props.hideDetails && props.strat && (
     <div
@@ -138,7 +150,7 @@ export default function StratDisplay(props: StratDisplayProps) {
             )}
           </div>
         )}
-        <div className="flex justify-center gap-1 text-sm">
+        <div className="flex justify-center items-center gap-1 text-sm">
           <span className="ml-2">
             {[
               settings?.activeStratNameTemplate?.mapName && props.strat.map,
@@ -148,6 +160,14 @@ export default function StratDisplay(props: StratDisplayProps) {
               .filter(Boolean)
               .join(" | ")}
           </span>
+          {!props.strat.drawingID && props.strat.adaptations.length > 0 && (
+            <AdaptationSelector
+              adaptations={props.strat.adaptations}
+              selection={adaptationSelection}
+              autoResolved={autoResolvedAdaptation}
+              onChange={props.onAdaptationSelectionChange}
+            />
+          )}
           <Link
             href={`/editor/${props.strat._id}`}
             className="text-muted-foreground hover:text-primary"
@@ -215,6 +235,7 @@ export default function StratDisplay(props: StratDisplayProps) {
               <StratViewer
                 strat={props.strat}
                 team={props.team}
+                adaptation={resolvedAdaptation}
                 assetModifier={
                   viewModifier === "hideForeign"
                     ? (assets) =>

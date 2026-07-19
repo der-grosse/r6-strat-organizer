@@ -616,7 +616,7 @@ export const DEFENDER_PRIMARY_GADGETS = [
     id: "magnet",
     name: "Magnet",
     icon: ["/gadgets/magnet.png"],
-    count: 6,
+    count: 7,
   },
   {
     id: "banshee",

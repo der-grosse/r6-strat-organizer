@@ -27,11 +27,27 @@ export interface Strat {
   hiddenFloors: number[];
   stratPositions: StratPositions[];
   filters: StratFilter[];
+  adaptations: Adaptation[];
 }
 
 export interface StratFilter {
   triggerOn: "banned" | "available";
   action: "hide" | "show";
+  filterType: "any" | "all";
+  operators: string[];
+}
+
+export interface Adaptation {
+  _id: Id<"adaptations">;
+  stratID: Id<"strats">;
+  name: string;
+  index: number;
+  filters: AdaptationFilter[];
+  hiddenAssetIDs: Id<"placedAssets">[];
+}
+
+export interface AdaptationFilter {
+  triggerOn: "banned" | "available";
   filterType: "any" | "all";
   operators: string[];
 }

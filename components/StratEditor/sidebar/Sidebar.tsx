@@ -10,6 +10,7 @@ import {
   DoorOpen,
   Fingerprint,
   Info,
+  Layers,
   LayoutGrid,
   UsersRound,
 } from "lucide-react";
@@ -32,23 +33,35 @@ import { Id } from "@/convex/_generated/dataModel";
 import CurrentStratPositionSelector from "./CurrentStratPositionSelector";
 import { DRAG_ASSET_DATA_TYPE } from "./DraggableAssetButton";
 import StratEditorSelectedElementsSidebar from "./Selected";
+import AdaptationsSidebar from "./Adaptations";
+
+export type SidebarTab =
+  | "meta"
+  | "player-ops"
+  | "selected-elements"
+  | "operator-gadgets"
+  | "operator-assets"
+  | "adaptations";
 
 export interface StratEditorSidebarProps {
   onAssetAdd: (asset: Omit<Asset & Partial<PlacedAsset>, "_id">) => void;
   strat: Strat;
   assets: PlacedAsset[];
+  allAssets: PlacedAsset[];
   team: FullTeam;
   hideAssets?: boolean;
   activeStratPosition: Id<"stratPositions"> | null;
   onActiveStratPositionChange: (id: Id<"stratPositions"> | null) => void;
+  activeAdaptationID: Id<"adaptations"> | null;
+  onActiveAdaptationChange: (id: Id<"adaptations"> | null) => void;
+  openTab: SidebarTab;
+  setOpenTab: React.Dispatch<React.SetStateAction<SidebarTab>>;
+  sidebarOpen: boolean;
+  setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function StratEditorSidebar(props: Readonly<StratEditorSidebarProps>) {
-  const [openTab, setOpenTab] = useState<
-    "meta" | "player-ops" | "selected-elements" | "operator-gadgets" | "operator-assets"
-  >("meta");
-
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { openTab, setOpenTab, sidebarOpen, setSidebarOpen } = props;
 
   // While an asset is being dragged out of the sidebar, the full-screen
   // backdrop (used to close the sidebar on tap) would otherwise swallow the
@@ -173,6 +186,15 @@ export default function StratEditorSidebar(props: Readonly<StratEditorSidebarPro
         );
       case "player-ops":
         return <StratEditorPlayerPositionsSidebar strat={props.strat} team={props.team} />;
+      case "adaptations":
+        return (
+          <AdaptationsSidebar
+            strat={props.strat}
+            allAssets={props.allAssets}
+            activeAdaptationID={props.activeAdaptationID}
+            onActiveAdaptationChange={props.onActiveAdaptationChange}
+          />
+        );
       default:
         return (
           <div className="flex items-center justify-center h-full">
@@ -180,7 +202,16 @@ export default function StratEditorSidebar(props: Readonly<StratEditorSidebarPro
           </div>
         );
     }
-  }, [openTab, onAssetAdd, props.strat, props.team, props.activeStratPosition]);
+  }, [
+    openTab,
+    onAssetAdd,
+    props.strat,
+    props.team,
+    props.activeStratPosition,
+    props.allAssets,
+    props.activeAdaptationID,
+    props.onActiveAdaptationChange,
+  ]);
 
   return (
     <div className="flex relative z-10">
@@ -255,6 +286,22 @@ export default function StratEditorSidebar(props: Readonly<StratEditorSidebarPro
               description: "Add operators or player locators to the map",
             }}
             active={openTab === "operator-assets"}
+          />
+        )}
+        {/* adaptations - prioritized variations of the strat */}
+        {!props.hideAssets && (
+          <SidebarButton
+            icon={<Layers />}
+            onClick={() => {
+              setOpenTab("adaptations");
+              setSidebarOpen((open) => (openTab === "adaptations" ? !open : true));
+            }}
+            tooltip={{
+              title: "Adaptations",
+              description:
+                "Create prioritized variations of this strat that hide or add assets based on operator bans",
+            }}
+            active={openTab === "adaptations"}
           />
         )}
         <div className="flex-1" />
