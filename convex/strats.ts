@@ -2,10 +2,10 @@ import { v } from "convex/values";
 import { mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
 import { requireUser } from "./auth";
 import { Doc, Id } from "./_generated/dataModel";
-import { Strat, StratFilter } from "../lib/types/strat.types";
+import { Adaptation, Strat } from "../lib/types/strat.types";
 import { PlacedAsset } from "../lib/types/asset.types";
 import { DefenderSecondaryGadgetID } from "../lib/static/operator";
-import { stratFilter } from "./schema";
+import { adaptationFilter, stratFilter } from "./schema";
 
 export const get = query({
   args: {
@@ -64,6 +64,8 @@ export const list = query({
         .withIndex("byStrat", (q) => q.eq("stratID", strat._id))
         .collect();
 
+      const adaptations = await getAdaptations(ctx, strat._id);
+
       fullStrats.push({
         _id: strat._id,
         map: strat.map,
@@ -76,6 +78,7 @@ export const list = query({
         hiddenFloors: strat.hiddenFloors || [],
         showFloorNames: strat.showFloorNames ?? true,
         filters: strat.filters || [],
+        adaptations,
         stratPositions: stratPositions
           .map((pos) => ({
             _id: pos._id,
@@ -121,6 +124,8 @@ export async function getStrat(
     .withIndex("byStrat", (q) => q.eq("stratID", id))
     .collect();
 
+  const adaptations = await getAdaptations(ctx, id);
+
   return {
     _id: stratDoc._id,
     map: stratDoc.map,
@@ -133,6 +138,7 @@ export async function getStrat(
     showFloorNames: stratDoc.showFloorNames ?? true,
     hiddenFloors: stratDoc.hiddenFloors || [],
     filters: stratDoc.filters || [],
+    adaptations,
     stratPositions: stratPositions
       .map((pos) => ({
         _id: pos._id,
@@ -155,6 +161,27 @@ export async function getStrat(
       }))
       .sort((a, b) => a.index - b.index),
   };
+}
+
+export async function getAdaptations(
+  ctx: QueryCtx | MutationCtx,
+  stratID: Id<"strats">,
+): Promise<Adaptation[]> {
+  const adaptations = await ctx.db
+    .query("adaptations")
+    .withIndex("byStrat", (q) => q.eq("stratID", stratID))
+    .collect();
+
+  return adaptations
+    .map((adaptation) => ({
+      _id: adaptation._id,
+      stratID: adaptation.stratID,
+      name: adaptation.name,
+      index: adaptation.index,
+      filters: adaptation.filters,
+      hiddenAssetIDs: adaptation.hiddenAssetIDs,
+    }))
+    .sort((a, b) => a.index - b.index);
 }
 
 export const archive = mutation({
@@ -345,6 +372,11 @@ export const createCopy = mutation({
       .withIndex("byStrat", (q) => q.eq("stratID", stratID))
       .collect();
 
+    const adaptations = await ctx.db
+      .query("adaptations")
+      .withIndex("byStrat", (q) => q.eq("stratID", stratID))
+      .collect();
+
     const newStratID = await ctx.db.insert("strats", {
       map: stratDoc.map,
       site: stratDoc.site,
@@ -384,20 +416,46 @@ export const createCopy = mutation({
       });
     }
 
+    // Adaptations and their assets reference each other, so create the
+    // adaptations first (with placeholder hiddenAssetIDs), then the assets with
+    // remapped adaptationIDs, then backfill the adaptations' hiddenAssetIDs.
+    const adaptationIDMap: Record<string, Id<"adaptations">> = {};
+    for (const adaptation of adaptations) {
+      const newAdaptationID = await ctx.db.insert("adaptations", {
+        stratID: newStratID,
+        name: adaptation.name,
+        index: adaptation.index,
+        filters: adaptation.filters,
+        hiddenAssetIDs: [],
+      });
+      adaptationIDMap[adaptation._id] = newAdaptationID;
+    }
+
+    const assetIDMap: Record<string, Id<"placedAssets">> = {};
     for (const asset of placedAssets) {
-      // Remove the _id field before inserting
-      //@ts-ignore
-      delete asset._id;
-      //@ts-ignore
-      delete asset._creationTime;
-      await ctx.db.insert("placedAssets", {
-        ...asset,
+      const { _id: oldAssetID, _creationTime, ...assetData } = asset;
+      const newAssetID = await ctx.db.insert("placedAssets", {
+        ...assetData,
         stratID: newStratID,
         stratPositionID: asset.stratPositionID
           ? stratPositionIDMap[asset.stratPositionID]
           : undefined,
+        adaptationID: asset.adaptationID ? adaptationIDMap[asset.adaptationID] : undefined,
       });
+      assetIDMap[oldAssetID] = newAssetID;
     }
+
+    for (const adaptation of adaptations) {
+      const remappedHiddenAssetIDs = adaptation.hiddenAssetIDs
+        .map((id) => assetIDMap[id])
+        .filter(Boolean);
+      if (remappedHiddenAssetIDs.length > 0) {
+        await ctx.db.patch(adaptationIDMap[adaptation._id], {
+          hiddenAssetIDs: remappedHiddenAssetIDs,
+        });
+      }
+    }
+
     return { success: true, stratID: newStratID };
   },
 });
@@ -730,6 +788,7 @@ export const getAssets = query({
         ({
           _id: asset._id,
           stratPositionID: asset.stratPositionID,
+          adaptationID: asset.adaptationID,
           customColor: asset.customColor,
 
           type: asset.type,
@@ -765,6 +824,7 @@ export const addAsset = mutation({
     rotation: v.number(),
     stratPositionID: v.optional(v.nullable(v.id("stratPositions"))),
     pickedOperatorID: v.optional(v.nullable(v.id("pickedOperators"))),
+    adaptationID: v.optional(v.nullable(v.id("adaptations"))),
     customColor: v.optional(v.nullable(v.string())),
 
     variant: v.optional(v.string()),
@@ -798,6 +858,7 @@ export const addAsset = mutation({
       rotation: args.rotation,
       stratPositionID: args.stratPositionID ?? undefined,
       pickedOperatorID: args.pickedOperatorID ?? undefined,
+      adaptationID: args.adaptationID ?? undefined,
       customColor: args.customColor ?? undefined,
       type: args.type,
       variant: args.variant,
@@ -829,6 +890,7 @@ export const updateAssets = mutation({
         rotation: v.optional(v.number()),
         stratPositionID: v.optional(v.nullable(v.id("stratPositions"))),
         pickedOperatorID: v.optional(v.nullable(v.id("pickedOperators"))),
+        adaptationID: v.optional(v.nullable(v.id("adaptations"))),
         customColor: v.optional(v.nullable(v.string())),
 
         type: v.optional(v.string()),
@@ -866,6 +928,9 @@ export const updateAssets = mutation({
         ...(asset.pickedOperatorID !== undefined
           ? { pickedOperatorID: asset.pickedOperatorID ?? undefined }
           : {}),
+        ...(asset.adaptationID !== undefined
+          ? { adaptationID: asset.adaptationID ?? undefined }
+          : {}),
         ...(asset.customColor !== undefined ? { customColor: asset.customColor ?? undefined } : {}),
 
         ...(asset.type !== undefined ? { type: asset.type } : {}),
@@ -897,8 +962,182 @@ export const deleteAssets = mutation({
       return { success: false, error: "No active team selected" };
     }
 
+    // Collect the strats affected so we can drop dangling references from any
+    // adaptation's hiddenAssetIDs after the assets are deleted.
+    const affectedStratIDs = new Set<Id<"strats">>();
+    for (const placedAssetID of placedAssetIDs) {
+      const asset = await ctx.db.get(placedAssetID);
+      if (asset) affectedStratIDs.add(asset.stratID);
+    }
+
     for (const placedAssetID of placedAssetIDs) {
       await ctx.db.delete(placedAssetID);
+    }
+
+    const deletedIDs = new Set(placedAssetIDs);
+    for (const stratID of affectedStratIDs) {
+      const adaptations = await ctx.db
+        .query("adaptations")
+        .withIndex("byStrat", (q) => q.eq("stratID", stratID))
+        .collect();
+      for (const adaptation of adaptations) {
+        if (adaptation.hiddenAssetIDs.some((id) => deletedIDs.has(id))) {
+          await ctx.db.patch(adaptation._id, {
+            hiddenAssetIDs: adaptation.hiddenAssetIDs.filter((id) => !deletedIDs.has(id)),
+          });
+        }
+      }
+    }
+
+    return { success: true };
+  },
+});
+
+// --------- Adaptations ---------
+
+export const createAdaptation = mutation({
+  args: {
+    stratID: v.id("strats"),
+    name: v.optional(v.string()),
+  },
+  async handler(ctx, { stratID, name }) {
+    const { activeTeamID } = await requireUser(ctx);
+    if (!activeTeamID) {
+      return { success: false, error: "No active team selected" };
+    }
+    const stratDoc = await ctx.db.get(stratID);
+    if (!stratDoc || stratDoc.teamID !== activeTeamID) {
+      return { success: false, error: "Strat not found" };
+    }
+
+    const existing = await ctx.db
+      .query("adaptations")
+      .withIndex("byStrat", (q) => q.eq("stratID", stratID))
+      .collect();
+    const maxIndex = existing.reduce((max, a) => (a.index > max ? a.index : max), -1);
+
+    const adaptationID = await ctx.db.insert("adaptations", {
+      stratID,
+      name: name ?? `Adaptation ${existing.length + 1}`,
+      index: maxIndex + 1,
+      filters: [],
+      hiddenAssetIDs: [],
+    });
+    return { success: true, adaptationID };
+  },
+});
+
+export const updateAdaptation = mutation({
+  args: {
+    adaptationID: v.id("adaptations"),
+    name: v.optional(v.string()),
+    filters: v.optional(v.array(adaptationFilter)),
+    hiddenAssetIDs: v.optional(v.array(v.id("placedAssets"))),
+  },
+  async handler(ctx, args) {
+    const { activeTeamID } = await requireUser(ctx);
+    if (!activeTeamID) {
+      return { success: false, error: "No active team selected" };
+    }
+    const adaptationDoc = await ctx.db.get(args.adaptationID);
+    if (!adaptationDoc) {
+      return { success: false, error: "Adaptation not found" };
+    }
+    const stratDoc = await ctx.db.get(adaptationDoc.stratID);
+    if (!stratDoc || stratDoc.teamID !== activeTeamID) {
+      return { success: false, error: "Strat not found" };
+    }
+    await ctx.db.patch(args.adaptationID, {
+      ...(args.name !== undefined ? { name: args.name } : {}),
+      ...(args.filters !== undefined ? { filters: args.filters } : {}),
+      ...(args.hiddenAssetIDs !== undefined ? { hiddenAssetIDs: args.hiddenAssetIDs } : {}),
+    });
+    return { success: true };
+  },
+});
+
+export const deleteAdaptation = mutation({
+  args: {
+    adaptationID: v.id("adaptations"),
+  },
+  async handler(ctx, { adaptationID }) {
+    const { activeTeamID } = await requireUser(ctx);
+    if (!activeTeamID) {
+      return { success: false, error: "No active team selected" };
+    }
+    const adaptationDoc = await ctx.db.get(adaptationID);
+    if (!adaptationDoc) {
+      return { success: false, error: "Adaptation not found" };
+    }
+    const stratDoc = await ctx.db.get(adaptationDoc.stratID);
+    if (!stratDoc || stratDoc.teamID !== activeTeamID) {
+      return { success: false, error: "Strat not found" };
+    }
+
+    // Delete assets that only exist for this adaptation.
+    const stratAssets = await ctx.db
+      .query("placedAssets")
+      .withIndex("byStrat", (q) => q.eq("stratID", adaptationDoc.stratID))
+      .collect();
+    for (const asset of stratAssets) {
+      if (asset.adaptationID === adaptationID) {
+        await ctx.db.delete(asset._id);
+      }
+    }
+
+    await ctx.db.delete(adaptationID);
+
+    // Re-pack the indexes of the remaining adaptations so priority stays gapless.
+    const remaining = (
+      await ctx.db
+        .query("adaptations")
+        .withIndex("byStrat", (q) => q.eq("stratID", adaptationDoc.stratID))
+        .collect()
+    ).sort((a, b) => a.index - b.index);
+    for (let i = 0; i < remaining.length; i++) {
+      if (remaining[i].index !== i) {
+        await ctx.db.patch(remaining[i]._id, { index: i });
+      }
+    }
+
+    return { success: true };
+  },
+});
+
+export const reorderAdaptations = mutation({
+  args: {
+    stratID: v.id("strats"),
+    orderedAdaptationIDs: v.array(v.id("adaptations")),
+  },
+  async handler(ctx, { stratID, orderedAdaptationIDs }) {
+    const { activeTeamID } = await requireUser(ctx);
+    if (!activeTeamID) {
+      return { success: false, error: "No active team selected" };
+    }
+    const stratDoc = await ctx.db.get(stratID);
+    if (!stratDoc || stratDoc.teamID !== activeTeamID) {
+      return { success: false, error: "Strat not found" };
+    }
+
+    const adaptations = await ctx.db
+      .query("adaptations")
+      .withIndex("byStrat", (q) => q.eq("stratID", stratID))
+      .collect();
+
+    const orderedSet = new Set(orderedAdaptationIDs);
+    if (
+      orderedSet.size !== orderedAdaptationIDs.length ||
+      orderedAdaptationIDs.length !== adaptations.length ||
+      adaptations.some((a) => !orderedSet.has(a._id))
+    ) {
+      return { success: false, error: "Reorder payload does not match current adaptations" };
+    }
+
+    for (let i = 0; i < orderedAdaptationIDs.length; i++) {
+      const adaptation = adaptations.find((a) => a._id === orderedAdaptationIDs[i])!;
+      if (adaptation.index !== i) {
+        await ctx.db.patch(adaptation._id, { index: i });
+      }
     }
     return { success: true };
   },

@@ -15,7 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "../../ui/button";
 import { Textarea } from "../../ui/textarea";
 import { FullTeam, TeamMember } from "@/lib/types/team.types";
-import { StratPositions } from "@/lib/types/strat.types";
+import { Adaptation, StratPositions } from "@/lib/types/strat.types";
 import { PlacedAsset } from "@/lib/types/asset.types";
 import { Id } from "@/convex/_generated/dataModel";
 import AssetMenu from "./AssetMenu";
@@ -25,16 +25,20 @@ export default function useMountAssets(
   {
     team,
     stratPositions,
+    activeAdaptation,
   }: {
     team: FullTeam;
     stratPositions: StratPositions[];
+    activeAdaptation: Adaptation | null;
   },
   {
     deleteAssets,
     updateAssets,
+    setAssetsHiddenInAdaptation,
   }: {
     deleteAssets: (assets: PlacedAsset[]) => void;
     updateAssets: (assets: PlacedAsset[]) => void;
+    setAssetsHiddenInAdaptation: (assetIDs: Id<"placedAssets">[], hidden: boolean) => void;
   },
 ) {
   const { user } = useUser();
@@ -242,22 +246,26 @@ export default function useMountAssets(
             return <>Missing Asset</>;
         }
       })();
+      // arrows and operators render as native SVG and cannot be wrapped in an
+      // HTML div — wrap them in an SVG <g> instead when dimming is needed.
+      const isSvgNative = asset.type === "arrow" || asset.type === "operator";
+
+      // While editing an adaptation, base assets (not owned by the adaptation)
+      // are dimmed; those marked hidden for the adaptation are dimmed further.
+      const isBaseAsset = !asset.adaptationID;
+      const isHiddenInAdaptation =
+        !!activeAdaptation && isBaseAsset && activeAdaptation.hiddenAssetIDs.includes(asset._id);
+      const dimOpacity = activeAdaptation && isBaseAsset ? (isHiddenInAdaptation ? 0.2 : 0.5) : 1;
+
       const fullAsset = (() => {
-        if (
-          selectedBy.length === 0 ||
-          selectedBy.every((id) => id === user?._id) ||
-          // arrows and operators render as native SVG and cannot be wrapped in
-          // an HTML div
-          asset.type === "arrow" ||
-          asset.type === "operator"
-        ) {
-          return assetElement;
-        } else {
-          const shadowColors = selectedBy
-            .filter((id) => id !== user?._id)
+        let element = assetElement;
+
+        const otherSelectors = selectedBy.filter((id) => id !== user?._id);
+        if (otherSelectors.length > 0 && !isSvgNative) {
+          const shadowColors = otherSelectors
             .map((id) => team.members.find((m) => m._id === id)?.defaultColor!)
             .filter(Boolean);
-          return (
+          element = (
             <div
               style={{
                 boxShadow: shadowColors.length
@@ -273,6 +281,22 @@ export default function useMountAssets(
             </div>
           );
         }
+
+        if (dimOpacity !== 1) {
+          const dimStyle = {
+            opacity: dimOpacity,
+            filter: isHiddenInAdaptation ? "grayscale(1)" : undefined,
+          };
+          element = isSvgNative ? (
+            <g style={dimStyle}>{element}</g>
+          ) : (
+            <div style={dimStyle} className="size-full">
+              {element}
+            </div>
+          );
+        }
+
+        return element;
       })();
       return {
         menu:
@@ -283,6 +307,8 @@ export default function useMountAssets(
               selectedAssets={selectedAssets}
               stratPositions={stratPositions}
               team={team}
+              activeAdaptation={activeAdaptation}
+              setAssetsHiddenInAdaptation={setAssetsHiddenInAdaptation}
               openColorPickerForAssets={(assets) => {
                 setColorPickerAssets(assets);
                 setColorPickerOpen(true);
@@ -302,7 +328,14 @@ export default function useMountAssets(
         asset: fullAsset,
       };
     },
-    [team, stratPositions],
+    [
+      team,
+      stratPositions,
+      activeAdaptation,
+      deleteAssets,
+      updateAssets,
+      setAssetsHiddenInAdaptation,
+    ],
   );
 
   const onAssetDoubleClick = useCallback((asset: PlacedAsset) => {

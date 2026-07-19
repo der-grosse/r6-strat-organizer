@@ -4,9 +4,10 @@ import { useEffect, useMemo } from "react";
 import useMountAssets from "./canvas/useMountedAssets";
 import StratEditorCanvas, { CANVAS_BASE_SIZE } from "./canvas/Canvas";
 import MAPS from "@/lib/static/maps";
-import { R6Map, Strat } from "@/lib/types/strat.types";
+import { Adaptation, R6Map, Strat } from "@/lib/types/strat.types";
 import { FullTeam } from "@/lib/types/team.types";
 import { PlacedAsset } from "@/lib/types/asset.types";
+import { applyAdaptationToAssets } from "@/lib/adaptations";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { deepCopy, filterNull } from "../Objects";
@@ -18,11 +19,18 @@ import { useUser } from "../context/UserContext";
 export interface StratViewerProps {
   strat: Strat;
   team: FullTeam;
+  adaptation?: Adaptation | null;
   assetModifier?: (assets: PlacedAsset[]) => PlacedAsset[];
   onLoaded?: () => void;
 }
 
-export default function StratViewer({ team, strat, assetModifier, onLoaded }: StratViewerProps) {
+export default function StratViewer({
+  team,
+  strat,
+  adaptation,
+  assetModifier,
+  onLoaded,
+}: StratViewerProps) {
   const { user } = useUser();
   const bannedOperators = useQuery(api.bannedOps.get);
   const settings = useQuery(api.settings.get);
@@ -36,10 +44,11 @@ export default function StratViewer({ team, strat, assetModifier, onLoaded }: St
   }, [strat.stratPositions, team.teamPositions, user]);
 
   const { renderAsset } = useMountAssets(
-    { team, stratPositions: strat.stratPositions },
+    { team, stratPositions: strat.stratPositions, activeAdaptation: null },
     {
       deleteAssets(assets) {},
       updateAssets(assets) {},
+      setAssetsHiddenInAdaptation() {},
     },
   );
 
@@ -49,11 +58,14 @@ export default function StratViewer({ team, strat, assetModifier, onLoaded }: St
 
   const assets = useMemo(() => {
     if (!allAssets) return [];
+    // Show the base strat merged with the active adaptation (hiding the base
+    // assets it replaces); with no adaptation this is just the base assets.
+    const adaptedAssets = applyAdaptationToAssets(allAssets, adaptation ?? null);
     if (assetModifier) {
-      return assetModifier(allAssets);
+      return assetModifier(adaptedAssets);
     }
-    return allAssets;
-  }, [allAssets, assetModifier]);
+    return adaptedAssets;
+  }, [allAssets, assetModifier, adaptation]);
 
   const { assets: clampedAssets, map: clampedMap } = useMemo(() => {
     if (!map) return { assets, map };

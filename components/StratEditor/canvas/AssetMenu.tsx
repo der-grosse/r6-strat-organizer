@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { PlacedAsset } from "@/lib/types/asset.types";
-import { StratPositions } from "@/lib/types/strat.types";
+import { Adaptation, StratPositions } from "@/lib/types/strat.types";
 import { FullTeam } from "@/lib/types/team.types";
+import { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 import {
   ALargeSmall,
@@ -10,6 +11,7 @@ import {
   ArrowRight,
   Ban,
   Brush,
+  Eye,
   EyeOff,
   ImageIcon,
   TextCursorInput,
@@ -35,6 +37,8 @@ export interface AssetMenuProps {
   openColorPickerForAssets: (assets: PlacedAsset[]) => void;
   openTextEditorForAsset?: (asset: PlacedAsset) => void;
   openImageUrlEditorForAsset?: (asset: PlacedAsset) => void;
+  activeAdaptation?: Adaptation | null;
+  setAssetsHiddenInAdaptation?: (assetIDs: Id<"placedAssets">[], hidden: boolean) => void;
 }
 
 export default function AssetMenu({
@@ -46,10 +50,42 @@ export default function AssetMenu({
   openColorPickerForAssets,
   openTextEditorForAsset,
   openImageUrlEditorForAsset,
+  activeAdaptation,
+  setAssetsHiddenInAdaptation,
 }: AssetMenuProps) {
   const assetStratPosition = stratPositions.find((op) =>
     selectedAssets.every((asset) => asset.stratPositionID === op._id),
   );
+
+  // In adaptation edit mode, base assets (not owned by any adaptation) can only
+  // be toggled hidden for the active adaptation — not otherwise edited.
+  const baseSelectedInAdaptation =
+    activeAdaptation && setAssetsHiddenInAdaptation
+      ? selectedAssets.filter((asset) => !asset.adaptationID)
+      : [];
+  const hideToggle =
+    baseSelectedInAdaptation.length > 0 ? (
+      <AdaptationHideToggle
+        key="adaptation-hide"
+        assets={baseSelectedInAdaptation}
+        adaptation={activeAdaptation!}
+        setAssetsHiddenInAdaptation={setAssetsHiddenInAdaptation!}
+      />
+    ) : null;
+
+  // Selection consists solely of base assets while editing an adaptation:
+  // restrict the menu to just the hide toggle.
+  if (activeAdaptation && hideToggle && baseSelectedInAdaptation.length === selectedAssets.length) {
+    return (
+      <div
+        className="absolute bottom-0 left-[50%] -translate-x-1/2 bg-muted text-muted-foreground rounded-lg flex items-center justify-center scale-200 origin-bottom z-100 h-9 pointer-events-auto"
+        onMouseDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {hideToggle}
+      </div>
+    );
+  }
 
   const menuItemIDs = getMenuItemsIDs(selectedAssets);
 
@@ -569,8 +605,50 @@ export default function AssetMenu({
       onMouseDown={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}
     >
+      {hideToggle}
+      {hideToggle && sections.length > 0 && (
+        <div key="adaptation-divider" className="bg-border w-[1px] h-6" />
+      )}
       {sections}
     </div>
+  );
+}
+
+function AdaptationHideToggle({
+  assets,
+  adaptation,
+  setAssetsHiddenInAdaptation,
+}: {
+  assets: PlacedAsset[];
+  adaptation: Adaptation;
+  setAssetsHiddenInAdaptation: (assetIDs: Id<"placedAssets">[], hidden: boolean) => void;
+}) {
+  const hiddenSet = new Set(adaptation.hiddenAssetIDs);
+  const allHidden = assets.every((asset) => hiddenSet.has(asset._id));
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          size="icon"
+          variant="ghost"
+          className={cn(allHidden && "bg-card dark:hover:bg-card")}
+          onMouseDown={(e) => e.stopPropagation()}
+          onClick={() =>
+            setAssetsHiddenInAdaptation(
+              assets.map((asset) => asset._id),
+              !allHidden,
+            )
+          }
+        >
+          {allHidden ? <Eye /> : <EyeOff />}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="top">
+        <p className="text-sm">
+          {allHidden ? "Show in this adaptation" : "Hide in this adaptation"}
+        </p>
+      </TooltipContent>
+    </Tooltip>
   );
 }
 

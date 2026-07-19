@@ -29,6 +29,7 @@ import WoodenBarricade from "@/components/icons/woodenBarricade";
 import Rotation from "@/components/icons/rotation";
 import Explosion from "../assets/Explosion";
 import { ImageIcon, MoveUpRight, Type } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export interface StratEditorSelectedElementsSidebarProps {
   onAssetAdd: (asset: Omit<Asset & Partial<PlacedAsset>, "_id">) => void;
@@ -90,30 +91,31 @@ export default function StratEditorSelectedElementsSidebar(
           {selectedPrimaryGadetIDs.length > 0 && (
             <>
               <Badge className="sticky top-0 w-full col-span-full">Selected primary gadgets</Badge>
-              {selectedPrimaryGadetIDs.map((gadget) => (
-                <DraggableAssetButton
-                  variant="outline"
-                  key={gadget.id}
-                  className="p-1 h-auto relative"
-                  onAssetAdd={props.onAssetAdd}
-                  asset={
-                    {
-                      type: "gadget",
-                      gadget: gadget.id,
-                      stratPositionID: gadget.stratPositionID,
-                      size: {
-                        width: ASSET_BASE_SIZE,
-                        height: ASSET_BASE_SIZE * (gadget.gadget?.aspectRatio ?? 1),
-                      },
-                    } as Omit<GadgetAsset, "_id">
-                  }
-                >
-                  <PrimaryGadgetIcon id={gadget.id} />
-                  <div className="absolute -top-1 -right-1 bg-accent text-accent-foreground rounded-full w-4 h-4 flex items-center justify-center text-xs">
-                    {(gadget.gadget?.count ?? 0) - gadget.placed}
-                  </div>
-                </DraggableAssetButton>
-              ))}
+              {selectedPrimaryGadetIDs.map((gadget) => {
+                const remaining = (gadget.gadget?.count ?? 0) - gadget.placed;
+                return (
+                  <DraggableAssetButton
+                    variant="outline"
+                    key={gadget.id}
+                    className="p-1 h-auto relative"
+                    onAssetAdd={props.onAssetAdd}
+                    asset={
+                      {
+                        type: "gadget",
+                        gadget: gadget.id,
+                        stratPositionID: gadget.stratPositionID,
+                        size: {
+                          width: ASSET_BASE_SIZE,
+                          height: ASSET_BASE_SIZE * (gadget.gadget?.aspectRatio ?? 1),
+                        },
+                      } as Omit<GadgetAsset, "_id">
+                    }
+                  >
+                    <PrimaryGadgetIcon id={gadget.id} />
+                    <CountBadge value={remaining} />
+                  </DraggableAssetButton>
+                );
+              })}
             </>
           )}
           {selectedSecondaryGadgets.length > 0 && (
@@ -140,9 +142,7 @@ export default function StratEditorSelectedElementsSidebar(
                   }
                 >
                   <SecondaryGadgetIcon id={gadget.id} />
-                  <div className="absolute -top-1 -right-1 bg-accent text-accent-foreground rounded-full w-4 h-4 flex items-center justify-center text-xs">
-                    {total - placed}
-                  </div>
+                  <CountBadge value={total - placed} />
                 </DraggableAssetButton>
               ))}
             </>
@@ -299,6 +299,20 @@ export default function StratEditorSelectedElementsSidebar(
           </DraggableAssetButton>
         </div>
       </ScrollArea>
+    </div>
+  );
+}
+
+function CountBadge({ value }: { value: number }) {
+  const isNegative = value < 0;
+  return (
+    <div
+      className={cn(
+        "absolute -top-1 -right-1 rounded-full w-4 h-4 flex items-center justify-center text-xs",
+        isNegative ? "bg-destructive text-white" : "bg-accent text-accent-foreground",
+      )}
+    >
+      {value}
     </div>
   );
 }
