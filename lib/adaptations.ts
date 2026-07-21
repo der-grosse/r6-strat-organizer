@@ -21,7 +21,7 @@ export function isAdaptationFilterHit(filter: AdaptationFilter, bannedOps: strin
 export function isAdaptationActive(adaptation: Adaptation, bannedOps: string[]): boolean {
   // Filters without operators are incomplete and simply ignored.
   const filters = adaptation.filters.filter((filter) => filter.operators.length > 0);
-  if (!filters.length) return false;
+  if (!filters.length) return true;
   return filters.every((filter) => isAdaptationFilterHit(filter, bannedOps));
 }
 

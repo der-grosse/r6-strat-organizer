@@ -1100,6 +1100,15 @@ export const deleteAdaptation = mutation({
       }
     }
 
+    // check if adaptation is currently active strat
+    const activeAdaptationDoc = await ctx.db
+      .query("activeStrats")
+      .withIndex("byTeam", (q) => q.eq("teamID", activeTeamID))
+      .first();
+    if (activeAdaptationDoc && activeAdaptationDoc.adaptationSelection === adaptationID) {
+      await ctx.db.patch(activeAdaptationDoc._id, { adaptationSelection: undefined });
+    }
+
     return { success: true };
   },
 });
