@@ -181,6 +181,11 @@ export default function Clubhouse2F(props: MapFloorClickableProps) {
           data-type="reinforcement"
           onClick={onClickHandler}
         />
+        <path
+          d="M2112.39,1206.77 L2111.84,1297.93"
+          data-type="reinforcement"
+          onClick={onClickHandler}
+        />
         {/* reinforcements end */}
         {/* hatches start */}
         <rect
