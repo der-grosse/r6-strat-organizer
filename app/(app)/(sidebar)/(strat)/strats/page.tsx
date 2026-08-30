@@ -2,7 +2,6 @@
 import { useFilter } from "@/components/context/FilterContext";
 import OperatorIcon from "@/components/general/OperatorIcon";
 import { Button } from "@/components/ui/button";
-import { DEFENDERS } from "@/lib/static/operator";
 import {
   Copy,
   Download,
@@ -42,7 +41,7 @@ import { api } from "@/convex/_generated/api";
 import type { FullTeam } from "@/lib/types/team.types";
 import { Strat } from "@/lib/types/strat.types";
 import { Id } from "@/convex/_generated/dataModel";
-import { usePlayableStrats } from "@/lib/strats";
+import { getStratLineup, usePlayableStrats } from "@/lib/strats";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
@@ -377,28 +376,23 @@ function StratItem({
           ))}
       </div>
       <div style={{ width: TABLE_SIZES.ops }} className="flex gap-1 -my-2 overflow-hidden">
-        {strat.stratPositions
-          .map((stratPosition) => ({
-            ops: stratPosition.pickedOperators
-              .map((op) => DEFENDERS.find((def) => def.name === op.operator)!)
-              .filter(Boolean),
-            isPowerPosition: stratPosition.isPowerPosition,
-            _id: stratPosition._id,
-            position: team.teamPositions.find((p) => p._id === stratPosition.teamPositionID),
-          }))
-          .filter(({ ops }) => ops.length)
-          .sort((a, b) => {
-            if (a.isPowerPosition && !b.isPowerPosition) return -10;
-            if (!a.isPowerPosition && b.isPowerPosition) return 10;
-            return (a.position?.index ?? 0) - (b.position?.index ?? 0);
-          })
-          .map(({ ops, isPowerPosition, _id }) => (
+        {getStratLineup(strat, bannedOps, {
+          teamPositions: team.teamPositions,
+          sort: "power-ops",
+        }).map((entry) => (
+          <div
+            key={entry.stratPositionID}
+            className={cn("relative", !entry.isPowerPosition && "scale-75")}
+          >
             <OperatorIcon
-              key={_id}
-              op={ops.find((o) => !bannedOps.includes(o.name))?.name ?? ops[0]}
-              className={isPowerPosition ? undefined : "grayscale scale-75"}
+              op={entry.operator.operator}
+              className={cn(!entry.isPowerPosition && "grayscale", entry.isBanned && "opacity-50")}
             />
-          ))}
+            {entry.isBanned && (
+              <Slash className="size-8 absolute top-0 left-0 opacity-70 text-destructive" />
+            )}
+          </div>
+        ))}
       </div>
       <div
         className="flex justify-end"

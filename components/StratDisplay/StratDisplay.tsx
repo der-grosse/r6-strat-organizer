@@ -1,7 +1,7 @@
 "use client";
 
 import { getGoogleDrawingsEditURL, getGoogleDrawingsPreviewURL } from "@/lib/googleDrawings";
-import { Ban, Crosshair, Pencil } from "lucide-react";
+import { Ban, Crosshair, Pencil, Slash } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { useUser } from "../context/UserContext";
@@ -19,6 +19,7 @@ import { api } from "@/convex/_generated/api";
 import StratGadgetVisibiltyPicker from "./StratGadgetVisibiltyPicker";
 import AdaptationSelector from "./AdaptationSelector";
 import { resolveAutoAdaptation, resolveSelectedAdaptation } from "@/lib/adaptations";
+import { getStratLineup } from "@/lib/strats";
 
 export interface StratDisplayProps {
   strat: Strat | null | undefined;
@@ -47,29 +48,24 @@ export default function StratDisplay(props: StratDisplayProps) {
   })();
 
   const teamLineUp = (
-    props.strat?.stratPositions.filter(
-      (stratPositions) => stratPositions.teamPositionID !== teamMember?.teamPositionID,
-    ) ?? []
+    props.strat
+      ? getStratLineup(props.strat, bannedOps, {
+          teamPositions: props.team.teamPositions,
+          sort: "team-positions",
+        })
+      : []
   )
-    .map((pos) => {
-      const teamPosition = props.team.teamPositions.find(
-        (teamPos) => teamPos._id === pos.teamPositionID,
-      );
+    .filter((entry) => entry.teamPositionID !== teamMember?.teamPositionID)
+    .map((entry) => {
       const player = props.team.members.find(
-        (member) => member.teamPositionID === pos.teamPositionID,
+        (member) => member.teamPositionID === entry.teamPositionID,
       );
-      const color = player?.defaultColor ?? undefined;
-
       return {
-        op: pos.pickedOperators.find((op) => !bannedOps.includes(op.operator)),
-        color,
+        ...entry,
+        color: player?.defaultColor ?? undefined,
         playerName: player?.name,
-        positionName: teamPosition?.positionName,
-        index: teamPosition?.index ?? 10,
       };
-    })
-    .filter((pos) => pos.op !== undefined)
-    .sort((a, b) => a.index - b.index);
+    });
 
   const [viewModifier, setViewModifier] = useState<"none" | "hideForeign" | "grayscaleForeign">(
     "none",
@@ -179,20 +175,26 @@ export default function StratDisplay(props: StratDisplayProps) {
         </div>
       </div>
       <div className="flex justify-end items-end gap-2.5 py-1">
-        {teamLineUp.map(({ op, color, playerName, positionName }, index) => (
+        {teamLineUp.map(({ operator, isBanned, color, playerName, positionName }, index) => (
           <Tooltip key={index}>
             <TooltipTrigger>
               <div className="relative rounded-sm scale-90" style={{ backgroundColor: color }}>
-                <OperatorIcon op={op?.operator!} className="scale-125" />
-                {op?.secondaryGadget && (
+                <OperatorIcon
+                  op={operator.operator}
+                  className={cn("scale-125", isBanned && "opacity-50")}
+                />
+                {isBanned && (
+                  <Slash className="absolute inset-0 size-8 text-destructive opacity-70" />
+                )}
+                {operator.secondaryGadget && (
                   <GadgetIcon
-                    id={op?.secondaryGadget}
+                    id={operator.secondaryGadget}
                     className="absolute size-6 -right-2 -bottom-2"
                   />
                 )}
-                {op?.tertiaryGadget && (
+                {operator.tertiaryGadget && (
                   <GadgetIcon
-                    id={op?.tertiaryGadget}
+                    id={operator.tertiaryGadget}
                     className="absolute size-6 -left-2 -bottom-2"
                   />
                 )}
@@ -201,6 +203,7 @@ export default function StratDisplay(props: StratDisplayProps) {
             <TooltipContent>
               <p className="text-center">
                 {playerName ? playerName : "Unassigned"} | {positionName}
+                {isBanned && " | all operators banned"}
               </p>
             </TooltipContent>
           </Tooltip>

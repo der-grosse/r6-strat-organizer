@@ -179,6 +179,7 @@ const schema = defineSchema({
       v.literal("grayscaleForeign"),
     ),
     hideEmptyFloors: v.optional(v.boolean()),
+    showSidebarOperators: v.optional(v.boolean()),
   }).index("byUser", ["userId"]),
 });
 

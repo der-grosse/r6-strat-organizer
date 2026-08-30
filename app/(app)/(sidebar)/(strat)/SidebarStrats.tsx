@@ -1,11 +1,13 @@
 import DndList from "@/components/general/DndList";
-import { SidebarMenuAction, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import OperatorIcon from "@/components/general/OperatorIcon";
+import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { getStratLineup } from "@/lib/strats";
 import { Strat } from "@/lib/types/strat.types";
-import { useMutation } from "convex/react";
-import { Pencil } from "lucide-react";
-import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { useMutation, useQuery } from "convex/react";
+import { Slash } from "lucide-react";
 import { useMemo } from "react";
 
 export interface SidebarStratsProps {
@@ -16,13 +18,23 @@ export interface SidebarStratsProps {
 
 export default function SidebarStrats(props: SidebarStratsProps) {
   const updateStratIndex = useMutation(api.strats.updateIndex);
+  const bannedOps = useQuery(api.bannedOps.get);
+  const team = useQuery(api.team.get);
+  const settings = useQuery(api.settings.get);
+  const showOperators = settings?.showSidebarOperators ?? true;
   const mappedStrats = useMemo(
     () =>
       props.strats.map((strat) => ({
         ...strat,
         id: strat._id,
+        lineup: showOperators
+          ? getStratLineup(strat, bannedOps ?? [], {
+              teamPositions: team?.teamPositions,
+              sort: "power-ops",
+            })
+          : [],
       })),
-    [props.strats],
+    [props.strats, bannedOps, team?.teamPositions, showOperators],
   );
   return (
     <div className="overflow-hidden">
@@ -60,6 +72,31 @@ export default function SidebarStrats(props: SidebarStratsProps) {
                     </>
                   )}
                 </>
+              )}
+              {strat.lineup.length > 0 && (
+                <span className="flex items-center gap-0.5 ml-4 mt-0.5">
+                  {strat.lineup.map((entry) => (
+                    <span
+                      key={entry.stratPositionID}
+                      className={cn("relative", !entry.isPowerPosition && "scale-75")}
+                      title={[entry.operator.operator, entry.positionName]
+                        .filter(Boolean)
+                        .join(" | ")}
+                    >
+                      <OperatorIcon
+                        op={entry.operator.operator}
+                        className={cn(
+                          "size-5",
+                          !entry.isPowerPosition && "grayscale",
+                          entry.isBanned && "opacity-50",
+                        )}
+                      />
+                      {entry.isBanned && (
+                        <Slash className="absolute inset-0 size-5 text-destructive opacity-70" />
+                      )}
+                    </span>
+                  ))}
+                </span>
               )}
             </SidebarMenuButton>
             {/* <Link href={`/editor/${strat.id}`}>

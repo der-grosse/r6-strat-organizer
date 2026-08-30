@@ -85,6 +85,32 @@ export default function AppSettings() {
         </div>
 
         <div className="space-y-2">
+          <Label>Sidebar</Label>
+          <p className="text-sm text-muted-foreground">
+            Show the operators each strat is played with, based on the current bans.
+          </p>
+          {(() => {
+            const showSidebarOperators = settings?.showSidebarOperators ?? true;
+            return (
+              <Button
+                variant="outline"
+                className="w-full justify-start gap-2"
+                onClick={() => updateSettings({ showSidebarOperators: !showSidebarOperators })}
+              >
+                {showSidebarOperators ? (
+                  <Eye className="size-4" />
+                ) : (
+                  <EyeOff className="size-4 text-muted-foreground" />
+                )}
+                <span className={!showSidebarOperators ? "text-muted-foreground" : ""}>
+                  Show operators in sidebar
+                </span>
+              </Button>
+            );
+          })()}
+        </div>
+
+        <div className="space-y-2">
           <Label>Floors</Label>
           <p className="text-sm text-muted-foreground">
             Hide floors that have no setup placed on them when viewing a strat.

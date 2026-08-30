@@ -11,6 +11,7 @@ const DEFAULT_SETTINGS = {
     siteName: true,
   },
   hideEmptyFloors: true, // if a floor has no own assets, hide it
+  showSidebarOperators: true, // show the resolved operators of a strat in the sidebar
 };
 
 export const get = query({
@@ -46,6 +47,7 @@ export const update = mutation({
       }),
     ),
     hideEmptyFloors: v.optional(v.boolean()),
+    showSidebarOperators: v.optional(v.boolean()),
   },
   async handler(ctx, args) {
     const user = await requireUser(ctx);
